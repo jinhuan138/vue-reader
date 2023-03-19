@@ -7,7 +7,7 @@
   </div>
 </template>
 <script setup>
-import { EpubView } from "@/modules/index.js";
+import { EpubView } from "../lib/index.js";
 </script>
 
 

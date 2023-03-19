@@ -1,18 +1,38 @@
 {
   "name": "vue-reader",
   "version": "1.0.0",
+  "main": "lib/index.js",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "compile": "rollup -c -w"
   },
   "dependencies": {
+    "@babel/core": "^7.20.12",
     "epubjs": "^0.3.93",
     "vue": "^3.2.41"
   },
   "devDependencies": {
+    "@rollup/plugin-babel": "^6.0.3",
+    "@rollup/plugin-commonjs": "^24.0.1",
+    "@rollup/plugin-node-resolve": "^15.0.1",
     "@vitejs/plugin-vue": "^3.2.0",
+    "@vue/compiler-sfc": "^3.2.47",
+    "autoprefixer": "8.0.0",
+    "postcss": "^8.4.21",
+    "postcss-preset-env": "^8.0.1",
+    "rollup-plugin-postcss": "^4.0.2",
+    "rollup-plugin-vue": "6.0.0-beta.10",
     "vite": "^3.2.3"
-  }
+  },
+  "browserslist": [
+    "defaults",
+    "not ie < 8",
+    "last 2 versions",
+    "> 1%",
+    "iOS 7",
+    "last 3 iOS versions"
+  ]
 }
