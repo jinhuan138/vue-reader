@@ -2,13 +2,13 @@
 <template>
   <div class="container">
     <div class="vueContainer">
-      <EpubView></EpubView>
+      <VueReader></VueReader>
     </div>
   </div>
 </template>
 <script setup>
 // import { EpubView } from "../lib/index.js";
-import EpubView from "./modules/EpubView/EpubView.vue";
+import VueReader from "./modules/VueReader/VueReader.vue";
 </script>
 
 

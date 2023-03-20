@@ -12,6 +12,9 @@ export default {
     file: './lib/index.js',
     format: 'es',
     name: 'vue-reader',
+    global:{
+      vue:"Vue"
+    }
   },
   plugins: [
     resolve(),
@@ -20,7 +23,8 @@ export default {
       css: true,
     }),
     babel({
-      exclude: '**/node_modules/**'
+      exclude: '**/node_modules/**',
+      babelHelpers: 'bundled' 
     }),
     postcss(),
     // autoprefixer()
