@@ -7,7 +7,8 @@
   </div>
 </template>
 <script setup>
-import { EpubView } from "../lib/index.js";
+// import { EpubView } from "../lib/index.js";
+import EpubView from "./modules/EpubView/EpubView.vue";
 </script>
 
 

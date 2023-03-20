@@ -14,17 +14,16 @@ export default {
     name: 'vue-reader',
   },
   plugins: [
+    resolve(),
     commonjs(),
     vue({
       css: true,
-
     }),
-    resolve(),
     babel({
-      exclude: '/node_modules/'
+      exclude: '**/node_modules/**'
     }),
     postcss(),
-    autoprefixer()
+    // autoprefixer()
   ],
   external: ['vue','Epub']
 };

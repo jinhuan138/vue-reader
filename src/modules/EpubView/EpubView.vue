@@ -14,16 +14,18 @@
       <!-- title -->
       <div class="titleArea">{{ bookName }}</div>
       <!-- view -->
-      <div class="reader">
+      <div>
+        <div class="reader">
         <div class="viewHolder">
           <div class="view" ref="view"></div>
         </div>
+      </div>
       </div>
     </div>
     <!-- toc -->
     <div>
       <div class="tocArea">
-        <div class="tocAreaButton">
+        <div>
           <button
             type="button"
             v-for="(item, index) in toc"
@@ -54,6 +56,9 @@ const initBook = async () => {
   book = new Epub(bookUrl, {});
   rendition = book.renderTo(view.value, {
     allowScriptedContent: true,
+    contained: true,
+      width: '100%',
+      height: '100%',
   });
   book.loaded.navigation.then(({ toc: _toc }) => {
     toc.value = _toc;
@@ -128,7 +133,8 @@ onUnmounted(() => {
 .viewHolder {
   height: 100%;
   width: 100%;
-  overflow: hidden;
+  /* overflow: hidden; */
+  position: relative;
 }
 .view {
   height: 100%;
