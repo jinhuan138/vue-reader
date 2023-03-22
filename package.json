@@ -1,7 +1,14 @@
 {
   "name": "vue-reader",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "lib/index.js",
+  "files": [
+    "lib"
+  ],
+  "keyword": [
+    "vue3",
+    "epub"
+  ],
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -11,6 +18,9 @@
   },
   "dependencies": {
     "@babel/core": "^7.20.12",
+    "@esbuild/win32-x64": "^0.17.12",
+    "@vitejs/plugin-vue": "^4.1.0",
+    "element-plus": "^2.3.1",
     "epubjs": "^0.3.93",
     "vue": "^3.2.41"
   },
@@ -18,13 +28,12 @@
     "@rollup/plugin-babel": "^6.0.3",
     "@rollup/plugin-commonjs": "^24.0.1",
     "@rollup/plugin-node-resolve": "^15.0.1",
-    "@vitejs/plugin-vue": "^3.2.0",
-    "@vue/compiler-sfc": "^3.2.47",
-    "autoprefixer": "8.0.0",
     "postcss": "^8.4.21",
     "postcss-preset-env": "^8.0.1",
     "rollup-plugin-postcss": "^4.0.2",
     "rollup-plugin-vue": "6.0.0",
+    "unplugin-auto-import": "^0.15.1",
+    "unplugin-vue-components": "^0.24.1",
     "vite": "^4.2.0"
   },
   "browserslist": [

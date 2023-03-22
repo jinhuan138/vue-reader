@@ -2,15 +2,15 @@
 <template>
   <div class="container">
     <div class="vueContainer">
-      <VueReader></VueReader>
+      <VueReader url="/files/啼笑因缘.epub" title="啼笑因缘"></VueReader>
     </div>
   </div>
 </template>
 <script setup>
-// import { EpubView } from "../lib/index.js";
-import VueReader from "./modules/VueReader/VueReader.vue";
+import { VueReader } from "../lib/index.js";
+console.log(VueReader)
+// import VueReader from "./modules/VueReader/VueReader.vue";
 </script>
-
 
 <style scoped>
 .container {

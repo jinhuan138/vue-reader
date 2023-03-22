@@ -1,18 +1,18 @@
 <template>
   <div class="container">
     <div class="readerArea" :class="{ containerExpanded: expandedToc }">
-      <!-- tocToggle -->
+      <!-- 翻页 -->
       <button class="tocButton" :class="{ tocButtonExpanded: expandedToc }" type="button"
         @click="expandedToc = !expandedToc">
         <span class="tocButtonBar" style="top: 35%"></span>
         <span class="tocButtonBar" style="top: 66%"></span>
       </button>
-      <!-- title -->
-      <div class="titleArea">{{ bookName }}</div>
-      <!-- epubView -->
-      <epub-view ref="epubRef" />
+      <!-- 书名 -->
+      <div class="titleArea" v-if="title">{{ title }}</div>
+      <!-- 阅读 -->
+      <epub-view ref="epubRef" :url="$attrs.url" :tocChanged="onTocChange" />
     </div>
-    <!-- toc -->
+    <!-- 目录 -->
     <div>
       <div class="tocArea">
         <div>
@@ -27,68 +27,28 @@
   </div>
 </template>
 <script setup>
-//http://epubjs.org/documentation/0.3/
-import { ref, reactive, toRef, onMounted, onUnmounted, nextTick } from "vue";
-import Epub from "epubjs/lib/index";
+import { ref, reactive, toRefs } from "vue";
 import EpubView from "../EpubView/EpubView.vue";
-const bookUrl = "/files/alice.epub";
-const bookName = "Alice in wonderland";
 const epubRef = ref(null);
-let book = null;
-let rendition = null;
-const toc = ref([]);
-const expandedToc = ref(false);
-const initBook = async () => {
-  book = new Epub(bookUrl, {});
-  console.log(epubRef.value)
-  nextTick(() => {
-    rendition = book.renderTo(epubRef.value.view, {
-      allowScriptedContent: true,
-      contained: true,
-      width: '100%',
-      height: '100%',
-    });
-  })
-  book.loaded.navigation.then(({ toc: _toc }) => {
-    toc.value = _toc;
-  });
-  rendition.display();
-};
+const props = defineProps({
+  title: {
+    type: String,
+  },
+})
+const book = reactive({
+  toc: [],//目录
+  expandedToc: false//目录展开
+})
+const { toc, expandedToc } = toRefs(book)
 
-const nextPage = () => {
-  rendition.next();
-};
-
-const prevPage = () => {
-  rendition.prev();
-};
-
+const onTocChange = (_toc) => {
+  toc.value = _toc
+}
 const setLocation = (href) => {
-  rendition.display(href);
+  epubRef.value.setLocation(href);
   expandedToc.value = false;
 };
 
-const handleKeyPress = ({ key }) => {
-  if (key === "ArrowUp" || key === "ArrowRight") {
-    nextPage();
-  } else if (key === "ArrowDown" || key === "ArrowLeft") {
-    prevPage();
-  }
-};
-
-const registerEvents = () => {
-  rendition.on("keyup", handleKeyPress);
-};
-
-onMounted(() => {
-  initBook();
-  document.addEventListener("keyup", handleKeyPress);
-  registerEvents();
-});
-
-onUnmounted(() => {
-  document.removeEventListener("keyup", handleKeyPress);
-});
 </script>
 <style scoped>
 /* container */

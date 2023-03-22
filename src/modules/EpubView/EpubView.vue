@@ -1,18 +1,85 @@
 <template>
-    <div>
-        <div class="reader">
-            <div class="viewHolder">
-                <div class="view" ref="view"></div>
-            </div>
+    <div class="reader">
+        <div class="viewHolder">
+            <div class="view" ref="view"></div>
         </div>
     </div>
 </template>
 <script setup>
-import { ref } from "vue"
-const view = ref(null)
-defineExpose({
-    view: view.value
+//http://epubjs.org/documentation/0.3/
+import { ref, onMounted, onUnmounted } from "vue";
+import Epub from "epubjs/lib/index";
+
+const props = defineProps({
+    url: {
+        type: String,
+        required: true
+    },
+    tocChanged: Function
 })
+const { url, tocChanged } = props
+
+const view = ref(null)
+let book = null
+let rendition = null;
+
+const initBook = async () => {
+    book = new Epub(url, {});
+    book.loaded.navigation.then(({ toc }) => {
+        tocChanged && tocChanged(toc)
+    });
+    initReader()
+};
+
+const initReader = () => {
+    rendition = book.renderTo(view.value, {
+        allowScriptedContent: false,
+        contained: true,
+        width: '100%',
+        height: '100%',
+    });
+    document.addEventListener("keyup", handleKeyPress);
+    registerEvents();
+    rendition.display()
+}
+
+const registerEvents = () => {
+    rendition.on("keyup", handleKeyPress);
+};
+
+
+const handleKeyPress = ({ key }) => {
+    if (key === "ArrowDown" || key === "ArrowRight") {
+        nextPage();
+    } else if (key === "ArrowUp" || key === "ArrowLeft") {
+        prevPage();
+    }
+};
+
+
+const nextPage = () => {
+    rendition.next();
+};
+
+const prevPage = () => {
+    rendition.prev();
+};
+
+const setLocation = (href) => {
+    rendition.display(href);
+};
+
+onMounted(() => {
+    initBook()
+})
+
+onUnmounted(() => {
+    document.removeEventListener("keyup", handleKeyPress);
+});
+defineExpose({
+    nextPage, prevPage, setLocation
+})
+
 </script>
 <style>
 .reader {
