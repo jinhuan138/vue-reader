@@ -2,7 +2,7 @@
 <template>
   <div class="container">
     <div class="vueContainer">
-      <VueReader url="/files/啼笑因缘.epub" title="啼笑因缘"></VueReader>
+      <VueReader url="/files/啼笑因缘.epub"></VueReader>
     </div>
   </div>
 </template>

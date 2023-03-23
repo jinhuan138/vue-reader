@@ -7,7 +7,9 @@ import vue from 'rollup-plugin-vue'
 import postcss from 'rollup-plugin-postcss'
 import RollupClear from 'rollup-plugin-clear'//打包前删除
 import cleanup from 'rollup-plugin-cleanup';//删除注释
-// import autoprefixer from 'autoprefixer'
+import externals from "rollup-plugin-node-externals";//声明第三方依赖
+import autoprefixer from 'autoprefixer'//css 加前缀
+import cssnano from "cssnano";//压缩css
 
 export default {
   input: 'src/modules/index.js',
@@ -25,6 +27,7 @@ export default {
       targets: ['lib'],
       watch: true,
     }),
+    externals({ devDeps: false, }),
     strip({
       labels: ['unittest']
     }),
@@ -37,9 +40,10 @@ export default {
       exclude: '**/node_modules/**',
       babelHelpers: 'bundled'
     }),
-    postcss(),
+    postcss({
+      plugins: [autoprefixer(), cssnano()]
+    }),
     cleanup()
-    // autoprefixer()
   ],
   external: ['vue', 'Epub']
 };

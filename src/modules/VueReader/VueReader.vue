@@ -8,9 +8,9 @@
         <span class="tocButtonBar" style="top: 66%"></span>
       </button>
       <!-- 书名 -->
-      <div class="titleArea" v-if="title">{{ title }}</div>
+      <div class="titleArea">{{ title || bookName }}</div>
       <!-- 阅读 -->
-      <epub-view ref="epubRef" :url="$attrs.url" :tocChanged="onTocChange" />
+      <epub-view ref="epubRef" :url="url" :tocChanged="onTocChange" />
     </div>
     <!-- 目录 -->
     <div>
@@ -27,12 +27,16 @@
   </div>
 </template>
 <script setup>
-import { ref, reactive, toRefs } from "vue";
+import { ref, reactive, toRefs, computed } from "vue";
 import EpubView from "../EpubView/EpubView.vue";
 const epubRef = ref(null);
 const props = defineProps({
   title: {
     type: String,
+  },
+  url: {
+    type: String,
+    required: true
   },
 })
 const book = reactive({
@@ -40,6 +44,11 @@ const book = reactive({
   expandedToc: false//目录展开
 })
 const { toc, expandedToc } = toRefs(book)
+
+const bookName = computed(() => {
+  let reg = /\/files\/(.*?)\.epub/;
+  return props.url.match(reg)[1];
+})
 
 const onTocChange = (_toc) => {
   toc.value = _toc
