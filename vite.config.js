@@ -7,6 +7,7 @@ import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 
 // https://vitejs.cn/vite3-cn/
 export default defineConfig({
+  base: "/reader/",
   plugins: [vue(),
   AutoImport({
     resolvers: [ElementPlusResolver()],
@@ -14,6 +15,7 @@ export default defineConfig({
   Components({
     resolvers: [ElementPlusResolver()],
   }),],
+  publicDir: 'public',
   resolve: {
     alias: [{ find: '@', replacement: resolve(__dirname, 'src') }]
   },

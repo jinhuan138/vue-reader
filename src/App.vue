@@ -7,8 +7,7 @@
   </div>
 </template>
 <script setup>
-import { VueReader } from "../lib/index.js";
-console.log(VueReader)
+import { VueReader } from "../lib/index.min.js";
 // import VueReader from "./modules/VueReader/VueReader.vue";
 </script>
 

@@ -1,6 +1,8 @@
 # Vue Reader - an easy way to embed a ePub into your webapp
 An vue-reader for vue powered by EpubJS
 
+[See demo](https://jinhuan138.github.io/reader/)
+
 ## Basic usage
 
 ```bash
