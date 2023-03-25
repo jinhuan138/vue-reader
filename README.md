@@ -44,3 +44,17 @@ import { VueReader } from "vue-reader";
 </style>
 ```
 
+## Attributes
+
+| **Name** | **Description**         | **Type**  | **Default** |
+| -------- | ----------------------- | --------- | ----------- |
+| url      | book url                | `string`  | —           |
+| title    | the title of the book   | `string`  | —           |
+| showToc  | whether to show the toc | `boolean` | true        |
+
+## Slots
+
+| **Name** | **Description**                                              |
+| -------- | ------------------------------------------------------------ |
+| title    | You have access to title by [slot](https://v3.vuejs.org/guide/component-slots.html) |
+

@@ -15,18 +15,27 @@ const props = defineProps({
         type: String,
         required: true
     },
-    tocChanged: Function
+    tocChanged: {
+        type: Function,
+    },
+    location: {
+        type: [Number, String],
+    }
 })
-const { url, tocChanged } = props
+const toc = ref([])
+const isLoaded = ref(false)
+const { url, tocChanged, location } = props
 
 const view = ref(null)
 let book = null
 let rendition = null;
+let bookLocation = location
 
 const initBook = async () => {
     book = new Epub(url, {});
-    book.loaded.navigation.then(({ toc }) => {
-        tocChanged && tocChanged(toc)
+    book.loaded.navigation.then(({ toc: _toc }) => {
+        toc.value = _toc
+        tocChanged && tocChanged(_toc)
     });
     initReader()
 };
@@ -40,7 +49,13 @@ const initReader = () => {
     });
     document.addEventListener("keyup", handleKeyPress);
     registerEvents();
-    rendition.display()
+    if (typeof location === 'string' || typeof location === 'number') {
+        rendition.display(location)
+    } else if (toc.length > 0 && toc[0].href) {
+        rendition.display(toc[0].href)
+    } else {
+        rendition.display()
+    }
 }
 
 const registerEvents = () => {
@@ -74,6 +89,7 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
+    book.destroy()
     document.removeEventListener("keyup", handleKeyPress);
 });
 defineExpose({

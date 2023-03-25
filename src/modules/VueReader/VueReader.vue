@@ -1,19 +1,28 @@
 <template>
   <div class="container">
     <div class="readerArea" :class="{ containerExpanded: expandedToc }">
-      <!-- 翻页 -->
-      <button class="tocButton" :class="{ tocButtonExpanded: expandedToc }" type="button"
-        @click="expandedToc = !expandedToc">
+      <!--展开目录 -->
+      <button v-if="showToc" class="tocButton" :class="{ tocButtonExpanded: expandedToc }" type="button"
+        @click="toggleToc">
         <span class="tocButtonBar" style="top: 35%"></span>
         <span class="tocButtonBar" style="top: 66%"></span>
       </button>
       <!-- 书名 -->
-      <div class="titleArea">{{ title || bookName }}</div>
+      <slot name="title" :title='bookName'>
+        <div class="titleArea">{{ bookName }}</div>
+      </slot>
       <!-- 阅读 -->
-      <epub-view ref="epubRef" :url="url" :tocChanged="onTocChange" />
+      <epub-view ref="epubRef" :url="url" :tocChanged="onTocChange" v-drag="dragHandler" />
+      <!-- 翻页 -->
+      <button class="arrow pre" @click="pre">
+        ‹
+      </button>
+      <button class="arrow next" @click="next">
+        ›
+      </button>
     </div>
     <!-- 目录 -->
-    <div>
+    <div v-if="showToc">
       <div class="tocArea">
         <div>
           <button type="button" v-for="(item, index) in toc" :key="index" class="tocAreaButton"
@@ -22,12 +31,14 @@
           </button>
         </div>
       </div>
-      <!-- <div class="tocBackground"></div> -->
+      <!-- 目录遮罩 -->
+      <div v-if="expandedToc" class="tocBackground" @click="toggleToc"></div>
     </div>
   </div>
 </template>
 <script setup>
 import { ref, reactive, toRefs, computed } from "vue";
+import { dragDirective } from '@vueuse/gesture'
 import EpubView from "../EpubView/EpubView.vue";
 const epubRef = ref(null);
 const props = defineProps({
@@ -38,7 +49,17 @@ const props = defineProps({
     type: String,
     required: true
   },
+  showToc: {
+    type: Boolean,
+    default: true
+  },
+  swipeAble: {
+    type: Boolean,
+    default: false
+  }
 })
+const { title } = props
+
 const book = reactive({
   toc: [],//目录
   expandedToc: false//目录展开
@@ -46,17 +67,50 @@ const book = reactive({
 const { toc, expandedToc } = toRefs(book)
 
 const bookName = computed(() => {
-  let reg = /\/files\/(.*?)\.epub/;
-  return props.url.match(reg)[1];
+  if (title) {
+    return title
+  } else {
+    let reg = /\/files\/(.*?)\.epub/;
+    return props.url.match(reg)[1];
+  }
+
 })
+
+const toggleToc = () => {
+  expandedToc.value = !expandedToc.value
+}
 
 const onTocChange = (_toc) => {
   toc.value = _toc
 }
+
 const setLocation = (href) => {
   epubRef.value.setLocation(href);
   expandedToc.value = false;
 };
+
+const next = () => {
+  epubRef.value.nextPage()
+}
+
+const pre = () => {
+  epubRef.value.prevPage()
+}
+//滑动翻页
+const vDrag = dragDirective
+const dragHandler = ({ movement: [x, y], dragging }) => {
+  console.log(movement)
+  if (!dragging) {
+    set({ x: 0, y: 0, cursor: 'grab' })
+    return
+  }
+
+  set({
+    cursor: 'grabbing',
+    x,
+    y,
+  })
+}
 
 </script>
 <style scoped>
@@ -156,5 +210,35 @@ const setLocation = (href) => {
 
 .tocButtonExpanded {
   background: #f2f2f2;
+}
+
+/* 翻页 */
+.arrow {
+  outline: none;
+  border: none;
+  background: none;
+  position: absolute;
+  top: 50%;
+  margin-top: -32px;
+  font-size: 64px;
+  padding: 0 10px;
+  color: #E2E2E2;
+  font-family: arial, sans-serif;
+  cursor: pointer;
+  user-select: none;
+  appearance: none;
+  font-weight: normal
+}
+
+.arrow:hover {
+  color: #777
+}
+
+.prev {
+  left: 1px;
+}
+
+.next {
+  right: 1px
 }
 </style>
