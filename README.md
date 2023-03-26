@@ -44,17 +44,25 @@ import { VueReader } from "vue-reader";
 </style>
 ```
 
-## Attributes
+### Attributes
 
-| **Name** | **Description**         | **Type**  | **Default** |
-| -------- | ----------------------- | --------- | ----------- |
-| url      | book url                | `string`  | —           |
-| title    | the title of the book   | `string`  | —           |
-| showToc  | whether to show the toc | `boolean` | true        |
+| **Name** | **Description**                   | **Type**          | **Default** |
+| -------- | --------------------------------- | ----------------- | ----------- |
+| url      | book url                          | `string`          | —           |
+| title    | the title of the book             | `string`          | —           |
+| showToc  | whether to show the toc           | `boolean`         | true        |
+| location | set / update location of the epub | `string`/`number` | —           |
 
-## Slots
+### Events
 
-| **Name** | **Description**                                              |
-| -------- | ------------------------------------------------------------ |
-| title    | You have access to title by [slot](https://v3.vuejs.org/guide/component-slots.html) |
+| **Name**        | **Description**                                              | **Parameters**       |
+| --------------- | ------------------------------------------------------------ | -------------------- |
+| update:location | a function that receives the current location while user is reading. This function is called everytime the page changes, and also when it first renders. | the updated location |
+
+### Slots
+
+| **Name**    | **Description**                                              |
+| ----------- | ------------------------------------------------------------ |
+| title       | You have access to title by [slot](https://v3.vuejs.org/guide/component-slots.html) |
+| loadingView | epub view loadingView                                        |
 

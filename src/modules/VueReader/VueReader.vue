@@ -12,7 +12,15 @@
         <div class="titleArea">{{ bookName }}</div>
       </slot>
       <!-- 阅读 -->
-      <epub-view ref="epubRef" :url="url" :tocChanged="onTocChange" v-drag="dragHandler" />
+      <epub-view ref="epubRef" v-bind="$attrs" :url="url" :tocChanged="onTocChange">
+        <template #loadingView>
+          <slot name="loadingView">
+            <div class="loadingView">
+              Loading…
+            </div>
+          </slot>
+        </template>
+      </epub-view>
       <!-- 翻页 -->
       <button class="arrow pre" @click="pre">
         ‹
@@ -56,13 +64,16 @@ const props = defineProps({
   swipeAble: {
     type: Boolean,
     default: false
+  },
+  tocChanged: {
+    type: Function,
   }
 })
-const { title } = props
+const { title, tocChanged } = props
 
 const book = reactive({
   toc: [],//目录
-  expandedToc: false//目录展开
+  expandedToc: false,//目录展开
 })
 const { toc, expandedToc } = toRefs(book)
 
@@ -80,9 +91,12 @@ const toggleToc = () => {
   expandedToc.value = !expandedToc.value
 }
 
+
 const onTocChange = (_toc) => {
   toc.value = _toc
+  tocChanged && tocChanged(_toc)
 }
+
 
 const setLocation = (href) => {
   epubRef.value.setLocation(href);
@@ -104,12 +118,6 @@ const dragHandler = ({ movement: [x, y], dragging }) => {
     set({ x: 0, y: 0, cursor: 'grab' })
     return
   }
-
-  set({
-    cursor: 'grabbing',
-    x,
-    y,
-  })
 }
 
 </script>
@@ -240,5 +248,16 @@ const dragHandler = ({ movement: [x, y], dragging }) => {
 
 .next {
   right: 1px
+}
+
+/* loading */
+.loadingView {
+  position: absolute;
+  top: 50%;
+  left: 10%;
+  right: 10%;
+  color: #ccc;
+  text-align: center;
+  margin-top: -.5em;
 }
 </style>

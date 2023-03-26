@@ -55,8 +55,5 @@
     "> 1%",
     "iOS 7",
     "last 3 iOS versions"
-  ],
-  "engines": {
-    "node": ">=14.18.0"
-  }
+  ]
 }

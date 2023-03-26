@@ -1,13 +1,18 @@
 <template>
     <div class="reader">
         <div class="viewHolder">
-            <div class="view" ref="view"></div>
+            <div class="view" ref="view" v-show="isLoaded"></div>
+            <div v-if="!isLoaded">
+                <slot name="loadingView">
+                </slot>
+            </div>
+
         </div>
     </div>
 </template>
 <script setup>
 //http://epubjs.org/documentation/0.3/
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, onMounted, onUnmounted, toRefs, watch } from "vue";
 import Epub from "epubjs/lib/index";
 
 const props = defineProps({
@@ -19,21 +24,38 @@ const props = defineProps({
         type: Function,
     },
     location: {
+        //当前页
         type: [Number, String],
-    }
+    },
+    getRendition: {
+        type: Function,
+    },
+    epubInitOptions: {
+        type: Object,
+        default: () => { }
+    },
+    epubOptions: {
+        type: Object,
+        default: () => { }
+    },
 })
+
+
+const { url, tocChanged, getRendition, epubInitOptions, epubOptions } = props
+const { location } = toRefs(props)
+
+const emit = defineEmits(['update:location'])
+
 const toc = ref([])
 const isLoaded = ref(false)
-const { url, tocChanged, location } = props
-
 const view = ref(null)
 let book = null
 let rendition = null;
-let bookLocation = location
 
 const initBook = async () => {
-    book = new Epub(url, {});
+    book = new Epub(url, epubInitOptions);
     book.loaded.navigation.then(({ toc: _toc }) => {
+        isLoaded.value = true
         toc.value = _toc
         tocChanged && tocChanged(_toc)
     });
@@ -46,13 +68,15 @@ const initReader = () => {
         contained: true,
         width: '100%',
         height: '100%',
+        ...epubOptions
     });
     document.addEventListener("keyup", handleKeyPress);
     registerEvents();
-    if (typeof location === 'string' || typeof location === 'number') {
-        rendition.display(location)
-    } else if (toc.length > 0 && toc[0].href) {
-        rendition.display(toc[0].href)
+    getRendition && getRendition(rendition)
+    if (typeof location.value === 'string' || typeof location.value === 'number') {
+        rendition.display(location.value)
+    } else if (toc.value.length > 0 && toc.value[0].href) {
+        rendition.display(toc.value[0].href)
     } else {
         rendition.display()
     }
@@ -60,6 +84,7 @@ const initReader = () => {
 
 const registerEvents = () => {
     rendition.on("keyup", handleKeyPress);
+    rendition.on('locationChanged', onLocationChange)
 };
 
 
@@ -71,8 +96,20 @@ const handleKeyPress = ({ key }) => {
     }
 };
 
+const onLocationChange = loc => {//监听翻页
+    const newLocation = loc && loc.start
+    if (location.value !== newLocation) {
+        emit('update:location', newLocation)
+    }
+}
+
+watch(location, (val) => {
+    // if (typeof location.value === 'string' || typeof location.value === 'number')
+    //     rendition.display(val)
+})
 
 const nextPage = () => {
+    console.log('nextPage')
     rendition.next();
 };
 
@@ -97,7 +134,7 @@ defineExpose({
 })
 
 </script>
-<style>
+<style scoped>
 .reader {
     position: absolute;
     inset: 50px 50px 20px;
@@ -106,7 +143,6 @@ defineExpose({
 .viewHolder {
     height: 100%;
     width: 100%;
-    /* overflow: hidden; */
     position: relative;
 }
 
