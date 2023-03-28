@@ -12,8 +12,9 @@
 </template>
 <script setup>
 //http://epubjs.org/documentation/0.3/
-import { ref, onMounted, onUnmounted, toRefs, watch } from "vue";
-import Epub from "epubjs/lib/index";
+import { ref, onMounted, onUnmounted, toRefs, watch, nextTick, computed } from "vue-demi";
+import Epub from "epubjs/dist/epub";
+// import Vibrant from 'node-vibrant/dist/vibrant'
 
 const props = defineProps({
     url: {
@@ -40,9 +41,8 @@ const props = defineProps({
     },
 })
 
-
-const { url, tocChanged, getRendition, epubInitOptions, epubOptions } = props
-const { location } = toRefs(props)
+const { tocChanged, getRendition, epubInitOptions, epubOptions } = props
+const { url, location } = toRefs(props)
 
 const emit = defineEmits(['update:location'])
 
@@ -51,13 +51,36 @@ const isLoaded = ref(false)
 const view = ref(null)
 let book = null
 let rendition = null;
+// let bookDetail = {}
 
 const initBook = async () => {
-    book = new Epub(url, epubInitOptions);
-    book.loaded.navigation.then(({ toc: _toc }) => {
-        isLoaded.value = true
-        toc.value = _toc
-        tocChanged && tocChanged(_toc)
+    if (book) book.destroy()
+    book = new Epub(url.value, epubInitOptions);
+    book.ready.then(() => {
+        book.loaded.navigation.then(({ toc: _toc }) => {
+            isLoaded.value = true
+            toc.value = _toc
+            tocChanged && tocChanged(_toc)
+        });
+        // book.loaded.metadata.then(async (metadata) => {
+        //     const cover = await book.coverUrl()
+        //     const palette = await Vibrant.from(cover).getPalette()
+        //     const { title, identifier, creator, publisher, language, pubdate, description, modified_date } = metadata
+        //     bookDetail = {
+        //         identifier,//id
+        //         title,//标题
+        //         creator,//作者
+        //         publisher,//出版社
+        //         language,//语言
+        //         pubdate,//出版日期
+        //         modified_date,//修改日期
+        //         description,//介绍
+        //         cover,//封面
+        //         bgColorFromCover: palette.DarkVibrant.hex,//主题色
+        //     }
+        //     console.log(bookDetail)
+        // });
+        // ;
     });
     initReader()
 };
@@ -103,13 +126,19 @@ const onLocationChange = loc => {//监听翻页
     }
 }
 
-watch(location, (val) => {
-    // if (typeof location.value === 'string' || typeof location.value === 'number')
-    //     rendition.display(val)
+watch(location, (val, old) => {
+    if (val === old) return
+    if (typeof val === 'string' || typeof val === 'number') {
+        rendition.display(val)
+    }
+}, {
+    immediate: true
+})
+watch(url, () => {
+    initBook()
 })
 
 const nextPage = () => {
-    console.log('nextPage')
     rendition.next();
 };
 

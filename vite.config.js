@@ -21,5 +21,8 @@ export default defineConfig({
   },
   server: {
     port: 8025
+  },
+  optimizeDeps: {
+    exclude: ['vue-demi']
   }
 })

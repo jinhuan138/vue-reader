@@ -45,8 +45,7 @@
   </div>
 </template>
 <script setup>
-import { ref, reactive, toRefs, computed } from "vue";
-import { dragDirective } from '@vueuse/gesture'
+import { ref, reactive, toRefs, computed } from "vue-demi";
 import EpubView from "../EpubView/EpubView.vue";
 const epubRef = ref(null);
 const props = defineProps({
@@ -110,21 +109,13 @@ const next = () => {
 const pre = () => {
   epubRef.value.prevPage()
 }
-//滑动翻页
-const vDrag = dragDirective
-const dragHandler = ({ movement: [x, y], dragging }) => {
-  console.log(movement)
-  if (!dragging) {
-    set({ x: 0, y: 0, cursor: 'grab' })
-    return
-  }
-}
 
 </script>
 <style scoped>
 /* container */
 .container {
   overflow: hidden;
+  position: relative;
   height: 100%;
 }
 

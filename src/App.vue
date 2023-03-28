@@ -1,75 +1,97 @@
 <template>
   <div class="container">
     <div class="vueContainer">
-      <VueReader url="/files/啼笑因缘.epub" :getRendition="val => rendition = val" :tocChanged="val => toc = val"
-        v-model:location="location" @update:location="locationChange">
-        <template #title="props">
-          <div class="title">
-            {{ props.title }}
-          </div>
-        </template>
-        <template #loadingView>
-          <div class="loadingView">
-            加载中。。。
-          </div>
-        </template>
+      <VueReader :location="location" url="/files/alice.epub" @update:location="locationChange" >
       </VueReader>
-      <div class="page">
-        {{ page }}
-      </div>
     </div>
   </div>
-  <!-- <Library /> -->
-  <!-- <div class="demo" v-drag="dragHandler" :dragOptions="dragOptions">
-   </div> -->
 </template>
 <script setup>
-// import { VueReader } from "../lib/index.min.js";
-import VueReader from "./modules/VueReader/VueReader.vue";
+import { VueReader } from "../lib/index.min.js";
+// import VueReader from "./modules/VueReader/VueReader.vue";
 import Library from '@/components/Library.vue'
-import { dragDirective } from '@vueuse/gesture'
-import { ref, onMounted } from "vue";
-const location = ref(5)
-const rendition = ref(null)
+import { ref, onMounted, watch, onUnmounted } from "vue";
+
+
 const toc = ref(null)
 const page = ref('')
+const url = ref("/files/啼笑因缘.epub")
 
 onMounted(() => {
-  location.value = 0
+  // location.value = 0
+  // url.value='/files/alice.epub'
 })
 //页码
-const locationChange = (epubcifi) => {
-  if (rendition.value && toc.value) {
-    const { displayed, href } = rendition.value.location.start
-    console.log(toc.value, href)
-    const chapter = toc.value.find(item => {
-      if (item.subitems.length) {
-        return item.subitems.find(item => item.href.includes(href))
-      } else {
-        return item.href.includes(href)
-      }
-    })
-    const label = chapter.subitems.length ? chapter.subitems.find(item => item.href.includes(href)).label : chapter.label || 'n/a'
-    page.value = `Page ${displayed.page} of ${displayed.total} in chapter ${label}`
+// const locationChange = (epubcifi) => {
+//   const getLabel = (toc, href) => {
+//     const chapter = toc.find(item => {
+//       if (item.subitems.length) {
+//         return getLabel(item.subitems, href)
+//       } else {
+//         return item.href.includes(href)
+//       }
+//     })
+//     return chapter.label || 'n/a'
+//   }
+//   if (rendition.value && toc.value) {
+//     const { displayed, href } = rendition.value.location.start
+//     const label = getLabel(toc.value, href)
+//     page.value = `${displayed.page}/${displayed.total} ${label}`
+//   }
+// }
+
+const rendition = ref(null)
+const selections = ref([])
+const setRenderSelection = (cfiRange, contents) => {
+  selections.value.push({
+    text: rendition.value.getRange(cfiRange).toString(),
+    cfiRange
+  })
+  rendition.value.annotations.add(
+    'highlight',
+    cfiRange,
+    {},
+    null,
+    'hl',
+    { fill: 'red', 'fill-opacity': '0.5', 'mix-blend-mode': 'multiply' }
+  )
+  contents.window.getSelection().removeAllRanges()
+}
+const getRendition = (val) => {
+  rendition.value = val
+  rendition.value.themes.default({
+    '::selection': {
+      background: 'orange'
+    }
+  })
+  if (rendition.value) {
+    rendition.value.on('selected', setRenderSelection)
   }
 }
-//滑动翻页
-const vDrag = dragDirective({
-  throttle: 1000,
-  enabled: false
+const remove = (cfiRange, index) => {
+  rendition.value.annotations.remove(cfiRange, 'highlight')
+  selections.value = selections.value.filter((item, j) => j !== index)
+}
+onUnmounted(() => {
+  rendition.value.off('selected', setRenderSelection)
 })
-const dragOptions = {
+const location = ref(null)
+const firstRenderDone = ref(false)
+const locationChange = (epubcifi) => {
+  // Since this function is also called on initial rendering, we are using custom state
+  // logic to check if this is the initial render.
+  // If you block this function from running (i.e not letting it change the page on the first render) your app crashes.
 
-}
-const dragHandler = ({ movement: [x, y] }) => {
-  if (x > 0) {
-    console.log('right swipe')
-  } else {
-    console.log('left swipe')
+  if (!firstRenderDone.value) {
+    location.value = localStorage.getItem('book-progress')
+    return firstRenderDone.value = true
+
   }
-}
-const getRendition = (rendition) => {
-
+  // This is the code that runs everytime the page changes, after the initial render.
+  // Saving the current epubcifi on storage...
+  localStorage.setItem('book-progress', epubcifi)
+  // And then rendering it.
+  // location.value = epubcifi// Or setLocation(localStorage.getItem("book-progress"))
 }
 </script>
 
@@ -120,6 +142,25 @@ const getRendition = (rendition) => {
   left: 1rem;
   text-align: center;
   z-index: 1;
+  color: #000;
+}
+
+.size {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  left: 1rem;
+  text-align: center;
+  z-index: 1;
+  color: #000;
+}
+
+.selection {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  z-index: 1;
+  background-color: white;
   color: #000;
 }
 </style>
