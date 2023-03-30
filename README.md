@@ -82,7 +82,15 @@ import { VueReader } from "vue-reader";
 | ----------- | --------------------- |
 | loadingView | epub view loadingView |
 
-## Recipes and tips
+### Exposes Exposes
+
+| **Name**    | **Description**        | **Type**         |
+| ----------- | ---------------------- | ---------------- |
+| nextPage    | display  next page     | `Function`       |
+| prevPage    | display  previous page | `Function`       |
+| setLocation | Set the page           | `Function(href)` |
+
+### Recipes and tips
 
 ### Save and retrieve progress from storage
 

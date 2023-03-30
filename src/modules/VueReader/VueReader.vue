@@ -45,7 +45,7 @@
   </div>
 </template>
 <script setup>
-import { ref, reactive, toRefs, computed } from "vue-demi";
+import { ref, reactive, toRefs, computed } from "vue";
 import EpubView from "../EpubView/EpubView.vue";
 const epubRef = ref(null);
 const props = defineProps({

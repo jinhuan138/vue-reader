@@ -12,8 +12,9 @@
 </template>
 <script setup>
 //http://epubjs.org/documentation/0.3/
-import { ref, onMounted, onUnmounted, toRefs, watch, nextTick, computed } from "vue-demi";
+import { ref, onMounted, onUnmounted, toRefs, watch } from "vue";
 import Epub from "epubjs/dist/epub";
+import { selectListener, clickListener, swipListener, wheelListener, keyListener } from '../utils/listener/listener';
 // import Vibrant from 'node-vibrant/dist/vibrant'
 
 const props = defineProps({
@@ -87,13 +88,11 @@ const initBook = async () => {
 
 const initReader = () => {
     rendition = book.renderTo(view.value, {
-        allowScriptedContent: false,
         contained: true,
         width: '100%',
         height: '100%',
         ...epubOptions
     });
-    document.addEventListener("keyup", handleKeyPress);
     registerEvents();
     getRendition && getRendition(rendition)
     if (typeof location.value === 'string' || typeof location.value === 'number') {
@@ -105,19 +104,23 @@ const initReader = () => {
     }
 }
 
+const flipPage = (direction) => {
+    if (direction === 'next') nextPage();
+    else if (direction === 'prev') prevPage();
+}
+
 const registerEvents = () => {
-    rendition.on("keyup", handleKeyPress);
+    rendition.on('rendered', (e, iframe) => {
+        iframe.iframe && iframe.iframe.contentWindow.focus()
+        clickListener(iframe.document, rendition, flipPage);
+        // selectListener(iframe.document, rendition, toggleBuble);
+        swipListener(iframe.document, flipPage);
+        wheelListener(iframe.document, flipPage);
+        keyListener(iframe.document, flipPage);
+    });
     rendition.on('locationChanged', onLocationChange)
 };
 
-
-const handleKeyPress = ({ key }) => {
-    if (key === "ArrowDown" || key === "ArrowRight") {
-        nextPage();
-    } else if (key === "ArrowUp" || key === "ArrowLeft") {
-        prevPage();
-    }
-};
 
 const onLocationChange = loc => {//监听翻页
     const newLocation = loc && loc.start
@@ -126,12 +129,23 @@ const onLocationChange = loc => {//监听翻页
     }
 }
 
-watch(location, (val, old) => {
+const debounce = (func, wait = 500) => {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            timeout = null;
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+};
+watch(location, debounce((val, old) => {
     if (val === old) return
     if (typeof val === 'string' || typeof val === 'number') {
         rendition.display(val)
     }
-}, {
+}), {
     immediate: true
 })
 watch(url, () => {
@@ -156,8 +170,8 @@ onMounted(() => {
 
 onUnmounted(() => {
     book.destroy()
-    document.removeEventListener("keyup", handleKeyPress);
 });
+
 defineExpose({
     nextPage, prevPage, setLocation
 })

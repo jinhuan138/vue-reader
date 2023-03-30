@@ -5,7 +5,7 @@ import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 
-// https://vitejs.cn/vite3-cn/
+// https://cn.vitejs.dev/
 export default defineConfig({
   base: "/reader/",
   plugins: [vue(),
@@ -17,12 +17,13 @@ export default defineConfig({
   }),],
   publicDir: 'public',
   resolve: {
-    alias: [{ find: '@', replacement: resolve(__dirname, 'src') }]
+    alias: [
+      { find: '@', replacement: resolve(__dirname, 'src') },
+      { find: 'comps', replacement: resolve(__dirname, 'src/components') }
+    ]
   },
   server: {
-    port: 8025
-  },
-  optimizeDeps: {
-    exclude: ['vue-demi']
+    port: 8025,
+    open: true
   }
 })
