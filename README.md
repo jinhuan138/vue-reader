@@ -82,7 +82,7 @@ import { VueReader } from "vue-reader";
 | ----------- | --------------------- |
 | loadingView | epub view loadingView |
 
-### Exposes Exposes
+### EpubView Exposes
 
 | **Name**    | **Description**        | **Type**         |
 | ----------- | ---------------------- | ---------------- |

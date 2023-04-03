@@ -4,11 +4,15 @@ import { resolve } from 'path'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
+import tsconfigPaths from 'vite-tsconfig-paths';
 
 // https://cn.vitejs.dev/
 export default defineConfig({
   base: "/reader/",
   plugins: [vue(),
+  tsconfigPaths({
+    root: __dirname,
+  }),
   AutoImport({
     resolvers: [ElementPlusResolver()],
   }),
@@ -17,6 +21,7 @@ export default defineConfig({
   }),],
   publicDir: 'public',
   resolve: {
+    extensions: ['.ts', '.js'],
     alias: [
       { find: '@', replacement: resolve(__dirname, 'src') },
       { find: 'comps', replacement: resolve(__dirname, 'src/components') }

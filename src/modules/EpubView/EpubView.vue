@@ -10,36 +10,39 @@
         </div>
     </div>
 </template>
-<script setup>
+<script setup lang="ts">
 //http://epubjs.org/documentation/0.3/
-import { ref, onMounted, onUnmounted, toRefs, watch } from "vue";
-import Epub from "epubjs/dist/epub";
-import { selectListener, clickListener, swipListener, wheelListener, keyListener } from '../utils/listener/listener';
+import { ref, onMounted, onUnmounted, toRefs, watch ,toRaw} from "vue";
+import ePub, { Book, Rendition } from 'epubjs';
+import { clickListener, swipListener, wheelListener, keyListener } from '../utils/listener/listener';
 // import Vibrant from 'node-vibrant/dist/vibrant'
 
-const props = defineProps({
+type Props = {
     url: {
-        type: String,
+        type: Book['url'],
         required: true
     },
-    tocChanged: {
-        type: Function,
-    },
-    location: {
+    location?: {
         //当前页
-        type: [Number, String],
+        type: Rendition['location'],
     },
-    getRendition: {
+    tocChanged?: {
+        type: Function,
+        require: false
+    },
+    getRendition?: {
         type: Function,
     },
-    epubInitOptions: {
-        type: Object,
-        default: () => { }
+    epubInitOptions?: {
+        type: Book['settings'],
     },
-    epubOptions: {
-        type: Object,
-        default: () => { }
-    },
+    epubOptions?: {
+        type: Rendition['settings'],
+    }
+}
+const props = withDefaults(defineProps<Props>(), {
+    epubInitOptions: {},
+    epubOptions: {}
 })
 
 const { tocChanged, getRendition, epubInitOptions, epubOptions } = props
@@ -47,18 +50,18 @@ const { url, location } = toRefs(props)
 
 const emit = defineEmits(['update:location'])
 
-const toc = ref([])
+const toc = ref<[Book['pageList']] | []>([])
 const isLoaded = ref(false)
-const view = ref(null)
-let book = null
-let rendition = null;
+const view = ref<null | HTMLDivElement>(null)
+let book: null | Book = null
+let rendition: null | Rendition = null;
 // let bookDetail = {}
 
 const initBook = async () => {
     if (book) book.destroy()
-    book = new Epub(url.value, epubInitOptions);
-    book.ready.then(() => {
-        book.loaded.navigation.then(({ toc: _toc }) => {
+    book = new ePub(url.value, epubInitOptions);
+    book!.ready.then(() => {
+        book!.loaded.navigation.then(({ toc: _toc }) => {
             isLoaded.value = true
             toc.value = _toc
             tocChanged && tocChanged(_toc)
@@ -87,7 +90,7 @@ const initBook = async () => {
 };
 
 const initReader = () => {
-    rendition = book.renderTo(view.value, {
+    rendition = book!.renderTo(view.value, {
         contained: true,
         width: '100%',
         height: '100%',
@@ -104,34 +107,34 @@ const initReader = () => {
     }
 }
 
-const flipPage = (direction) => {
+const flipPage = (direction: string) => {
     if (direction === 'next') nextPage();
     else if (direction === 'prev') prevPage();
 }
 
 const registerEvents = () => {
-    rendition.on('rendered', (e, iframe) => {
-        iframe.iframe && iframe.iframe.contentWindow.focus()
+    rendition!.on('rendered', (e: Event, iframe: HTMLIFrameElement) => {
+        iframe?.iframe?.contentWindow.focus()
         clickListener(iframe.document, rendition, flipPage);
         // selectListener(iframe.document, rendition, toggleBuble);
         swipListener(iframe.document, flipPage);
         wheelListener(iframe.document, flipPage);
         keyListener(iframe.document, flipPage);
     });
-    rendition.on('locationChanged', onLocationChange)
+    rendition!.on('locationChanged', onLocationChange)
 };
 
 
-const onLocationChange = loc => {//监听翻页
+const onLocationChange = (loc) => {//监听翻页
     const newLocation = loc && loc.start
     if (location.value !== newLocation) {
         emit('update:location', newLocation)
     }
 }
 
-const debounce = (func, wait = 500) => {
-    let timeout;
-    return function executedFunction(...args) {
+const debounce = (func: Function, wait = 500) => {
+    let timeout: null;
+    return function executedFunction(...args: any) {
         const later = () => {
             timeout = null;
             func(...args);
@@ -140,10 +143,10 @@ const debounce = (func, wait = 500) => {
         timeout = setTimeout(later, wait);
     };
 };
-watch(location, debounce((val, old) => {
+watch(location, debounce((val: string | number, old: string | number) => {
     if (val === old) return
     if (typeof val === 'string' || typeof val === 'number') {
-        rendition.display(val)
+        rendition?.display(val)
     }
 }), {
     immediate: true
@@ -153,15 +156,15 @@ watch(url, () => {
 })
 
 const nextPage = () => {
-    rendition.next();
+    rendition?.next();
 };
 
 const prevPage = () => {
-    rendition.prev();
+    rendition?.prev();
 };
 
-const setLocation = (href) => {
-    rendition.display(href);
+const setLocation = (href: string | number) => {
+    rendition!.display(href);
 };
 
 onMounted(() => {
@@ -169,7 +172,7 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-    book.destroy()
+    book?.destroy()
 });
 
 defineExpose({

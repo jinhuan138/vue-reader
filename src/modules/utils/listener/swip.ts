@@ -8,7 +8,9 @@
  * @param {Document} document - The document to add event listeners to.
  * @param {function} fn - The listener function.
  */
-export default function swipListener(document, fn) {
+
+ 
+export default function swipListener(document:Document, fn:(dire:string)=>void) {
   // Defaults: 100, 350, 100
   // Required min distance traveled to be considered swipe
   const threshold = 50;
@@ -17,13 +19,13 @@ export default function swipListener(document, fn) {
   // Maximum distance allowed at the same time in perpendicular direction
   const restraint = 200;
 
-  let startX;
-  let startY;
-  let startTime;
+  let startX:number;
+  let startY:number;
+  let startTime:number;
 
   document.addEventListener(
     'touchstart',
-    e => {
+    (e:TouchEvent) => {
       if (e.ignore) return;
       e.ignore = true;
 
@@ -36,7 +38,7 @@ export default function swipListener(document, fn) {
 
   document.addEventListener(
     'touchend',
-    e => {
+    (e:TouchEvent) => {
       if (e.ignore) return;
       e.ignore = true;
 

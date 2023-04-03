@@ -44,11 +44,12 @@
     </div>
   </div>
 </template>
-<script setup>
+<script setup lang="ts">
 import { ref, reactive, toRefs, computed } from "vue";
 import EpubView from "../EpubView/EpubView.vue";
-const epubRef = ref(null);
-const props = defineProps({
+const epubRef = ref<InstanceType<typeof EpubView> | null>(null)
+
+const props = defineProps<{
   title: {
     type: String,
   },
@@ -67,7 +68,7 @@ const props = defineProps({
   tocChanged: {
     type: Function,
   }
-})
+}>()
 const { title, tocChanged } = props
 
 const book = reactive({
@@ -97,7 +98,7 @@ const onTocChange = (_toc) => {
 }
 
 
-const setLocation = (href) => {
+const setLocation = (href:string) => {
   epubRef.value.setLocation(href);
   expandedToc.value = false;
 };

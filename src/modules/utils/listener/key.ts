@@ -5,8 +5,8 @@
 * @param {function} fn - The listener function.
 */
 
-export default function keyListener(el, fn) {
-	el.addEventListener('keyup', e => {
+export default function keyListener(el:HTMLElement, fn:(dire:string)=>void) {
+	el.addEventListener('keyup', (e:KeyboardEvent ) => {
 		
 		// Right or up arrow key indicates next 
 		if (e.keyCode === 39 || e.keyCode === 38) { 

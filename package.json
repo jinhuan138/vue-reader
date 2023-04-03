@@ -43,9 +43,11 @@
     "rollup-plugin-node-externals": "^5.1.2",
     "rollup-plugin-postcss": "^4.0.2",
     "rollup-plugin-vue": "6.0.0",
+    "typescript": "^5.0.3",
     "unplugin-auto-import": "^0.15.1",
     "unplugin-vue-components": "^0.24.1",
     "vite": "^4.2.1",
+    "vite-tsconfig-paths": "^4.0.7",
     "vue": "^3.2.47"
   },
   "browserslist": [

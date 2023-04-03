@@ -5,22 +5,22 @@
 * @param {function} fn - The listener function.
 */
 
-export default function wheelListener(el, fn) {
+export default function wheelListener(el: HTMLElement, fn: (dire:string)=>void) {
 
 	// Required min distance traveled to be considered swipe
 	const threshold = 750;
 	// Maximum time allowed to travel that distance
 	const allowedTime = 50;
 
-	let dist = 0;
-	let isScrolling;
+	let dist:number = 0;
+	let isScrolling:NodeJS.Timeout;
 
 	el.addEventListener('wheel', e => {
 		if (e.ignore) return;
 		e.ignore = true;
 
 		clearTimeout(isScrolling);
-		
+
 		dist += e.deltaY;
 
 
@@ -32,7 +32,7 @@ export default function wheelListener(el, fn) {
 				fn(direction);
 				dist = 0;
 			}
-			
+
 			dist = 0;
 		}, allowedTime);
 
