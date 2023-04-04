@@ -12,12 +12,12 @@
 </template>
 <script setup lang="ts">
 //http://epubjs.org/documentation/0.3/
-import { ref, onMounted, onUnmounted, toRefs, watch ,toRaw} from "vue";
+import { ref, onMounted, onUnmounted, toRefs, watch, toRaw } from "vue";
 import ePub, { Book, Rendition } from 'epubjs';
 import { clickListener, swipListener, wheelListener, keyListener } from '../utils/listener/listener';
 // import Vibrant from 'node-vibrant/dist/vibrant'
 
-type Props = {
+interface Props {
     url: {
         type: Book['url'],
         required: true
@@ -27,11 +27,11 @@ type Props = {
         type: Rendition['location'],
     },
     tocChanged?: {
-        type: Function,
+        type: () => void,
         require: false
     },
     getRendition?: {
-        type: Function,
+        type: () => void,
     },
     epubInitOptions?: {
         type: Book['settings'],
@@ -41,14 +41,16 @@ type Props = {
     }
 }
 const props = withDefaults(defineProps<Props>(), {
-    epubInitOptions: {},
-    epubOptions: {}
+    epubInitOptions: () => ({}),
+    epubOptions: () => ({})
 })
 
 const { tocChanged, getRendition, epubInitOptions, epubOptions } = props
 const { url, location } = toRefs(props)
 
-const emit = defineEmits(['update:location'])
+const emit = defineEmits<{
+    (e: 'update:location', loc: any): void
+}>()
 
 const toc = ref<[Book['pageList']] | []>([])
 const isLoaded = ref(false)
@@ -59,7 +61,8 @@ let rendition: null | Rendition = null;
 
 const initBook = async () => {
     if (book) book.destroy()
-    book = new ePub(url.value, epubInitOptions);
+    const bookurl = url.value
+    book = new ePub(bookurl, epubInitOptions);
     book!.ready.then(() => {
         book!.loaded.navigation.then(({ toc: _toc }) => {
             isLoaded.value = true
@@ -90,7 +93,8 @@ const initBook = async () => {
 };
 
 const initReader = () => {
-    rendition = book!.renderTo(view.value, {
+    const element = view.value as HTMLDivElement
+    rendition = book!.renderTo(element, {
         contained: true,
         width: '100%',
         height: '100%',
@@ -98,9 +102,9 @@ const initReader = () => {
     });
     registerEvents();
     getRendition && getRendition(rendition)
-    if (typeof location.value === 'string' || typeof location.value === 'number') {
+    if (typeof location?.value === 'string' || typeof location?.value === 'number') {
         rendition.display(location.value)
-    } else if (toc.value.length > 0 && toc.value[0].href) {
+    } else if (toc.value.length > 0 && toc?.value[0]?.href) {
         rendition.display(toc.value[0].href)
     } else {
         rendition.display()
@@ -125,7 +129,7 @@ const registerEvents = () => {
 };
 
 
-const onLocationChange = (loc) => {//监听翻页
+const onLocationChange = (loc:Rendition['location']) => {//监听翻页
     const newLocation = loc && loc.start
     if (location.value !== newLocation) {
         emit('update:location', newLocation)

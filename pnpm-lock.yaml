@@ -17,6 +17,7 @@ specifiers:
   node-vibrant: 3.2.1-alpha.1
   postcss: ^8.4.21
   postcss-preset-env: ^8.0.1
+  prettier: ^2.8.7
   rollup-plugin-cleanup: ^3.2.1
   rollup-plugin-clear: ^2.0.7
   rollup-plugin-node-externals: ^5.1.2
@@ -48,6 +49,7 @@ devDependencies:
   node-vibrant: 3.2.1-alpha.1
   postcss: 8.4.21
   postcss-preset-env: 8.0.1_postcss@8.4.21
+  prettier: 2.8.7
   rollup-plugin-cleanup: 3.2.1
   rollup-plugin-clear: 2.0.7
   rollup-plugin-node-externals: registry.npmmirror.com/rollup-plugin-node-externals/5.1.2
@@ -2710,6 +2712,12 @@ packages:
       nanoid: 3.3.4
       picocolors: 1.0.0
       source-map-js: 1.0.2
+    dev: true
+
+  /prettier/2.8.7:
+    resolution: {integrity: sha512-yPngTo3aXUUmyuTjeTUT75txrf+aMh9FiD7q9ZE/i6r0bPb22g4FsE6Y338PQX1bmfy08i9QQCB7/rcUAVntfw==}
+    engines: {node: '>=10.13.0'}
+    hasBin: true
     dev: true
 
   /process-nextick-args/2.0.1:
