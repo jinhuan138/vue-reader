@@ -9,11 +9,11 @@ export default function keyListener(el:HTMLElement, fn:(dire:string)=>void) {
 	el.addEventListener('keyup', (e:KeyboardEvent ) => {
 		
 		// Right or up arrow key indicates next 
-		if (e.keyCode === 39 || e.keyCode === 38) { 
+		if (e.key === 'ArrowUp' || e.key === 'ArrowRight') { 
 			fn('next');
 		}
 		// left or down arrow key indicates next 
-		else if (e.keyCode === 37 || e.keyCode === 40 ){ 
+		else if (e.key === 'ArrowDown' || e.key === 'ArrowLeft' ){ 
 			fn('prev')
 		}
 	}, false);

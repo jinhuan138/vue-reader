@@ -8,7 +8,7 @@
  * @param {Document} document - The document to add event listeners to.
  * @param {function} fn - The listener function.
  */
-
+ type epubEvent = TouchEvent & { ignore?: boolean }
  
 export default function swipListener(document:Document, fn:(dire:string)=>void) {
   // Defaults: 100, 350, 100
@@ -25,7 +25,7 @@ export default function swipListener(document:Document, fn:(dire:string)=>void) 
 
   document.addEventListener(
     'touchstart',
-    (e:TouchEvent) => {
+    (e:epubEvent) => {
       if (e.ignore) return;
       e.ignore = true;
 
@@ -38,7 +38,7 @@ export default function swipListener(document:Document, fn:(dire:string)=>void) 
 
   document.addEventListener(
     'touchend',
-    (e:TouchEvent) => {
+    (e:epubEvent) => {
       if (e.ignore) return;
       e.ignore = true;
 
@@ -61,7 +61,7 @@ export default function swipListener(document:Document, fn:(dire:string)=>void) 
         // Tap
         else {
 
-          document.defaultView.getSelection().removeAllRanges();
+          document?.defaultView?.getSelection()?.removeAllRanges();
 
           // Convert tap to click
           document.dispatchEvent(

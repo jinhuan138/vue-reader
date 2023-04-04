@@ -15,9 +15,11 @@ export default defineConfig({
   }),
   AutoImport({
     resolvers: [ElementPlusResolver()],
+    dts: 'types/auto-import.d.ts',
   }),
   Components({
     resolvers: [ElementPlusResolver()],
+    dts: 'types/components.d.ts',
   }),],
   publicDir: 'public',
   resolve: {

@@ -10,16 +10,18 @@
  * @param {Object} rendition - EPUBJS rendition 
  * @param {function} fn - The listener function.
  */
-import { Rendition, } from 'epubjs';
+import { Rendition } from 'epubjs';
 
-export default function mouseListener(document: Document, rendition: Rendition, fn: (dire:string)=>void) {
+type epubEvent = MouseEvent & { ignore?: boolean }
 
-  document.addEventListener('click', (event:MouseEvent) => {
+export default function mouseListener(document: Document, rendition: Rendition, fn: (dire: string) => void) {
+
+  document.addEventListener('click', (event: epubEvent) => {
     if (event.ignore) return;
     event.ignore = true;
 
     // User selected text
-    if (document.getSelection().toString()) return;
+    if (document?.getSelection()?.toString()) return;
 
     // Get book iframe window's size
     const wX = document.body.clientWidth;

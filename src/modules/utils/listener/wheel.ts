@@ -4,6 +4,7 @@
 * @param {HTMLElement} el - The element to add event listeners to.
 * @param {function} fn - The listener function.
 */
+type epubEvent = WheelEvent & { ignore?: boolean }
 
 export default function wheelListener(el: HTMLElement, fn: (dire:string)=>void) {
 
@@ -15,7 +16,7 @@ export default function wheelListener(el: HTMLElement, fn: (dire:string)=>void) 
 	let dist:number = 0;
 	let isScrolling:NodeJS.Timeout;
 
-	el.addEventListener('wheel', e => {
+	el.addEventListener('wheel', (e:epubEvent) => {
 		if (e.ignore) return;
 		e.ignore = true;
 

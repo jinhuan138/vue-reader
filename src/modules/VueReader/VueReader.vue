@@ -98,17 +98,17 @@ const onTocChange = (_toc) => {
 }
 
 
-const setLocation = (href:string) => {
-  epubRef.value.setLocation(href);
+const setLocation = (href:string|number) => {
+  epubRef?.value?.setLocation(href);
   expandedToc.value = false;
 };
 
 const next = () => {
-  epubRef.value.nextPage()
+  epubRef?.value?.nextPage()
 }
 
 const pre = () => {
-  epubRef.value.prevPage()
+  epubRef?.value?.prevPage()
 }
 
 </script>
