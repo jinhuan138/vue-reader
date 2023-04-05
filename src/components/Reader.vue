@@ -11,8 +11,8 @@
     </div>
 </template>
 <script setup>
-import { VueReader } from "/lib/index.min.js";
-// import VueReader from "@/modules/VueReader/VueReader.vue";
+// import { VueReader } from "/lib/index.min.js";
+import VueReader from "@/modules/VueReader/VueReader.vue";
 import { ref } from "vue";
 
 const book = '啼笑因缘'
@@ -39,13 +39,15 @@ const locationChange = (epubcifi) => {
                 return true
             }
         })
-        // return chapter ? chapter.label : 'n/a'
         return label;
     }
     if (epubcifi) {
         const { displayed, href } = rendition.value.location.start
-        const label = getLabel(toc.value, href)
-        page.value = `${displayed.page}/${displayed.total} ${label}`
+        const { cfi } = rendition.value.location.end
+        if (href !== 'titlepage.xhtml') {
+            const label = getLabel(toc.value, href)
+            page.value = `${displayed.page}/${displayed.total} ${label}`
+        }
     }
     //存储
     if (!firstRenderDone.value) {

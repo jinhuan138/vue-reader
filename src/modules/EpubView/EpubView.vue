@@ -12,33 +12,18 @@
 </template>
 <script setup lang="ts">
 //http://epubjs.org/documentation/0.3/
-import { ref, onMounted, onUnmounted, toRefs, watch, toRaw } from "vue";
+import { ref, onMounted, onUnmounted, toRefs, watch } from "vue";
 import ePub, { Book, Rendition } from 'epubjs';
 import { clickListener, swipListener, wheelListener, keyListener } from '../utils/listener/listener';
 // import Vibrant from 'node-vibrant/dist/vibrant'
 
 interface Props {
-    url: {
-        type: Book['url'],
-        required: true
-    },
-    location?: {
-        //当前页
-        type: Rendition['location'],
-    },
-    tocChanged?: {
-        type: () => void,
-        require: false
-    },
-    getRendition?: {
-        type: () => void,
-    },
-    epubInitOptions?: {
-        type: Book['settings'],
-    },
-    epubOptions?: {
-        type: Rendition['settings'],
-    }
+    url: Book['url'],
+    location?: Rendition['location'], //当前页
+    tocChanged?: (toc: [Book['pageList']]) => void,
+    getRendition?: (rendition: Rendition) => void,
+    epubInitOptions?: Book['settings'],
+    epubOptions?: Rendition['settings'],
 }
 const props = withDefaults(defineProps<Props>(), {
     epubInitOptions: () => ({}),
@@ -49,7 +34,7 @@ const { tocChanged, getRendition, epubInitOptions, epubOptions } = props
 const { url, location } = toRefs(props)
 
 const emit = defineEmits<{
-    (e: 'update:location', loc: any): void
+    (e: 'update:location', loc: Rendition['location']): void
 }>()
 
 const toc = ref<[Book['pageList']] | []>([])
@@ -129,7 +114,7 @@ const registerEvents = () => {
 };
 
 
-const onLocationChange = (loc:Rendition['location']) => {//监听翻页
+const onLocationChange = (loc: Rendition['location']) => {//监听翻页
     const newLocation = loc && loc.start
     if (location.value !== newLocation) {
         emit('update:location', newLocation)
@@ -137,7 +122,7 @@ const onLocationChange = (loc:Rendition['location']) => {//监听翻页
 }
 
 const debounce = (func: Function, wait = 500) => {
-    let timeout: null;
+    let timeout: null | NodeJS.Timeout;
     return function executedFunction(...args: any) {
         const later = () => {
             timeout = null;
@@ -147,7 +132,7 @@ const debounce = (func: Function, wait = 500) => {
         timeout = setTimeout(later, wait);
     };
 };
-watch(location, debounce((val: string | number, old: string | number) => {
+watch(location, debounce((val: string, old: string) => {
     if (val === old) return
     if (typeof val === 'string' || typeof val === 'number') {
         rendition?.display(val)
