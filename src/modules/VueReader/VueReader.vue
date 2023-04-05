@@ -49,26 +49,18 @@ import { ref, reactive, toRefs, computed } from "vue";
 import EpubView from "../EpubView/EpubView.vue";
 const epubRef = ref<InstanceType<typeof EpubView> | null>(null)
 
-const props = defineProps<{
-  title: {
-    type: String,
-  },
-  url: {
-    type: String,
-    required: true
-  },
-  showToc: {
-    type: Boolean,
-    default: true
-  },
-  swipeAble: {
-    type: Boolean,
-    default: false
-  },
-  tocChanged: {
-    type: Function,
-  }
-}>()
+interface Props {
+  title?: string,
+  url: string,
+  showToc?: boolean,
+  swipeAble?: boolean,
+  tocChanged?: () => void
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  showToc: true,
+  swipeAble: false
+})
 const { title, tocChanged } = props
 
 const book = reactive({
@@ -98,7 +90,7 @@ const onTocChange = (_toc) => {
 }
 
 
-const setLocation = (href:string|number) => {
+const setLocation = (href: string | number) => {
   epubRef?.value?.setLocation(href);
   expandedToc.value = false;
 };

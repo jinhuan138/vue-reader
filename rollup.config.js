@@ -13,7 +13,7 @@ import autoprefixer from 'autoprefixer'//css 加前缀
 import cssnano from "cssnano";//压缩css
 
 export default {
-  input: 'src/modules/index.js',
+  input: 'src/modules/index.ts',
   output: [{
     file: './lib/index.min.js',
     format: 'es',

@@ -10,7 +10,14 @@ export {}
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     Demo: typeof import('./../src/components/Demo.vue')['default']
+    ElCard: typeof import('element-plus/es')['ElCard']
+    ElImage: typeof import('element-plus/es')['ElImage']
+    ElMain: typeof import('element-plus/es')['ElMain']
+    ElPopover: typeof import('element-plus/es')['ElPopover']
     Library: typeof import('./../src/components/Library.vue')['default']
+    Reader: typeof import('./../src/components/Reader.vue')['default']
+    RouterLink: typeof import('vue-router')['RouterLink']
+    RouterView: typeof import('vue-router')['RouterView']
     Test: typeof import('./../src/components/Test.vue')['default']
   }
 }

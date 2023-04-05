@@ -1,7 +1,6 @@
 <template>
-  <Demo/>
+  <router-view></router-view>
 </template>
 <script setup lang="ts">
-import Demo from "comps/Demo.vue"
 
 </script>

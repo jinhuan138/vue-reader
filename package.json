@@ -34,6 +34,7 @@
     "autoprefixer": "^10.4.14",
     "cssnano": "^5.1.15",
     "element-plus": "^2.3.1",
+    "epub": "^1.2.1",
     "i": "^0.3.7",
     "node-vibrant": "3.2.1-alpha.1",
     "postcss": "^8.4.21",
@@ -50,7 +51,8 @@
     "unplugin-vue-components": "^0.24.1",
     "vite": "^4.2.1",
     "vite-tsconfig-paths": "^4.0.7",
-    "vue": "^3.2.47"
+    "vue": "^3.2.47",
+    "vue-router": "4"
   },
   "browserslist": [
     "defaults",
