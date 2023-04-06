@@ -5,18 +5,19 @@
 * @param {function} fn - The listener function.
 */
 type epubEvent = WheelEvent & { ignore?: boolean }
+type Direction = 'next' | "prev"
 
-export default function wheelListener(el: HTMLElement, fn: (dire:string)=>void) {
+export default function wheelListener(el: HTMLElement, fn: (dire: Direction) => void) {
 
 	// Required min distance traveled to be considered swipe
 	const threshold = 750;
 	// Maximum time allowed to travel that distance
 	const allowedTime = 50;
 
-	let dist:number = 0;
-	let isScrolling:NodeJS.Timeout;
+	let dist: number = 0;
+	let isScrolling: NodeJS.Timeout;
 
-	el.addEventListener('wheel', (e:epubEvent) => {
+	el.addEventListener('wheel', (e: epubEvent) => {
 		if (e.ignore) return;
 		e.ignore = true;
 

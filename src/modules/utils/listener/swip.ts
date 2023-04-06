@@ -9,8 +9,9 @@
  * @param {function} fn - The listener function.
  */
  type epubEvent = TouchEvent & { ignore?: boolean }
+ type Direction = 'next' | "prev"
  
-export default function swipListener(document:Document, fn:(dire:string)=>void) {
+export default function swipListener(document:Document, fn:(dire:Direction)=>void) {
   // Defaults: 100, 350, 100
   // Required min distance traveled to be considered swipe
   const threshold = 50;

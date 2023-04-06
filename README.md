@@ -61,14 +61,14 @@ import { VueReader } from "vue-reader";
 
 ### EpubView Attributes
 
-| **Name**        | **Description**                                              | **Type**          | **Default** |
-| --------------- | ------------------------------------------------------------ | ----------------- | ----------- |
-| url             | book url                                                     | `string`          | —           |
-| location        | set / update location of the epub                            | `string`/`number` | —           |
-| tocChanged      | when the reader has parsed the book you will receive an array of the chapters | `function`        | —           |
-| epubInitOptions | pass custom properties to the epub init function, see [epub.js](http://epubjs.org/documentation/0.3/#epub) | `object`          | —           |
-| epubOptions     | pass custom properties to the epub rendition, see [epub.js's book.renderTo function](http://epubjs.org/documentation/0.3/#rendition) | `object`          | —           |
-| getRendition    | when epubjs has rendered the epub-file you can get access to the epubjs-rendition object here | `function`        | —           |
+| **Name**        | **Description**                                              | **Type**              | **Default** |
+| --------------- | ------------------------------------------------------------ | --------------------- | ----------- |
+| url             | the path or arrayBuffer of the book                          | `string`              | —           |
+| location        | set / update location of the epub                            | `string`/`number`     | —           |
+| tocChanged      | when the reader has parsed the book you will receive an array of the chapters | `function(toc)`       | —           |
+| epubInitOptions | pass custom properties to the epub init function, see [epub.js](http://epubjs.org/documentation/0.3/#epub) | `object`              | —           |
+| epubOptions     | pass custom properties to the epub rendition, see [epub.js's book.renderTo function](http://epubjs.org/documentation/0.3/#rendition) | `object`              | —           |
+| getRendition    | when epubjs has rendered the epub-file you can get access to the epubjs-rendition object here | `function(rendition)` | —           |
 
 ### EpubView Events
 
@@ -86,9 +86,9 @@ import { VueReader } from "vue-reader";
 
 | **Name**    | **Description**        | **Type**         |
 | ----------- | ---------------------- | ---------------- |
-| nextPage    | display  next page     | `Function`       |
-| prevPage    | display  previous page | `Function`       |
-| setLocation | Set the page           | `Function(href)` |
+| nextPage    | display  next page     | `function`       |
+| prevPage    | display  previous page | `function`       |
+| setLocation | Set the page           | `function(href)` |
 
 ### Recipes and tips
 

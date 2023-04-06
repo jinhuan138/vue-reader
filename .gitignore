@@ -23,3 +23,4 @@ lib
 *.njsproj
 *.sln
 *.sw?
+.yarn
