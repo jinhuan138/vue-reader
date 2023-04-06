@@ -46,24 +46,29 @@
 </template>
 <script setup lang="ts">
 import { ref, reactive, toRefs, computed } from "vue";
+import { Book } from 'epubjs'
 import EpubView from "../EpubView/EpubView.vue";
 const epubRef = ref<InstanceType<typeof EpubView> | null>(null)
 
 interface Props {
   title?: string,
-  url: string,
+  url: string | ArrayBuffer,
   showToc?: boolean,
   swipeAble?: boolean,
-  tocChanged?: () => void
+  tocChanged?: (toc: Book['navigation']['toc']) => void
 }
 
 const props = withDefaults(defineProps<Props>(), {
   showToc: true,
   swipeAble: false
 })
-const { title, tocChanged } = props
+const { title, tocChanged, url } = props
 
-const book = reactive({
+interface EpubBook {
+  toc: Book['navigation']['toc'],
+  expandedToc: boolean
+}
+const book: EpubBook = reactive({
   toc: [],//目录
   expandedToc: false,//目录展开
 })
@@ -73,10 +78,14 @@ const bookName = computed(() => {
   if (title) {
     return title
   } else {
-    let reg = /\/files\/(.*?)\.epub/;
-    return props.url.match(reg)[1];
+    let title = ''
+    if (typeof (url) === 'string') {
+      let reg = /\/files\/(.*?)\.epub/;
+      const res = url.match(reg)
+      if (res?.length) title = res[1]
+    }
+    return title
   }
-
 })
 
 const toggleToc = () => {
@@ -84,7 +93,7 @@ const toggleToc = () => {
 }
 
 
-const onTocChange = (_toc) => {
+const onTocChange = (_toc: Book['navigation']['toc']) => {
   toc.value = _toc
   tocChanged && tocChanged(_toc)
 }

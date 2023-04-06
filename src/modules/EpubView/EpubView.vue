@@ -1,7 +1,7 @@
 <template>
     <div class="reader">
         <div class="viewHolder">
-            <div class="view" ref="view" v-show="isLoaded"></div>
+            <div class="view" id="viewer" v-show="isLoaded"></div>
             <div v-if="!isLoaded">
                 <slot name="loadingView">
                 </slot>
@@ -18,14 +18,15 @@ import { clickListener, swipListener, wheelListener, keyListener } from '../util
 // import Vibrant from 'node-vibrant/dist/vibrant'
 
 interface Props {
-    url: Book['url'],
-    location?: Rendition['location'], //当前页
-    tocChanged?: (toc: [Book['pageList']]) => void,
+    url: string | ArrayBuffer,
+    location?: number | string, //当前页
+    tocChanged?: (toc: Book['navigation']['toc']) => void,
     getRendition?: (rendition: Rendition) => void,
     epubInitOptions?: Book['settings'],
     epubOptions?: Rendition['settings'],
 }
 const props = withDefaults(defineProps<Props>(), {
+    location: 0,
     epubInitOptions: () => ({}),
     epubOptions: () => ({})
 })
@@ -37,17 +38,15 @@ const emit = defineEmits<{
     (e: 'update:location', loc: Rendition['location']): void
 }>()
 
-const toc = ref<[Book['pageList']] | []>([])
+const toc = ref<Book['navigation']['toc']>([])
 const isLoaded = ref(false)
-const view = ref<null | HTMLDivElement>(null)
 let book: null | Book = null
 let rendition: null | Rendition = null;
 // let bookDetail = {}
 
 const initBook = async () => {
     if (book) book.destroy()
-    const bookurl = url.value
-    book = new ePub(bookurl, epubInitOptions);
+    book = ePub(url.value, epubInitOptions);
     book!.ready.then(() => {
         book!.loaded.navigation.then(({ toc: _toc }) => {
             isLoaded.value = true
@@ -78,8 +77,7 @@ const initBook = async () => {
 };
 
 const initReader = () => {
-    const element = view.value as HTMLDivElement
-    rendition = book!.renderTo(element, {
+    rendition = book!.renderTo('viewer', {
         contained: true,
         width: '100%',
         height: '100%',
@@ -87,7 +85,9 @@ const initReader = () => {
     });
     registerEvents();
     getRendition && getRendition(rendition)
-    if (typeof location?.value === 'string' || typeof location?.value === 'number') {
+    if (typeof location?.value === 'string') {
+        rendition.display(location.value)
+    } else if (typeof location?.value === 'number') {
         rendition.display(location.value)
     } else if (toc.value.length > 0 && toc?.value[0]?.href) {
         rendition.display(toc.value[0].href)
@@ -102,9 +102,9 @@ const flipPage = (direction: string) => {
 }
 
 const registerEvents = () => {
-    rendition!.on('rendered', (e: Event, iframe: HTMLIFrameElement) => {
-        iframe?.iframe?.contentWindow.focus()
-        clickListener(iframe.document, rendition, flipPage);
+    rendition!.on('rendered', (e: Event, iframe: any) => {
+        iframe.iframe.contentWindow.focus()
+        clickListener(iframe.document, rendition as Rendition, flipPage);
         // selectListener(iframe.document, rendition, toggleBuble);
         swipListener(iframe.document, flipPage);
         wheelListener(iframe.document, flipPage);
@@ -121,20 +121,24 @@ const onLocationChange = (loc: Rendition['location']) => {//监听翻页
     }
 }
 
-const debounce = (func: Function, wait = 500) => {
-    let timeout: null | NodeJS.Timeout;
-    return function executedFunction(...args: any) {
+const debounce = (func: Function, wait: number = 500) => {
+    let timeout: NodeJS.timeout;
+    return function executedFunction(...args: Array<any>) {
         const later = () => {
             timeout = null;
             func(...args);
         };
-        clearTimeout(timeout);
+        clearTimeout(timeout as number);
         timeout = setTimeout(later, wait);
     };
 };
-watch(location, debounce((val: string, old: string) => {
+
+watch(location, debounce((val: string | number, old: string) => {
     if (val === old) return
-    if (typeof val === 'string' || typeof val === 'number') {
+    if (typeof val === 'string') {
+        rendition?.display(val)
+    }
+    if (typeof val === 'number') {
         rendition?.display(val)
     }
 }), {
@@ -152,8 +156,11 @@ const prevPage = () => {
     rendition?.prev();
 };
 
-const setLocation = (href: string | number) => {
-    rendition!.display(href);
+const setLocation = (href: number | string) => {
+    if (typeof (href) === 'string')
+        rendition!.display(href);
+    if (typeof (href) === 'number')
+        rendition!.display(href);
 };
 
 onMounted(() => {

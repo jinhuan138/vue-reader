@@ -1,58 +1,85 @@
 <template>
     <div class="container">
         <div class="vueContainer">
-            <VueReader :location="location" url="/files/alice.epub" @update:location="locationChange">
+            <VueReader :location="location" :url="url" @update:location="locationChange"
+                :getRendition="val => rendition = val" :tocChanged="val => toc = val">
             </VueReader>
+            <div class="page">
+                {{ page }}
+            </div>
         </div>
     </div>
 </template>
 <script setup>
-// import { VueReader } from "../lib/index.min.js";
-import VueReader from "./modules/VueReader/VueReader.vue";
-import Library from '@/components/Library.vue'
-import { ref, onMounted, watch, onUnmounted } from "vue";
+// import { VueReader } from "/lib/index.min.js";
+import VueReader from "@/modules/VueReader/VueReader.vue";
+import epub from 'epubjs'
+import { ref, nextTick } from "vue";
 
-const toc = ref(null)
-const page = ref('')
-const url = ref("/files/啼笑因缘.epub")
-
+const book = '啼笑因缘'
+const url = ref(`/files/${book}.epub`)
 const rendition = ref(null)
-const selections = ref([])
-const setRenderSelection = (cfiRange, contents) => {
-    selections.value.push({
-        text: rendition.value.getRange(cfiRange).toString(),
-        cfiRange
-    })
-    rendition.value.annotations.add(
-        'highlight',
-        cfiRange,
-        {},
-        null,
-        'hl',
-        { fill: 'red', 'fill-opacity': '0.5', 'mix-blend-mode': 'multiply' }
-    )
-    contents.window.getSelection().removeAllRanges()
-}
-const getRendition = (val) => {
-    rendition.value = val
-    rendition.value.themes.default({
-        '::selection': {
-            background: 'orange'
-        }
-    })
-    if (rendition.value) {
-        rendition.value.on('selected', setRenderSelection)
-    }
-}
-const remove = (cfiRange, index) => {
-    rendition.value.annotations.remove(cfiRange, 'highlight')
-    selections.value = selections.value.filter((item, j) => j !== index)
-}
-onUnmounted(() => {
-    rendition.value.off('selected', setRenderSelection)
-})
 const location = ref(null)
+const toc = ref([])
+const page = ref('')
 const firstRenderDone = ref(false)
+
+nextTick(() => {
+    rendition.value.hooks.content.register((contents, view) => {
+        let msg = new SpeechSynthesisUtterance()
+        let text = contents.document.body.textContent
+        text = text
+            .replace(/\s\s/g, "")
+            .replace(/\r/g, "")
+            .replace(/\n/g, "")
+            .replace(/\t/g, "")
+            .replace(/\f/g, "");
+        msg.text = text;
+        msg.voice = window.speechSynthesis.getVoices()[0];
+        msg.rate = 1;
+        window.speechSynthesis.speak(msg);
+        msg.onerror = (err) => {
+            console.log(err);
+        };
+        msg.onend = async (event) => {
+            // this.handleAudio();
+        };
+    })
+})
+
+const locationChange = (epubcifi) => {
+    //翻页
+    const getLabel = (toc, href) => {
+        let label = 'n/a';
+        toc.some(item => {
+            if (item.subitems.length > 0) {
+                const subChapter = getLabel(item.subitems, href);
+                if (subChapter !== 'n/a') {
+                    label = subChapter
+                    return true
+                }
+            } else if (item.href.includes(href)) {
+                label = item.label
+                return true
+            }
+        })
+        return label;
+    }
+    if (epubcifi) {
+        const { displayed, href } = rendition.value.location.start
+        const { cfi } = rendition.value.location.end
+        if (href !== 'titlepage.xhtml') {
+            const label = getLabel(toc.value, href)
+            page.value = `${displayed.page}/${displayed.total} ${label}`
+        }
+    }
+    //存储
+    if (!firstRenderDone.value) {
+        location.value = localStorage.getItem(book)
+        return firstRenderDone.value = true
+    }
+    localStorage.setItem(book, epubcifi)
+}
 </script>
   
 <style scoped>
@@ -74,27 +101,6 @@ const firstRenderDone = ref(false)
     bottom: 0rem;
 }
 
-.demo {
-    width: 100px;
-    height: 100px;
-    background-color: skyblue;
-}
-
-.title {
-    text-align: center;
-    color: skyblue;
-}
-
-.loadingView {
-    position: absolute;
-    top: 50%;
-    left: 10%;
-    right: 10%;
-    color: skyblue;
-    text-align: center;
-    margin-top: -.5em;
-}
-
 .page {
     position: absolute;
     bottom: 1rem;
@@ -102,25 +108,6 @@ const firstRenderDone = ref(false)
     left: 1rem;
     text-align: center;
     z-index: 1;
-    color: #000;
-}
-
-.size {
-    position: absolute;
-    bottom: 1rem;
-    right: 1rem;
-    left: 1rem;
-    text-align: center;
-    z-index: 1;
-    color: #000;
-}
-
-.selection {
-    position: absolute;
-    bottom: 1rem;
-    right: 1rem;
-    z-index: 1;
-    background-color: white;
     color: #000;
 }
 </style>

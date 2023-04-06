@@ -5,7 +5,9 @@
 * @param {function} fn - The listener function.
 */
 
-export default function keyListener(el:HTMLElement, fn:(dire:string)=>void) {
+type Direction = 'next' | "prev"
+
+export default function keyListener(el:HTMLElement, fn:(dire:Direction)=>void) {
 	el.addEventListener('keyup', (e:KeyboardEvent ) => {
 		
 		// Right or up arrow key indicates next 
