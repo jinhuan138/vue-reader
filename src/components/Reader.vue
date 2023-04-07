@@ -11,8 +11,8 @@
     </div>
 </template>
 <script setup>
-// import { VueReader } from "/lib/index.min.js";
-import VueReader from "@/modules/VueReader/VueReader.vue";
+import { VueReader } from "/lib/index.min.js";
+// import VueReader from "@/modules/VueReader/VueReader.vue";
 import { ref } from "vue";
 
 const book = '啼笑因缘'
