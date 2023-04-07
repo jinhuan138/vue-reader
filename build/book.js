@@ -1,7 +1,7 @@
 //https://www.npmjs.com/package/epub
 const EPub = require("epub")
 const sharp = require("sharp")
-const perfectJson = require('perfect-json')
+// const perfectJson = require('perfect-json')
 const { join } = require('path')
 const fs = require('fs')
 const Vibrant = require('node-vibrant')
@@ -49,7 +49,7 @@ const saveBookInfo = async () => {
     Promise.all(p)
     const jsonPath = join(libraryPath, './books.json')//生成books.json
     setTimeout(() => {
-        fs.writeFileSync(jsonPath, perfectJson(booksJson))
+        fs.writeFileSync(jsonPath,booksJson)
     }, (books.length) * 500);
 }
 saveBookInfo()

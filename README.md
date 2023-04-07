@@ -61,14 +61,16 @@ import { VueReader } from "vue-reader";
 
 ### EpubView Attributes
 
-| **Name**        | **Description**                                              | **Type**              | **Default** |
-| --------------- | ------------------------------------------------------------ | --------------------- | ----------- |
-| url             | the path or arrayBuffer of the book                          | `string`              | —           |
-| location        | set / update location of the epub                            | `string`/`number`     | —           |
-| tocChanged      | when the reader has parsed the book you will receive an array of the chapters | `function(toc)`       | —           |
-| epubInitOptions | pass custom properties to the epub init function, see [epub.js](http://epubjs.org/documentation/0.3/#epub) | `object`              | —           |
-| epubOptions     | pass custom properties to the epub rendition, see [epub.js's book.renderTo function](http://epubjs.org/documentation/0.3/#rendition) | `object`              | —           |
-| getRendition    | when epubjs has rendered the epub-file you can get access to the epubjs-rendition object here | `function(rendition)` | —           |
+| **Name**           | **Description**                                              | **Type**                      | **Default** |
+| ------------------ | ------------------------------------------------------------ | ----------------------------- | ----------- |
+| url                | the path or arrayBuffer of the book                          | `string`                      | —           |
+| location           | set / update location of the epub                            | `string`/`number`             | —           |
+| tocChanged         | when the reader has parsed the book you will receive an array of the chapters | `function(toc)`               | —           |
+| handleKeyPress     | when press the key                                           | `function()`                  |             |
+| handleTextSelected | when select text                                             | `function(cfiRange,contents)` |             |
+| epubInitOptions    | pass custom properties to the epub init function, see [epub.js](http://epubjs.org/documentation/0.3/#epub) | `object`                      | —           |
+| epubOptions        | pass custom properties to the epub rendition, see [epub.js's book.renderTo function](http://epubjs.org/documentation/0.3/#rendition) | `object`                      | —           |
+| getRendition       | when epubjs has rendered the epub-file you can get access to the epubjs-rendition object here | `function(rendition)`         | —           |
 
 ### EpubView Events
 

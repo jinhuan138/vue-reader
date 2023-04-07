@@ -1,6 +1,8 @@
 {
     "compilerOptions": {
-        "isolatedModules": true,
+        "declaration": true,
+        "skipLibCheck": true,
+        "isolatedModules": false,
         "useDefineForClassFields": true,
         "target": "esnext",
         "module": "esnext",
@@ -13,8 +15,8 @@
         "noImplicitAny": false,
         "noImplicitThis": true,
         "alwaysStrict": true,
-        "noUnusedLocals": true,
-        "noUnusedParameters": true,
+        "noUnusedLocals": false,
+        "noUnusedParameters": false,
         "noImplicitReturns": true,
         "noFallthroughCasesInSwitch": true,
         "baseUrl": ".",
@@ -25,10 +27,17 @@
             "comps/*": [
                 "src/components/*"
             ]
-        }
+        },
+        "lib": [
+            "esnext",
+            "DOM"
+        ]
     },
     "include": [
         "src/**/*",
         "types"
+    ],
+    "exclude": [
+        "node_modules"
     ]
 }

@@ -3,15 +3,15 @@
  * https://github.com/Xyfir/xyfir-reader
  */
 
- /**
- * Listen for swipes convert them to actions.
- * @param {Document} document - The document to add event listeners to.
- * @param {function} fn - The listener function.
- */
- type epubEvent = TouchEvent & { ignore?: boolean }
- type Direction = 'next' | "prev"
- 
-export default function swipListener(document:Document, fn:(dire:Direction)=>void) {
+/**
+* Listen for swipes convert them to actions.
+* @param {Document} document - The document to add event listeners to.
+* @param {function} fn - The listener function.
+*/
+type epubEvent = TouchEvent & { ignore?: boolean }
+type Direction = 'next' | "prev" | "up" | "down"
+
+export default function swipListener(document: Document, fn: (dire: Direction) => void) {
   // Defaults: 100, 350, 100
   // Required min distance traveled to be considered swipe
   const threshold = 50;
@@ -20,13 +20,13 @@ export default function swipListener(document:Document, fn:(dire:Direction)=>voi
   // Maximum distance allowed at the same time in perpendicular direction
   const restraint = 200;
 
-  let startX:number;
-  let startY:number;
-  let startTime:number;
+  let startX: number;
+  let startY: number;
+  let startTime: number;
 
   document.addEventListener(
     'touchstart',
-    (e:epubEvent) => {
+    (e: epubEvent) => {
       if (e.ignore) return;
       e.ignore = true;
 
@@ -39,7 +39,7 @@ export default function swipListener(document:Document, fn:(dire:Direction)=>voi
 
   document.addEventListener(
     'touchend',
-    (e:epubEvent) => {
+    (e: epubEvent) => {
       if (e.ignore) return;
       e.ignore = true;
 
