@@ -1,6 +1,6 @@
 {
   "name": "vue-reader",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "main": "lib/index.min.js",
   "files": [
     "lib"
@@ -16,7 +16,10 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "compile": "rollup -c"
+    "compile": "rollup -c",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs"
   },
   "license": "ISC",
   "dependencies": {
@@ -52,7 +55,10 @@
     "unplugin-vue-components": "^0.24.1",
     "vite": "^4.2.1",
     "vite-tsconfig-paths": "^4.0.7",
+    "vitepress": "^1.0.0-alpha.65",
+    "vitepress-demoblock": "^1.0.4",
     "vue": "^3.2.47",
+    "vue-reader": "^1.0.9",
     "vue-router": "4"
   },
   "browserslist": [
@@ -62,5 +68,6 @@
     "> 1%",
     "iOS 7",
     "last 3 iOS versions"
-  ]
+  ],
+  "types": "lib/src/modules/index.d.ts"
 }
