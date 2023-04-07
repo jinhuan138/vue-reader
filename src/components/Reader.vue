@@ -18,7 +18,7 @@ import { ref } from "vue";
 const book = '啼笑因缘'
 const url = ref(`/files/${book}.epub`)
 const rendition = ref(null)
-const location = ref(null)
+const location = ref(2)
 const toc = ref([])
 const page = ref('')
 const firstRenderDone = ref(false)

@@ -29,7 +29,7 @@ export default function mouseListener(document: Document, rendition: Rendition, 
     // const wY = document.body.clientHeight;
 
     // Get click location
-    const cX = event.clientX - (rendition.manager.scrollLeft || 0);
+    const cX = event.clientX - (0);
     // const cY = event.clientY;
 
     // Click was in left 20% of page

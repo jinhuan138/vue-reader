@@ -12,16 +12,19 @@
 </template>
 <script setup lang="ts">
 //http://epubjs.org/documentation/0.3/
-import { ref, onMounted, onUnmounted, toRefs, watch } from "vue";
-import ePub, { Book, Rendition } from 'epubjs';
+import { ref, onMounted, onUnmounted, toRefs, watch, nextTick } from "vue";
+import ePub, { Book, Rendition, Contents } from 'epubjs';
+import View from 'epubjs/types/managers/view';
 import { clickListener, swipListener, wheelListener, keyListener } from '../utils/listener/listener';
 // import Vibrant from 'node-vibrant/dist/vibrant'
 
 interface Props {
-    url: string | ArrayBuffer,
-    location?: number | string, //当前页
+    url: any,  // string | ArrayBuffer
+    location?: any, //当前页 number | string | Rendition['location']['start']
     tocChanged?: (toc: Book['navigation']['toc']) => void,
     getRendition?: (rendition: Rendition) => void,
+    handleTextSelected?: (cfiRange: string, contents: Contents) => void,
+    handleKeyPress?: void,
     epubInitOptions?: Book['settings'],
     epubOptions?: Rendition['settings'],
 }
@@ -31,11 +34,11 @@ const props = withDefaults(defineProps<Props>(), {
     epubOptions: () => ({})
 })
 
-const { tocChanged, getRendition, epubInitOptions, epubOptions } = props
+const { tocChanged, getRendition, handleTextSelected, handleKeyPress, epubInitOptions, epubOptions } = props
 const { url, location } = toRefs(props)
 
 const emit = defineEmits<{
-    (e: 'update:location', loc: Rendition['location']): void
+    (e: 'update:location', location: Props['location']): void
 }>()
 
 const toc = ref<Book['navigation']['toc']>([])
@@ -78,7 +81,7 @@ const initBook = async () => {
 
 const initReader = () => {
     rendition = book!.renderTo('viewer', {
-        contained: true,
+        // contained: true,
         width: '100%',
         height: '100%',
         ...epubOptions
@@ -102,15 +105,23 @@ const flipPage = (direction: string) => {
 }
 
 const registerEvents = () => {
-    rendition!.on('rendered', (e: Event, iframe: any) => {
-        iframe.iframe.contentWindow.focus()
-        clickListener(iframe.document, rendition as Rendition, flipPage);
-        // selectListener(iframe.document, rendition, toggleBuble);
-        swipListener(iframe.document, flipPage);
-        wheelListener(iframe.document, flipPage);
-        keyListener(iframe.document, flipPage);
-    });
-    rendition!.on('locationChanged', onLocationChange)
+    if (rendition) {
+        rendition.on('rendered', (e: Event, iframe: any) => {
+            iframe?.iframe?.contentWindow.focus()
+            clickListener(iframe?.document, rendition as Rendition, flipPage);
+            // selectListener(iframe.document, rendition, toggleBuble);
+            swipListener(iframe.document, flipPage);
+            wheelListener(iframe.document, flipPage);
+            keyListener(iframe.document, flipPage);
+        });
+        rendition.on('locationChanged', onLocationChange)
+        if (handleTextSelected) {
+            rendition.on('selected', handleTextSelected)
+        }
+        if (handleKeyPress) {
+            rendition.on('selected', handleKeyPress)
+        }
+    }
 };
 
 
@@ -122,18 +133,18 @@ const onLocationChange = (loc: Rendition['location']) => {//监听翻页
 }
 
 const debounce = (func: Function, wait: number = 500) => {
-    let timeout: NodeJS.timeout;
+    let timeout: NodeJS.Timeout | null;
     return function executedFunction(...args: Array<any>) {
         const later = () => {
             timeout = null;
             func(...args);
         };
-        clearTimeout(timeout as number);
+        clearTimeout(timeout as NodeJS.Timeout);
         timeout = setTimeout(later, wait);
     };
 };
 
-watch(location, debounce((val: string | number, old: string) => {
+watch(location, debounce((val: string | number, old: string | number) => {
     if (val === old) return
     if (typeof val === 'string') {
         rendition?.display(val)

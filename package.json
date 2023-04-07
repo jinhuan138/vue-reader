@@ -47,7 +47,6 @@
     "rollup-plugin-postcss": "^4.0.2",
     "rollup-plugin-typescript2": "^0.34.1",
     "rollup-plugin-vue": "6.0.0",
-    "sharp": "^0.32.0",
     "typescript": "^5.0.3",
     "unplugin-auto-import": "^0.15.1",
     "unplugin-vue-components": "^0.24.1",

@@ -51,16 +51,14 @@ import EpubView from "../EpubView/EpubView.vue";
 const epubRef = ref<InstanceType<typeof EpubView> | null>(null)
 
 interface Props {
+  url: any,// string | ArrayBuffer
   title?: string,
-  url: string | ArrayBuffer,
   showToc?: boolean,
-  swipeAble?: boolean,
   tocChanged?: (toc: Book['navigation']['toc']) => void
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  showToc: true,
-  swipeAble: false
+  showToc: true
 })
 const { title, tocChanged, url } = props
 
@@ -80,7 +78,7 @@ const bookName = computed(() => {
   } else {
     let title = ''
     if (typeof (url) === 'string') {
-      let reg = /\/files\/(.*?)\.epub/;
+      const reg = /\/files\/(.*?)\.epub/;
       const res = url.match(reg)
       if (res?.length) title = res[1]
     }

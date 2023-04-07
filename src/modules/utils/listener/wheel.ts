@@ -30,7 +30,7 @@ export default function wheelListener(el: HTMLElement, fn: (dire: Direction) => 
 			if (Math.abs(dist) >= threshold) {
 
 				// If wheel scrolled down it indicates left
-				let direction = Math.sign(dist) > 0 ? 'next' : 'prev';
+				let direction:Direction = Math.sign(dist) > 0 ? 'next' : 'prev';
 				fn(direction);
 				dist = 0;
 			}
