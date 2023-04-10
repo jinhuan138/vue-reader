@@ -1,10 +1,15 @@
 # Vue Reader - an easy way to embed a ePub into your webapp
 An vue-reader for vue powered by EpubJS
 
-## document
-[document](sadasdad)|[demo](https://jinhuan138.github.io/reader/)
+
+:::demo
+demo
+:::
+
+[See demo](https://jinhuan138.github.io/reader/)
 
 ## Basic usage
+
 
 ```bash
 npm install vue-reader --save
@@ -12,24 +17,23 @@ npm install vue-reader --save
 
 And in your vue-component...
 
+::: demo
 ```vue
 <template>
   <div class="container">
     <div class="vueContainer">
-      <VueReader url="/files/啼笑因缘.epub"></VueReader>
+      <VueReader url="/docs/files/alice.epub"></VueReader>
     </div>
   </div>
 </template>
 <script setup>
-import { VueReader } from "vue-reader";
+// import { VueReader } from "vue-reader";
+console.log('VueReader')
 </script>
 
 <style scoped>
 .container {
   position: relative;
-  width: 100%;
-  height: 100%;
-  min-height: 100vh;
   background: linear-gradient(to bottom, #f2f2f2 0%, #333 100%);
   overflow: hidden;
 }
@@ -43,6 +47,7 @@ import { VueReader } from "vue-reader";
 }
 </style>
 ```
+:::
 
 ### VueReader Attributes
 

@@ -14,7 +14,6 @@
 //http://epubjs.org/documentation/0.3/
 import { ref, onMounted, onUnmounted, toRefs, watch, nextTick } from "vue";
 import ePub, { Book, Rendition, Contents } from 'epubjs';
-import View from 'epubjs/types/managers/view';
 import { clickListener, swipListener, wheelListener, keyListener } from '../utils/listener/listener';
 // import Vibrant from 'node-vibrant/dist/vibrant'
 

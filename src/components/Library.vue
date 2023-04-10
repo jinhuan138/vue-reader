@@ -1,44 +1,49 @@
 <template>
-    <el-main :class="'main' + agent">
-        <div class="grid" ref="grid">
-            <div v-for="(book, index) in bookList" :key="index">
-                <el-popover>
+    <el-container direction="vertical">
+        <!-- 头部 -->
+        <Header />
+        <!-- 书籍 -->
+        <el-main :class="'main' + agent">
+            <div class="grid" ref="grid">
+                <div v-for="(book, index) in bookList" :key="index">
                     <!-- 提示 -->
-                    <div class="tip">
+                    <!-- <div class="tip">
                         <p v-if="book.creator">作者: {{ book.creator }}</p>
                         <p v-if="book.description">
                             介绍: {{ trunc(book.description, 30) }}
                         </p>
                         <p v-if="book.publisher">出版社: {{ book.publisher }}</p>
-                        <p v-if="book.date">出版日期: {{ book.date | publishDate }}</p>
+                        <p v-if="book.date">出版日期: {{ book.date | book.publishDate }}</p>
                         <p v-if="book.language">语言: {{ book.language }}</p>
-                    </div>
+                    </div> -->
                     <!-- 主体 -->
-                    <router-link :to="{ name: 'Reader', path: '/reader', params: { url: book.url } }" slot="reference">
+                    <router-link :to="{ name: 'reader', params: { name: book.url } }" slot="reference">
                         <el-card ref="card" shadow="hover" :class="'box-card' + agent" :body-style="{ padding: '0px' }">
                             <el-image :src="coverPath(book.url)" :fit="'fill'" :class="'el-image' + agent">
                                 <div slot="error" class="image-slot">
-                                    <el-image :src="$withBase('/books/cover/default-cover.png')" :fit="'fill'">
+                                    <el-image src="/books/cover/default-cover.png" :fit="'fill'">
                                     </el-image>
                                 </div>
                             </el-image>
-                            <div :class="'title' + agent" :style="{
-                                background: book.bgColorFromCover
-                                    ? book.bgColorFromCover
-                                    : '#6d6d6d',
-                                            }">
+                            <div :class="'title' + agent"
+                                :style="{
+                                    background: book.bgColorFromCover
+                                        ? book.bgColorFromCover
+                                        : '#6d6d6d',
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            }">
                                 {{ trunc(book.title, 30) }}
                             </div>
                         </el-card>
                     </router-link>
-                </el-popover>
+                </div>
             </div>
-        </div>
-    </el-main>
+        </el-main>
+    </el-container>
 </template>
   
 <script>
-// import books from "../../public/books/books.json";
+import Header from "comps/Header.vue"
+import books from "/public/books/books.json";
 export default {
     name: 'Library',
     data() {
@@ -65,7 +70,8 @@ export default {
         },
     },
     beforeMount() {
-        // this.bookList = books
+        this.bookList = books
+        console.log(this.bookList)
         const sUserAgent = navigator.userAgent.toLowerCase();
         if (
             /ipad|iphone|midp|rv:1.2.3.4|ucweb|android|windows ce|windows mobile/.test(
@@ -79,7 +85,6 @@ export default {
         }
     },
     mounted() {
-        // console.log("allBooks", books);
         if (!this.bookList.length) return
         this.initStyle();
         this.positionItems();
@@ -90,9 +95,7 @@ export default {
             return str.length > n ? `${str.substr(0, n - 3)}...` : str;
         },
         coverPath(name) {
-            return this.$withBase(
-                "/books/cover/" + name.replace(".epub", "") + ".webp"
-            );
+            return "/books/cover/" + name.replace(".epub", ".jpg")
         },
         initStyle() {
             this.items = this.$refs["grid"].children;
@@ -185,48 +188,46 @@ export default {
   
 <style scopped>
 .main {
-    margin-top: 40px;
-    height: 100%;
+    /* margin-top: 40px; */
 }
 
 .main-phone {
     font-size: 12px;
-    height: 100%;
 }
 
-.grid {
-    height: 100%;
+.main .grid {
+    margin: 40px;
 }
 
-.tip {
+.main .tip {
     width: 280px;
 }
 
-.box-card {
+.main .box-card {
     width: 170px;
     height: 250px;
     /* background: #fff; */
     user-select: none;
 }
 
-.box-card-phone {
+.main .box-card-phone {
     width: 85px;
     height: 125px;
     /* background: #fff; */
     user-select: none;
 }
 
-.el-image {
+.main .el-image {
     height: 200px;
     width: 100%;
 }
 
-.el-image-phone {
+.main .el-image-phone {
     height: 100px;
     width: 100%;
 }
 
-.title {
+.main .title {
     width: 100%;
     height: 50px;
     font-size: 14px;
@@ -238,7 +239,7 @@ export default {
     top: -3px;
 }
 
-.title-phone {
+.main .title-phone {
     height: 60px;
 }
 </style>

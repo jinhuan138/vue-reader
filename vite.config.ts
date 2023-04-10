@@ -8,7 +8,7 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 
 // https://cn.vitejs.dev/
 export default defineConfig({
-  base: "/reader/",
+  base: "/vue-reader",
   plugins: [vue(),
   tsconfigPaths({
     root: __dirname,
@@ -30,7 +30,6 @@ export default defineConfig({
     ]
   },
   server: {
-    port: 8025,
-    open: true
+    port: 8025
   }
 })
