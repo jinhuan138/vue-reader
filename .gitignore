@@ -26,4 +26,8 @@ lib
 .yarn
 
 # vitepress
-docs/.vitepress/cache
+vitedocs/.vitepress/cache
+
+#vuepress
+docs/.vuepress/.cache
+docs/.vuepress/.temp

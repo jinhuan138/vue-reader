@@ -11,12 +11,14 @@
     </div>
 </template>
 <script setup>
-import { VueReader } from "/lib/index.min.js";
-// import VueReader from "@/modules/VueReader/VueReader.vue";
+import { VueReader } from "vue-reader";
+import { useRoute, useRouter } from 'vue-router'
 import { ref } from "vue";
 
-const book = '啼笑因缘'
-const url = ref(`/files/${book}.epub`)
+const route = useRoute()
+const book = route.params.name
+const defaultBook = '啼笑因缘'
+const url = ref(book.endsWith('.epub') ? `/books/${book}` : `/files/${defaultBook}.epub`)
 const rendition = ref(null)
 const location = ref(2)
 const toc = ref([])

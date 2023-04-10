@@ -1,10 +1,12 @@
 //https://www.npmjs.com/package/epub
-const EPub = require("epub")
-const sharp = require("sharp")
-// const perfectJson = require('perfect-json')
-const { join } = require('path')
-const fs = require('fs')
-const Vibrant = require('node-vibrant')
+import EPub from "epub"
+import { join, dirname } from 'node:path'
+import fs from 'fs'
+import { fileURLToPath } from 'node:url'
+import Vibrant from 'node-vibrant'
+import { json } from "stream/consumers"
+
+const __dirname = dirname(fileURLToPath(import.meta.url))
 const libraryPath = join(__dirname, '../public/books')
 const booksJson = []
 const parseBook = (name) => {
@@ -14,16 +16,13 @@ const parseBook = (name) => {
         book.on("end", async () => {
             // epub is now usable
             const { title, cover } = book.metadata
-            await book.getImage(cover, async function (error, img, mimeType) {
+            await book.getImage(cover, async (error, img, mimeType) => {
+                //img buffer
                 if (error) return console.log(error)
                 if (mimeType.includes('image')) {
-                    const coverPath = join(libraryPath, 'cover', `./${name.replace(".epub", "")}.webp`)
-                    const data = await sharp(img)//转换成webp生成封面
-                        .webp({ lossless: true })
-                        .toBuffer()
-
-                    fs.writeFileSync(coverPath, data)
-                    // 获取图书封面主题颜色,node-vibrant不支持webp直接使用buffer
+                    const coverPath = join(libraryPath, 'cover', `./${name.replace(".epub", "")}.jpg`)
+                    fs.writeFileSync(coverPath, img)
+                    // // 获取图书封面主题颜色,node-vibrant不支持webp直接使用buffer
                     const palette = await Vibrant.from(img).getPalette()
                     booksJson.push({ ...book.metadata, url: name, bgColorFromCover: palette.DarkVibrant.hex })
                 }
@@ -45,11 +44,11 @@ const saveBookInfo = async () => {
         if (name.endsWith('epub'))
             return parseBook(name)
     })
-    p = promise.filter(i => i)
-    Promise.all(p)
+    const arr = promise.filter(i => i)
+    Promise.all(arr)
     const jsonPath = join(libraryPath, './books.json')//生成books.json
     setTimeout(() => {
-        fs.writeFileSync(jsonPath,booksJson)
+        fs.writeFileSync(jsonPath, JSON.stringify(booksJson, null, 2))
     }, (books.length) * 500);
 }
 saveBookInfo()

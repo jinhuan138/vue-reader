@@ -17,9 +17,9 @@
     "build": "vite build",
     "preview": "vite preview",
     "compile": "rollup -c",
-    "docs:dev": "vitepress dev docs",
-    "docs:build": "vitepress build docs",
-    "docs:preview": "vitepress preview docs"
+    "book": "node build/book",
+    "docs:dev": "vuepress dev docs",
+    "docs:build": "vuepress build docs"
   },
   "license": "ISC",
   "dependencies": {
@@ -27,6 +27,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.20.12",
+    "@element-plus/icons-vue": "^2.1.0",
     "@esbuild/win32-x64": "^0.17.14",
     "@rollup/plugin-babel": "^6.0.3",
     "@rollup/plugin-commonjs": "^24.0.1",
@@ -35,6 +36,8 @@
     "@rollup/plugin-terser": "^0.4.0",
     "@types/node": "^18.15.11",
     "@vitejs/plugin-vue": "^4.1.0",
+    "@vuepress/client": "2.0.0-beta.49",
+    "@vuepress/plugin-register-components": "2.0.0-beta.49",
     "autoprefixer": "^10.4.14",
     "cssnano": "^5.1.15",
     "element-plus": "^2.3.1",
@@ -55,11 +58,14 @@
     "unplugin-vue-components": "^0.24.1",
     "vite": "^4.2.1",
     "vite-tsconfig-paths": "^4.0.7",
-    "vitepress": "^1.0.0-alpha.65",
+    "vitepress": "1.0.0-alpha.30",
     "vitepress-demoblock": "^1.0.4",
+    "vitepress-theme-demoblock": "^2.0.2",
     "vue": "^3.2.47",
     "vue-reader": "^1.0.9",
-    "vue-router": "4"
+    "vue-router": "4",
+    "vuepress": "2.0.0-beta.49",
+    "vuepress-plugin-demo-block-vue3": "^1.1.0"
   },
   "browserslist": [
     "defaults",
