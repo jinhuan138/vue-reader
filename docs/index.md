@@ -2,7 +2,6 @@
 An vue-reader for vue powered by EpubJS
 
 
-<demo src=".\component\demo.vue" desc="使用 `type`、`plain`、`round` 和 `circle` 来定义按钮的样式。"></demo>
 [See demo](https://jinhuan138.github.io/reader/)
 
 ## Basic usage

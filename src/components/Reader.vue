@@ -12,10 +12,11 @@
 </template>
 <script setup>
 import { VueReader } from "vue-reader";
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { ref } from "vue";
 
 const route = useRoute()
+console.log(route)
 const book = route.params.name
 const defaultBook = '啼笑因缘'
 const url = ref(book.endsWith('.epub') ? `/books/${book}` : `/files/${defaultBook}.epub`)
