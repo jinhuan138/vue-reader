@@ -36,8 +36,6 @@
     "@rollup/plugin-terser": "^0.4.0",
     "@types/node": "^18.15.11",
     "@vitejs/plugin-vue": "^4.1.0",
-    "@vuepress/client": "2.0.0-beta.49",
-    "@vuepress/plugin-register-components": "2.0.0-beta.49",
     "autoprefixer": "^10.4.14",
     "cssnano": "^5.1.15",
     "element-plus": "^2.3.1",
@@ -53,6 +51,7 @@
     "rollup-plugin-postcss": "^4.0.2",
     "rollup-plugin-typescript2": "^0.34.1",
     "rollup-plugin-vue": "6.0.0",
+    "sass": "^1.61.0",
     "typescript": "^5.0.3",
     "unplugin-auto-import": "^0.15.1",
     "unplugin-vue-components": "^0.24.1",
@@ -63,9 +62,7 @@
     "vitepress-theme-demoblock": "^2.0.2",
     "vue": "^3.2.47",
     "vue-reader": "^1.0.9",
-    "vue-router": "4",
-    "vuepress": "2.0.0-beta.49",
-    "vuepress-plugin-demo-block-vue3": "^1.1.0"
+    "vue-router": "4"
   },
   "browserslist": [
     "defaults",

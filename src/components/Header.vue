@@ -1,23 +1,43 @@
 <template>
     <el-header height="40px">
         <span id="left">
-            <el-button size="small" :icon="Plus" circle @click="addFiles" />
+            <!-- <el-upload title="导入图书" accept=".epub" :on-change="selectFile" :multiple="false">
+                <el-button size="small" :icon="Plus" circle />
+            </el-upload> -->
+            <el-button size="small" :icon="Plus" circle @click="select"></el-button>
+            <input type="file" name="select" :visible="false" accept=".epub" v-show="false" ref="input"
+                :onchange="onchange" />
         </span>
         <span id="center">vue-reader</span>
         <span id="right">
-            <el-button size="small" :icon="Minus" circle @click="minimizeWindow" />
-            <el-button size="small" :icon="FullScreen" circle @click="maximizeWindow" />
-            <el-button size="small" :icon="Close" circle @click="closeWindow" />
+            <el-button size="small" :icon="Minus" circle />
+            <el-button size="small" :icon="FullScreen" circle />
+            <el-button size="small" :icon="Close" circle />
         </span>
     </el-header>
 </template>
 
 <script setup>
+import { ref } from "vue"
 import { Plus, Minus, Close, FullScreen } from '@element-plus/icons-vue'
+import { useRouter } from 'vue-router'
+const input = ref(null)
+const router = useRouter()
+const selectFile = (file) => {
+    const { raw, name, size } = file
+    router.push({ name: 'reader', params: { file: { raw, name, size }, name } })
+    console.log(file)
+}
+const select = () => {
+    input.value.click()
+}
+const onchange = (e) => {
+    console.log(e)
 
+}
 </script>
 
-<style>
+<style scoped>
 .el-header {
     text-align: center;
     vertical-align: middle;
