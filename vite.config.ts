@@ -30,6 +30,6 @@ export default defineConfig({
     ]
   },
   server: {
-    port: 8025
+    port: 8025,
   }
 })
