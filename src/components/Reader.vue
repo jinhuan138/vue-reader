@@ -12,14 +12,33 @@
 </template>
 <script setup>
 import { VueReader } from "vue-reader";
+import { db } from "../utils/db";
 import { useRoute } from 'vue-router'
-import { ref } from "vue";
+import { ref, computed, onMounted } from "vue";
 
 const route = useRoute()
-console.log(route)
-const book = route.params.name
+const { name, id } = route.params
 const defaultBook = '啼笑因缘'
-const url = ref(book.endsWith('.epub') ? `/books/${book}` : `/files/${defaultBook}.epub`)
+const url = computed(() => {
+    if (id) {
+        //indexDB导入
+        // const res = await db.books.get({ id })
+        // console.log(res.info.buffer)
+        // return res.info.buffer
+    } else if (name) {
+        //url导入
+        return `/books/${name}`
+    } else {
+        return `/files/${defaultBook}.epub`
+    }
+})
+onMounted(async () => {
+    const res = await db.books.get({
+        id: 2
+    })
+    console.log(url)
+})
+
 const rendition = ref(null)
 const location = ref(2)
 const toc = ref([])

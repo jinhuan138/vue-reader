@@ -77,10 +77,10 @@ const bookName = computed(() => {
     return title
   } else {
     let title = ''
-    if (typeof (url) === 'string') {
-      const reg = /\/files\/(.*?)\.epub/;
-      const res = url.match(reg)
-      if (res?.length) title = res[1]
+    if (typeof (url) === 'string' || url.endsWith('.epub')) {
+      const num = url.lastIndexOf('/') + 1
+      const name = url.substring(num)
+      title = name.replace(".epub", '')
     }
     return title
   }
@@ -89,7 +89,6 @@ const bookName = computed(() => {
 const toggleToc = () => {
   expandedToc.value = !expandedToc.value
 }
-
 
 const onTocChange = (_toc: Book['navigation']['toc']) => {
   toc.value = _toc

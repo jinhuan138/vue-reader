@@ -46,11 +46,11 @@ import { VueReader } from "vue-reader";
 
 ### VueReader Attributes
 
-| **Name** | **Description**         | **Type**  | **Default** |
-| -------- | ----------------------- | --------- | ----------- |
-| url      | book url                | `string`  | —           |
-| title    | the title of the book   | `string`  | —           |
-| showToc  | whether to show the toc | `boolean` | true        |
+| **Name** | **Description**         | **Type**               | **Default** |
+| -------- | ----------------------- | ---------------------- | ----------- |
+| url      | book url or arrayBuffer | `string`|`ArrayBuffer` | —           |
+| title    | the title of the book   | `string`               | —           |
+| showToc  | whether to show the toc | `boolean`              | true        |
 
 ### VueReader Slots
 

@@ -1,12 +1,12 @@
 <template>
     <el-header height="40px">
         <span id="left">
-            <!-- <el-upload title="导入图书" accept=".epub" :on-change="selectFile" :multiple="false">
-                <el-button size="small" :icon="Plus" circle />
-            </el-upload> -->
-            <el-button size="small" :icon="Plus" circle @click="select"></el-button>
-            <input type="file" name="select" :visible="false" accept=".epub" v-show="false" ref="input"
-                :onchange="onchange" />
+            <el-upload :auto-upload="false" v-show="false" ref="input" title="导入图书" accept=".epub" :on-change="selectFile"
+                :multiple="false">
+            </el-upload>
+            <el-button size="small" :icon="Plus" circle @click="select" title="导入图书"></el-button>
+            <!-- <input type="file" name="select" :multiple="false" :visible="false" accept=".epub" v-show="false" ref="input"
+                :onchange="onchange" /> -->
         </span>
         <span id="center">vue-reader</span>
         <span id="right">
@@ -19,21 +19,49 @@
 
 <script setup>
 import { ref } from "vue"
-import { Plus, Minus, Close, FullScreen } from '@element-plus/icons-vue'
+import { db } from "../utils/db"
+import { getFileMD5 } from "../utils/md5"
 import { useRouter } from 'vue-router'
+import { Plus, Minus, Close, FullScreen } from '@element-plus/icons-vue'
+import { ElMessage } from 'element-plus'
+
 const input = ref(null)
 const router = useRouter()
-const selectFile = (file) => {
-    const { raw, name, size } = file
-    router.push({ name: 'reader', params: { file: { raw, name, size }, name } })
-    console.log(file)
+const selectFile = async (item) => {
+    const { raw, name, size } = item
+    const md5 = await getFileMD5(raw)
+    const res = await db.books.get({ md5 })
+    console.log(res)
+    if (res) return ElMessage.error('图书重复')
+    // const reader = new FileReader()
+    // reader.onerror = (error) => {
+    //     console.log(error)
+    // }
+    // reader.onloadend = (e) => {
+    //     const file = { buffer: reader.result, size, name, md5 }
+    //     saveFile(file)
+    // }
+    // reader.readAsArrayBuffer(raw)
+}
+const saveFile = async (file) => {
+    //保存文件
+    const id = await db.books.add(file);
+    // router.push({ name: 'reader', params: { id } })
 }
 const select = () => {
-    input.value.click()
+    input.value.$refs.uploadRef.$el.click()
 }
 const onchange = (e) => {
-    console.log(e)
-
+    //原生input获取文件
+    const file = e.target.files[0]
+    const { name, size } = file
+    console.log(file)
+    const reader = new FileReader()
+    reader.onerror = (error) => reject(error);
+    reader.onloadend = (e) => {
+        console.log(reader.result)
+    }
+    reader.readAsArrayBuffer(file)
 }
 </script>
 

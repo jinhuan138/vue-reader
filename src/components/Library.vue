@@ -30,7 +30,7 @@
                                     background: book.bgColorFromCover
                                         ? book.bgColorFromCover
                                         : '#6d6d6d',
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    }">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    }">
                                 {{ trunc(book.title, 30) }}
                             </div>
                         </el-card>
@@ -43,8 +43,9 @@
   
 <script setup>
 import Header from "comps/Header.vue"
+import { saveAs } from 'file-saver';
 import books from "/public/books/books.json";
-import { ref, reactive, toRefs, onBeforeMount, onMounted, onBeforeUnmount, defineProps } from "vue"
+import { ref, reactive, toRefs, onBeforeMount, onMounted, onBeforeUnmount } from "vue"
 
 const grid = ref(null)
 const main = ref(null)
@@ -69,7 +70,7 @@ const props = defineProps({
 const { useMin, maxCols } = props
 
 onBeforeMount(() => {
-    bookList.value = books
+    // bookList.value = books
 })
 onMounted(() => {
     if (!bookList.value.length) return
@@ -85,6 +86,13 @@ const coverPath = (name) => {
 }
 const trunc = (str, n) => {
     return str.length > n ? `${str.substr(0, n - 3)}...` : str
+}
+const publishDate = (val) => {
+    const date = new Date(val);
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDay();
+    return `${year}--${month}--${day}`;
 }
 //style
 const initStyle = () => {
@@ -167,138 +175,31 @@ const setup = () => {
 const resize = () => {
     setTimeout(positionItems(), 200);
 }
-// export default {
-//     name: 'Library',
-//     data() {
-//         return {
-//             bookList: [],
-//             maxColWidth: 280,
-//             gap: 32,
-//             agent: "",//default pc
-//         };
-//     },
-//     props: {
-//         useMin: {
-//             type: Boolean, // Place items in lower column
-//             default: false,
-//         },
-//     },
-//     filters: {
-//         publishDate(val) {
-//             const date = new Date(val);
-//             const year = date.getFullYear();
-//             const month = date.getMonth() + 1;
-//             const day = date.getDay();
-//             return `${year}--${month}--${day}`;
-//         },
-//     },
-//     mounted() {
-//         if (!this.bookList.length) return
-//         this.initStyle();
-//         this.positionItems();
-//         window.addEventListener("resize", this.resize);
-//     },
-//     methods: {
-//         trunc(str, n) {
-//             return str.length > n ? `${str.substr(0, n - 3)}...` : str;
-//         },
-//         coverPath(name) {
-//             return "/books/cover/" + name.replace(".epub", ".jpg")
-//         },
-//         initStyle() {
-//             this.items = this.$refs["grid"].children;
-//             if (this.items.length === 0) return;
-//             this.$el.style.position = "relative";
-//             Array.prototype.forEach.call(this.items, (item) => {
-//                 item.style.position = "absolute";
-//                 item.style.maxWidth = `${this.maxColWidth}px`;
-//                 item.style.transition =
-//                     "top 0.2s ease, left 0.2s ease, right 0.2s ease, buttom 0.2s ease";
-//             });
-//         },
-//         //样式
-//         setup() {
-//             const { width } = this.$el.getBoundingClientRect();
-//             let numCols = Math.floor(width / this.colWidth()) || 1;
-//             const cols = [];
-
-//             if (this.maxCols && numCols > this.maxCols) {
-//                 numCols = this.maxCols;
-//             }
-
-//             for (let i = 0; i < numCols; i += 1) {
-//                 cols[i] = {
-//                     height: 0,
-//                     top: 0,
-//                     index: i,
-//                 };
-//             }
-
-//             const wSpace = width - numCols * this.colWidth() + this.gap;
-
-//             return {
-//                 cols,
-//                 wSpace,
-//             };
-//         },
-//         resize() {
-//             setTimeout(this.positionItems(), 200);
-//         },
-//         positionItems() {
-//             if (this.items.length === 0) return;
-
-//             let { cols, wSpace } = this.setup();
-
-//             wSpace = Math.floor(wSpace / 2);
-
-//             Array.prototype.forEach.call(this.items, (item, i) => {
-//                 const min = this.nextCol(cols, i);
-
-//                 const left = min.index * this.colWidth() + wSpace;
-
-//                 item.style.left = `${left}px`;
-//                 item.style.top = `${min.height + min.top}px`;
-
-//                 min.height += min.top + item.getBoundingClientRect().height;
-//                 min.top = this.gap;
-//             });
-
-//             this.$el.style.height = `${this.getMax(cols).height}px`;
-//         },
-//         colWidth() {
-//             let width = this.items[0].getBoundingClientRect().width + this.gap;
-//             return width;
-//         },
-//         nextCol(cols, i) {
-//             if (this.useMin) return this.getMin(cols);
-//             return cols[i % cols.length];
-//         },
-//         getMax(cols) {
-//             let max = cols[0];
-//             cols.forEach((col) => {
-//                 if (col.height > max.height) max = col;
-//             });
-//             return max;
-//         },
-//         getMin(cols) {
-//             let min = cols[0];
-//             cols.forEach(col => {
-//                 if (col.height < min.height) min = col;
-//             });
-//             return min;
-//         },
-//     },
-//     beforeDestroy() {
-//         window.removeEventListener("resize", this.resize);
-//     },
-// };
+//book info
+const formatSize = (size) => {
+    return size ? size / 1024 / 1024 > 1 ? parseFloat(
+        this.props.currentBook.size / 1024 / 1024 + ""
+    ).toFixed(2) + "Mb"
+        : parseInt(this.props.currentBook.size / 1024 + "") + "Kb"
+        :
+        "0" + "Kb"
+}
+const exportFile = (id) => {
+    saveAs(
+        new Blob([result]),
+        // this.props.currentBook.name +
+        // `.${this.props.currentBook.format.toLocaleLowerCase()}`
+    )
+}
 </script>
   
 <style scoped lang="scss">
 .main {
+
     /* margin-top: 40px; */
     .grid {
         margin: 40px;
+
         .box-card {
             width: 170px;
             height: 250px;
@@ -323,6 +224,5 @@ const resize = () => {
         }
     }
 }
-
 </style>
   
