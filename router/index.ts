@@ -9,7 +9,7 @@ const routes: Array<RouteRecordRaw> = [
 ]
 
 const router = createRouter({
-    history: createWebHistory('/vue-reader'),
+    history: createWebHistory(),
     routes,
 })
 
