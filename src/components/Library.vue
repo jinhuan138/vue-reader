@@ -70,7 +70,7 @@ const props = defineProps({
 const { useMin, maxCols } = props
 
 onBeforeMount(() => {
-    // bookList.value = books
+    bookList.value = books
 })
 onMounted(() => {
     if (!bookList.value.length) return

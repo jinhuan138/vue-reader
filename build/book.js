@@ -16,7 +16,7 @@ const parseBook = (name) => {
         book.on("end", async () => {
             // epub is now usable
             const { title, cover } = book.metadata
-            const md5 = await getFileMD5(fs.readFileSync(filePath))
+            // const md5 = await getFileMD5(fs.readFileSync(filePath))
             await book.getImage(cover, async (error, img, mimeType) => {
                 //img buffer
                 if (error) return console.log(error)
@@ -25,7 +25,7 @@ const parseBook = (name) => {
                     fs.writeFileSync(coverPath, img)
                     // // 获取图书封面主题颜色,node-vibrant不支持webp直接使用buffer
                     const palette = await Vibrant.from(img).getPalette()
-                    booksJson.push({ ...book.metadata, url: name, bgColorFromCover: palette.DarkVibrant.hex, md5 })
+                    booksJson.push({ ...book.metadata, url: name, bgColorFromCover: palette.DarkVibrant.hex })
                 }
             });
             console.log(name + ' 解析完成')
