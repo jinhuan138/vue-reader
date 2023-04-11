@@ -44,7 +44,7 @@
 <script setup>
 import Header from "comps/Header.vue"
 import { saveAs } from 'file-saver';
-import books from "/public/books/books.json";
+import books from "../../public/books/books.json";
 import { ref, reactive, toRefs, onBeforeMount, onMounted, onBeforeUnmount } from "vue"
 
 const grid = ref(null)

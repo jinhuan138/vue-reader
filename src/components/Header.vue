@@ -33,15 +33,15 @@ const selectFile = async (item) => {
     const res = await db.books.get({ md5 })
     console.log(res)
     if (res) return ElMessage.error('图书重复')
-    // const reader = new FileReader()
-    // reader.onerror = (error) => {
-    //     console.log(error)
-    // }
-    // reader.onloadend = (e) => {
-    //     const file = { buffer: reader.result, size, name, md5 }
-    //     saveFile(file)
-    // }
-    // reader.readAsArrayBuffer(raw)
+    const reader = new FileReader()
+    reader.onerror = (error) => {
+        console.log(error)
+    }
+    reader.onloadend = (e) => {
+        const file = { buffer: reader.result, size, name, md5 }
+        saveFile(file)
+    }
+    reader.readAsArrayBuffer(raw)
 }
 const saveFile = async (file) => {
     //保存文件

@@ -2,7 +2,7 @@
 An vue-reader for vue powered by EpubJS
 
 ## document
-[document](sadasdad)|[demo](https://jinhuan138.github.io/reader/)
+[document]()|[demo](https://jinhuan138.github.io/reader/)
 
 ## Basic usage
 
