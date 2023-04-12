@@ -20,6 +20,7 @@
         "noImplicitReturns": true,
         "noFallthroughCasesInSwitch": true,
         "baseUrl": ".",
+        "sourceMap": true,
         "paths": {
             "@/*": [
                 "src/*"
@@ -30,11 +31,15 @@
         },
         "lib": [
             "esnext",
-            "DOM"
+            "dom"
         ]
     },
+    "vueCompilerOptions": {
+        
+    },
     "include": [
-        "src/**/*",
+        "src/**/*.ts",
+        "src/**/*.vue",
         "types/*"
     ],
     "exclude": [

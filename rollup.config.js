@@ -33,16 +33,16 @@ export default {
       labels: ['unittest']
     }),
     resolve(),
-    commonjs(),
+    typescript({
+      tsconfig: './tsconfig.json',
+    }),
     vue({
       css: true,
     }),
+    commonjs(),
     babel({
       exclude: '**/node_modules/**',
       babelHelpers: 'bundled'
-    }),
-    typescript({
-      tsconfig: './tsconfig.json'
     }),
     postcss({
       plugins: [autoprefixer(), cssnano()]

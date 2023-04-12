@@ -32,10 +32,14 @@
     <!-- 目录 -->
     <div v-if="showToc">
       <div class="tocArea">
-        <div>
-          <button type="button" v-for="(item, index) in toc" :key="index" class="tocAreaButton"
-            @click="setLocation(item.href)">
+        <div v-for="(item, index) in toc" :key="index">
+          <button type="button" class="tocAreaButton" @click="setLocation(item.href)">
             {{ item.label }}
+          </button>
+          <!-- 二级目录 -->
+          <button type="button" class="tocAreaButton" @click="setLocation(subitem.href)"
+            v-for="(subitem, index) in item.subitems" :key="index">
+            {{ "&nbsp;".repeat(4) + subitem.label }}
           </button>
         </div>
       </div>
@@ -48,6 +52,7 @@
 import { ref, reactive, toRefs, computed } from "vue";
 import { Book } from 'epubjs'
 import EpubView from "../EpubView/EpubView.vue";
+
 const epubRef = ref<InstanceType<typeof EpubView> | null>(null)
 
 interface Props {
