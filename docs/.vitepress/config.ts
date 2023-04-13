@@ -18,11 +18,13 @@ export default defineConfig({
     themeConfig: {
     },
     rewrites: {
+        'docs/test.md': 'docs/test',
+        // 'packages/pkg-b/src/pkg-b-docs.md': 'pkg-b/index.md'
     },
     vue: {
     },
     vite: {
-        publicDir: "../../public",
+        publicDir: resolve(__dirname, "../../public"),
         server: {
             port: 3030,
         },
