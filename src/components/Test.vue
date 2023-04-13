@@ -2,7 +2,7 @@
     <div class="container">
         <div class="vueContainer">
             <VueReader :location="location" :url="url" @update:location="locationChange"
-                :getRendition="val => epubBook = val" :tocChanged="val => toc = val" :getBook="val => rendition = val">
+                :getRendition="val => rendition = val" :tocChanged="val => toc = val">
             </VueReader>
             <div class="page">
                 {{ page }}
@@ -13,69 +13,72 @@
 <script setup>
 // import { VueReader } from "/lib/index.min.js";
 import VueReader from "@/modules/VueReader/VueReader.vue";
-import epub from 'epubjs'
-import { ref, nextTick, computed } from "vue";
+import mediumZoom from 'medium-zoom'
+import { ref, nextTick, computed, markRaw } from "vue";
 
-const book = '《冰菓》套装（共6册 ，日本推理大师 米泽穗信 出道作，经典日本校园推理动画《冰菓》原作小说）'
-const url = ref(`/books/${book}.epub`)
-const rendition = ref(null)
-const epubBook = ref(null)
+const book = 'alice'
+const url = ref(`/files/${book}.epub`)
+let rendition = markRaw({})
+let epubBook = markRaw({})
 const location = ref(null)
-const toc = ref([])
+let toc = markRaw([])
 const page = ref('')
 const firstRenderDone = ref(false)
 
-// const s = computed(() => {
-//     return
-// })
+//朗读
+const voice = (text, rate = 1) => {
+    const msg = new SpeechSynthesisUtterance()
+    msg.text = text;
+    sg.voice = window.speechSynthesis.getVoices()[0];
+    msg.rate = rate
+    window.speechSynthesis.speak(msg);
+    msg.onerror = (err) => {
+        console.log(err);
+    };
+    msg.onend = async (event) => {
+        // this.handleAudio();
+    };
+}
 
 nextTick(() => {
-    rendition.value.hooks.content.register((contents, view) => {
-        let msg = new SpeechSynthesisUtterance()
-        let text = contents.document.body.textContent
-        text = text
-            .replace(/\s\s/g, "")
-            .replace(/\r/g, "")
-            .replace(/\n/g, "")
-            .replace(/\t/g, "")
-            .replace(/\f/g, "");
-        msg.text = text;
-        msg.voice = window.speechSynthesis.getVoices()[0];
-        msg.rate = 1;
-        window.speechSynthesis.speak(msg);
-        msg.onerror = (err) => {
-            console.log(err);
-        };
-        msg.onend = async (event) => {
-            // this.handleAudio();
-        };
+    rendition.hooks.content.register((contents, view) => {
+        // let msg = new SpeechSynthesisUtterance()
+        // let text = contents.document.body.textContent
+        // text = text
+        //     .replace(/\s\s/g, "")
+        //     .replace(/\r/g, "")
+        //     .replace(/\n/g, "")
+        //     .replace(/\t/g, "")
+        //     .replace(/\f/g, "");
+        //图片放大
+        // console.log(contents.document.querySelectorAll('img'))
+        mediumZoom(contents.document.querySelectorAll('img'))
     })
 })
 
-const locationChange = (epubcifi) => {
-    console.log(epubBook.value.book.locations.length())
-    //翻页
-    const getLabel = (toc, href) => {
-        let label = 'n/a';
-        toc.some(item => {
-            if (item.subitems.length > 0) {
-                const subChapter = getLabel(item.subitems, href);
-                if (subChapter !== 'n/a') {
-                    label = subChapter
-                    return true
-                }
-            } else if (item.href.includes(href)) {
-                label = item.label
+const getLabel = (toc, href) => {
+    let label = 'n/a';
+    toc.some(item => {
+        if (item.subitems.length > 0) {
+            const subChapter = getLabel(item.subitems, href);
+            if (subChapter !== 'n/a') {
+                label = subChapter
                 return true
             }
-        })
-        return label;
-    }
+        } else if (item.href.includes(href)) {
+            label = item.label
+            return true
+        }
+    })
+    return label;
+}
+const locationChange = (epubcifi) => {
+    //翻页
     if (epubcifi) {
-        const { displayed, href } = rendition.value.location.start
-        const { cfi } = rendition.value.location.end
+        const { displayed, href } = rendition.location.start
+        const { cfi } = rendition.location.end
         if (href !== 'titlepage.xhtml') {
-            const label = getLabel(toc.value, href)
+            const label = getLabel(toc, href)
             page.value = `${displayed.page}/${displayed.total} ${label}`
         }
     }

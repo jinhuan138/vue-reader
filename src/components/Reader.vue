@@ -44,25 +44,24 @@ const location = ref(2)
 const toc = ref([])
 const page = ref('')
 const firstRenderDone = ref(false)
-
-const locationChange = (epubcifi) => {
-    //翻页
-    const getLabel = (toc, href) => {
-        let label = 'n/a';
-        toc.some(item => {
-            if (item.subitems.length > 0) {
-                const subChapter = getLabel(item.subitems, href);
-                if (subChapter !== 'n/a') {
-                    label = subChapter
-                    return true
-                }
-            } else if (item.href.includes(href)) {
-                label = item.label
+const getLabel = (toc, href) => {
+    let label = 'n/a';
+    toc.some(item => {
+        if (item.subitems.length > 0) {
+            const subChapter = getLabel(item.subitems, href);
+            if (subChapter !== 'n/a') {
+                label = subChapter
                 return true
             }
-        })
-        return label;
-    }
+        } else if (item.href.includes(href)) {
+            label = item.label
+            return true
+        }
+    })
+    return label;
+}
+const locationChange = (epubcifi) => {
+    //翻页
     if (epubcifi) {
         const { displayed, href } = rendition.value.location.start
         const { cfi } = rendition.value.location.end
