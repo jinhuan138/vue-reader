@@ -4,7 +4,6 @@ import { join, dirname } from 'node:path'
 import fs from 'fs'
 import { fileURLToPath } from 'node:url'
 import Vibrant from 'node-vibrant'
-import { getFileMD5 } from "../src/utils/md5.js"
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const libraryPath = join(__dirname, '../public/books')
@@ -16,7 +15,7 @@ const parseBook = (name) => {
         book.on("end", async () => {
             // epub is now usable
             const { title, cover } = book.metadata
-            // const md5 = await getFileMD5(fs.readFileSync(filePath))
+            console.log( book.metadata)
             await book.getImage(cover, async (error, img, mimeType) => {
                 //img buffer
                 if (error) return console.log(error)
@@ -34,6 +33,7 @@ const parseBook = (name) => {
         book.parse();
     })
 }
+
 const saveBookInfo = async () => {
     //不存在cover文件夹创建
     fs.stat(join(libraryPath, 'cover'), fs.constants.F_OK, (err) => {

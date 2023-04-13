@@ -12,7 +12,7 @@
 </template>
 <script setup lang="ts">
 //http://epubjs.org/documentation/0.3/
-import { ref, onMounted, onUnmounted, toRefs, watch, nextTick } from "vue";
+import { ref, onMounted, onUnmounted, toRefs, watch } from "vue";
 import ePub, { Book, Rendition, Contents } from 'epubjs';
 import { clickListener, swipListener, wheelListener, keyListener } from '../utils/listener/listener';
 // import Vibrant from 'node-vibrant/dist/vibrant'
@@ -22,6 +22,7 @@ interface Props {
     location?: any, //当前页 number | string | Rendition['location']['start']
     tocChanged?: (toc: Book['navigation']['toc']) => void,
     getRendition?: (rendition: Rendition) => void,
+    getBook?: (book: Book) => void,
     handleTextSelected?: (cfiRange: string, contents: Contents) => void,
     handleKeyPress?: void,
     epubInitOptions?: Book['settings'],
@@ -33,7 +34,7 @@ const props = withDefaults(defineProps<Props>(), {
     epubOptions: () => ({})
 })
 
-const { tocChanged, getRendition, handleTextSelected, handleKeyPress, epubInitOptions, epubOptions } = props
+const { tocChanged, getRendition, getBook, handleTextSelected, handleKeyPress, epubInitOptions, epubOptions } = props
 const { url, location } = toRefs(props)
 
 const emit = defineEmits<{
@@ -49,6 +50,7 @@ let rendition: null | Rendition = null;
 const initBook = async () => {
     if (book) book.destroy()
     book = ePub(url.value, epubInitOptions);
+    if (getBook) getBook(book)
     book!.ready.then(() => {
         book!.loaded.navigation.then(({ toc: _toc }) => {
             isLoaded.value = true
@@ -114,6 +116,7 @@ const registerEvents = () => {
             keyListener(iframe.document, flipPage);
         });
         rendition.on('locationChanged', onLocationChange)
+        rendition.on("displayError", () => console.error("error rendering book"))
         if (handleTextSelected) {
             rendition.on('selected', handleTextSelected)
         }
@@ -154,6 +157,7 @@ watch(location, debounce((val: string | number, old: string | number) => {
 }), {
     immediate: true
 })
+
 watch(url, () => {
     initBook()
 })

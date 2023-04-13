@@ -2,7 +2,7 @@
     <div class="container">
         <div class="vueContainer">
             <VueReader :location="location" :url="url" @update:location="locationChange"
-                :getRendition="val => rendition = val" :tocChanged="val => toc = val">
+                :getRendition="val => epubBook = val" :tocChanged="val => toc = val" :getBook="val => rendition = val">
             </VueReader>
             <div class="page">
                 {{ page }}
@@ -14,15 +14,20 @@
 // import { VueReader } from "/lib/index.min.js";
 import VueReader from "@/modules/VueReader/VueReader.vue";
 import epub from 'epubjs'
-import { ref, nextTick } from "vue";
+import { ref, nextTick, computed } from "vue";
 
-const book = '啼笑因缘'
-const url = ref(`/files/${book}.epub`)
+const book = '《冰菓》套装（共6册 ，日本推理大师 米泽穗信 出道作，经典日本校园推理动画《冰菓》原作小说）'
+const url = ref(`/books/${book}.epub`)
 const rendition = ref(null)
+const epubBook = ref(null)
 const location = ref(null)
 const toc = ref([])
 const page = ref('')
 const firstRenderDone = ref(false)
+
+// const s = computed(() => {
+//     return
+// })
 
 nextTick(() => {
     rendition.value.hooks.content.register((contents, view) => {
@@ -48,6 +53,7 @@ nextTick(() => {
 })
 
 const locationChange = (epubcifi) => {
+    console.log(epubBook.value.book.locations.length())
     //翻页
     const getLabel = (toc, href) => {
         let label = 'n/a';
