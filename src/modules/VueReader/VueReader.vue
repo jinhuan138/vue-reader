@@ -107,11 +107,11 @@ const setLocation = (href: string | number) => {
 };
 
 const next = () => {
-  epubRef?.value?.nextPage()
+  epubRef.value?.nextPage()
 }
 
 const pre = () => {
-  epubRef?.value?.prevPage()
+  epubRef.value?.prevPage()
 }
 
 </script>
@@ -184,6 +184,14 @@ const pre = () => {
   box-sizing: border-box;
   outline: none;
   cursor: pointer;
+}
+
+.tocArea .tocAreaButton:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.tocArea .tocAreaButton:active {
+  background: rgba(0, 0, 0, 0.1);
 }
 
 .tocButton {
