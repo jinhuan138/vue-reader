@@ -1,11 +1,14 @@
-import DefaultTheme from 'vitepress/theme'; //引入默认主题
+import DefaultTheme from 'vitepress/theme'
+import { EnhanceAppContext } from "vitepress"
+import 'vitepress-theme-demoblock/dist/theme/styles/index.css'
 import { VueReader } from "vue-reader";
 import router from "../../router/index"
 
 export default {
   ...DefaultTheme,
-  enhanceApp({ app, siteData }) {
-    app.use(router)
+  enhanceApp(ctx: EnhanceAppContext) {
+    DefaultTheme.enhanceApp(ctx)
+    const { app, siteData } = ctx
     app.component('VueReader', VueReader)
   }
 }

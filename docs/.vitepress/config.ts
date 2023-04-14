@@ -14,12 +14,7 @@ export default defineConfig({
             md.use(demoBlockPlugin)
         }
     },
-    cleanUrls: true,
     themeConfig: {
-    },
-    rewrites: {
-        'docs/test.md': 'docs/test',
-        // 'packages/pkg-b/src/pkg-b-docs.md': 'pkg-b/index.md'
     },
     vue: {
     },

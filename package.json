@@ -62,10 +62,9 @@
     "unplugin-vue-components": "^0.24.1",
     "vite": "^4.2.1",
     "vite-tsconfig-paths": "^4.0.7",
-    "vitepress": "1.0.0-alpha.65",
-    "vitepress-demoblock": "^1.0.4",
+    "vitepress": "1.0.0-alpha.30",
     "vitepress-theme-demoblock": "^2.0.2",
-    "vue": "^3.2.47",
+    "vue": "^3.2.44",
     "vue-reader": "^1.0.9",
     "vue-router": "4"
   },
