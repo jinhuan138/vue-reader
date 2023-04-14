@@ -1,7 +1,7 @@
 <template>
     <div class="reader">
         <div class="viewHolder">
-            <div class="view" id="viewer" v-show="isLoaded"></div>
+            <div class="view" ref="viewer" id="viewer" v-show="isLoaded"></div>
             <div v-if="!isLoaded">
                 <slot name="loadingView">
                 </slot>
@@ -41,6 +41,7 @@ const emit = defineEmits<{
     (e: 'update:location', location: Props['location']): void
 }>()
 
+const viewer = ref<HTMLDivElement | null>(null)
 const toc = ref<Book['navigation']['toc']>([])
 const isLoaded = ref(false)
 let book: null | Book = null
@@ -81,7 +82,7 @@ const initBook = async () => {
 };
 
 const initReader = () => {
-    rendition = book!.renderTo('viewer', {
+    rendition = book!.renderTo(viewer.value as HTMLDivElement, {
         // contained: true,
         width: '100%',
         height: '100%',

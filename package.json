@@ -1,6 +1,6 @@
 {
   "name": "vue-reader",
-  "version": "1.0.9",
+  "version": "1.1.0",
   "main": "lib/index.min.js",
   "files": [
     "lib"
@@ -20,7 +20,7 @@
     "book": "node build/book",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
-    "docs:preview": "vitepress preview docs"
+    "docs:preview": "vitepress preview docs --port 3333"
   },
   "license": "ISC",
   "dependencies": {
@@ -57,16 +57,15 @@
     "rollup-plugin-vue": "6.0.0",
     "sass": "^1.61.0",
     "spark-md5": "^3.0.2",
-    "typescript": "^5.0.3",
+    "typescript": "^5.0.4",
     "unplugin-auto-import": "^0.15.1",
     "unplugin-vue-components": "^0.24.1",
     "vite": "^4.2.1",
     "vite-tsconfig-paths": "^4.0.7",
-    "vitepress": "1.0.0-alpha.65",
-    "vitepress-demoblock": "^1.0.4",
+    "vitepress": "1.0.0-alpha.30",
     "vitepress-theme-demoblock": "^2.0.2",
-    "vue": "^3.2.47",
-    "vue-reader": "^1.0.9",
+    "vue": "3.2.44",
+    "vue-reader": "^1.1.0",
     "vue-router": "4"
   },
   "browserslist": [

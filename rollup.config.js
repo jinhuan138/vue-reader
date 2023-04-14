@@ -33,11 +33,12 @@ export default {
       labels: ['unittest']
     }),
     resolve(),
-    typescript({
-      tsconfig: './tsconfig.json',
-    }),
     vue({
       css: true,
+    }),
+    typescript({
+      tsconfig: './tsconfig.json',
+      exclude: ['node_modules']
     }),
     commonjs(),
     babel({
