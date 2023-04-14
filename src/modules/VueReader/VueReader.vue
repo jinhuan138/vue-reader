@@ -37,10 +37,12 @@
             {{ item.label }}
           </button>
           <!-- 二级目录 -->
-          <button type="button" class="tocAreaButton" @click="setLocation(subitem.href)"
-            v-for="(subitem, index) in item.subitems" :key="index">
-            {{ "&nbsp;".repeat(4) + subitem.label }}
-          </button>
+          <template v-if="item.subitems && item.subitems.length > 0">
+            <button type="button" v-for="(subitem, index) in item.subitems" :key="index" class="tocAreaButton"
+              @click="setLocation(subitem.href)">
+              {{ "&nbsp;".repeat(4) + subitem.label }}
+            </button>
+          </template>
         </div>
       </div>
       <!-- 目录遮罩 -->
@@ -52,11 +54,12 @@
 import { ref, reactive, toRefs, computed } from "vue";
 import { Book } from 'epubjs'
 import EpubView from "../EpubView/EpubView.vue";
+type EpubViewInstance = InstanceType<typeof EpubView>
 
-const epubRef = ref<InstanceType<typeof EpubView> | null>(null)
+const epubRef = ref<EpubViewInstance>()
 
 interface Props {
-  url: any,// string | ArrayBuffer
+  url: string | ArrayBuffer,
   title?: string,
   showToc?: boolean,
   tocChanged?: (toc: Book['navigation']['toc']) => void
@@ -82,7 +85,7 @@ const bookName = computed(() => {
     return title
   } else {
     let title = ''
-    if (typeof (url) === 'string' || url.endsWith('.epub')) {
+    if (typeof (url) === 'string' && url.endsWith('.epub')) {
       const num = url.lastIndexOf('/') + 1
       const name = url.substring(num)
       title = name.replace(".epub", '')
