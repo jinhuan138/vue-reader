@@ -1,12 +1,10 @@
 <template>
-    <div class="container">
-        <div class="vueContainer">
-            <VueReader :location="location" :url="url" @update:location="locationChange"
-                :getRendition="val => rendition = val" :tocChanged="val => toc = val">
-            </VueReader>
-            <div class="page">
-                {{ page }}
-            </div>
+    <div style="height: 100vh">
+        <VueReader :location="location" :url="url" @update:location="locationChange" :getRendition="val => rendition = val"
+            :tocChanged="val => toc = val">
+        </VueReader>
+        <div class="page">
+            {{ page }}
         </div>
     </div>
 </template>
@@ -14,11 +12,12 @@
 import { VueReader } from "vue-reader";
 import { db } from "../utils/db";
 import { useRoute } from 'vue-router'
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, markRaw } from "vue";
 
 const route = useRoute()
 const { name, id } = route.params
 const defaultBook = '啼笑因缘'
+const book = name ? name.replace(".epub", '') : defaultBook
 const url = computed(() => {
     if (id) {
         //indexDB导入
@@ -33,10 +32,11 @@ const url = computed(() => {
     }
 })
 onMounted(async () => {
-    const res = await db.books.get({
-        id: 2
-    })
-    console.log(url)
+    console.log(rendition)
+    // const res = await db.books.get({
+    //     id: 2
+    // })
+    // console.log(url)
 })
 
 const rendition = ref(null)
@@ -80,24 +80,6 @@ const locationChange = (epubcifi) => {
 </script>
   
 <style scoped>
-.container {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    min-height: 100vh;
-    background: linear-gradient(to bottom, #f2f2f2 0%, #333 100%);
-    overflow: hidden;
-}
-
-.vueContainer {
-    font-size: 16px;
-    position: absolute;
-    top: 0px;
-    left: 0rem;
-    right: 0rem;
-    bottom: 0rem;
-}
-
 .page {
     position: absolute;
     bottom: 1rem;
