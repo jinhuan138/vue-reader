@@ -56,8 +56,9 @@
 import { ref, reactive, toRefs, computed } from "vue";
 import { Book } from 'epubjs'
 import EpubView from "../EpubView/EpubView.vue";
+type EpubViewInstance = InstanceType<typeof EpubView>
 
-const epubRef = ref<InstanceType<typeof EpubView> | null>(null)
+const epubRef = ref<EpubViewInstance>()
 
 interface Props {
   url: any,
