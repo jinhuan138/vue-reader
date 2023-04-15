@@ -12,16 +12,16 @@ npm install vue-reader --save
 
 And in your vue-component...
 
-:::demo basic usage
-
 ```vue
 <template>
    <div style="height: 100vh">
-      <VueReader url="/docs/files/啼笑因缘.epub"/>
+      <VueReader url="/files/啼笑因缘.epub"/>
    </div>
 </template>
+<script setup>
+import { VueReader } from "vue-reader"
+</script>
 ```
-:::
 
 ## VueReader Attributes
 
@@ -81,7 +81,7 @@ Saving the current page on storage is pretty simple, but we need to keep in mind
 ```vue
 <template>
     <div style="height: 100vh">
-        <VueReader :location="location" url="/files/啼笑因缘.epub" @update:location="locationChange"/>
+        <VueReader url="/files/啼笑因缘.epub" :location="location" @update:location="locationChange"/>
     </div>
 </template>
 <script setup>
@@ -105,7 +105,7 @@ const locationChange = (epubcifi) => {
     // And then rendering it.
     location.value = epubcifi// Or setLocation(localStorage.getItem("book-progress"))
 }
-<script/>
+</script>
 ```
 
 ## Display page number for current chapter
@@ -117,25 +117,25 @@ We store the epubjs rendition in a ref, and get the page numbers in the callback
     <div style="height: 100vh">
         <VueReader 
             url="/files/啼笑因缘.epub" 
-            :getRendition="val => rendition = val" 
-            :tocChanged="val => toc = val"
+            :getRendition="getRendition"
+            :tocChanged="tocChanged" 
             @update:location="locationChange">
         </VueReader>
         <div class="page">
             {{ page }}
         </div>
     </div>
-</div>
 </template>
 <script setup>
-import { ref, markRaw } from "vue";
+import { ref } from "vue";
 import { VueReader } from "vue-reader"
 
-let rendition = markRaw({})
-const location = ref(null)
-let toc = markRaw([])
+let rendition = null, toc = []
 const page = ref('')
 const firstRenderDone = ref(false)
+
+const getRendition = val => rendition = val
+const tocChanged = val => toc = val
 
 const getLabel = (toc, href) => {
     let label = 'n/a';
@@ -194,10 +194,10 @@ Hooking into epubJS rendition object is the key for this also.
     </div>
 </template>
 <script setup>
-import { VueReader } from "vue-reader";
-import { ref, markRaw } from "vue"
+import { VueReader } from "vue-reader"
+import { ref } from "vue"
 
-let rendition = markRaw({})
+let rendition = null
 const size = ref(100)
 const changeSize = (val) => {
     size.value = val
@@ -210,10 +210,6 @@ const getRendition = (val) => {
 </script>
 <style scoped>
 .size {
-    position: absolute;
-    bottom: 1rem;
-    right: 1rem;
-    left: 1rem;
     text-align: center;
     z-index: 1;
     color: #000;
@@ -229,14 +225,16 @@ This is useful for when you want to set custom font families, custom background 
 ```vue
 <template>
     <div style="height: 100vh">
-        <VueReader url="/files/啼笑因缘.epub" :getRendition="getRendition">
+        <VueReader 
+            url="/files/啼笑因缘.epub" 
+            :getRendition="getRendition">
         </VueReader>
     </div>
 </template>
 <script setup>
-import { ref } from "vue";
+import { VueReader } from "vue-reader";
 
-let rendition = markRaw({})
+let rendition = null
 const getRendition = (val) => {
     rendition = val
     rendition.themes.register('custom', {
@@ -244,10 +242,10 @@ const getRendition = (val) => {
             color: '#fff',
             'background-color': "#252525",
         },
-        img: {
+        'image': {
             border: '1px solid red'
         },
-        p: {
+        'p': {
             'font-family': 'Helvetica, sans-serif',
             'font-weight': '400',
             'font-size': '20px',
@@ -266,77 +264,72 @@ This shows how to hook into epubJS annotations object and let the user highlight
 ```vue
 <template>
     <div style="height: 100vh">
-        <VueReader url="/files/啼笑因缘.epub" :getRendition="getRendition">
+        <VueReader 
+            url="/files/啼笑因缘.epub" 
+            :getRendition="getRendition">
         </VueReader>
         <div class="selection">
             Selection:
             <ul>
                 <li v-for="({ text, cfiRange }, index) in selections" :key="index">
                     {{ text || '' }}
-                    <button @click="rendition.display(cfiRange)">
-                        show
-                    </button>
-                    <button @click="remove(cfiRange, index)">
-                        x
-                    </button>
+                    <button @click="rendition.display(cfiRange)">show</button>
+                    <button @click="remove(cfiRange, index)">x</button>
                 </li>
             </ul>
         </div>
     </div>
-  </div>
 </template>
 <script setup>
-import { ref, onUnmounted } from "vue";    
-    
-const rendition = ref(null)
+import { VueReader } from "vue-reader";
+import { ref, onUnmounted } from "vue";
+
+let rendition = null
 const selections = ref([])
 
 const setRenderSelection = (cfiRange, contents) => {
-  selections.value.push({
-    text: rendition.value.getRange(cfiRange).toString(),
-    cfiRange
-  })
-  rendition.value.annotations.add(
-    'highlight',
-    cfiRange,
-    {},
-    null,
-    'hl',
-    { fill: 'red', 'fill-opacity': '0.5', 'mix-blend-mode': 'multiply' }
-  )
-  contents.window.getSelection().removeAllRanges()
+    selections.value.push({
+        text: rendition.getRange(cfiRange).toString(),
+        cfiRange
+    })
+    rendition.annotations.add(
+        'highlight',
+        cfiRange,
+        {},
+        null,
+        'hl',
+        { fill: 'red', 'fill-opacity': '0.5', 'mix-blend-mode': 'multiply' }
+    )
+    contents.window.getSelection().removeAllRanges()
 }
 
 const getRendition = (val) => {
-  rendition.value = val
-  rendition.value.themes.default({
-    '::selection': {
-      background: 'orange'
+    rendition = val
+    rendition.themes.default({
+        '::selection': {
+            background: 'orange'
+        }
+    })
+    if (rendition) {
+        rendition.on('selected', setRenderSelection)
     }
-  })
-  if (rendition.value) {
-    rendition.value.on('selected', setRenderSelection)
-  }
 }
 
 const remove = (cfiRange, index) => {
-  rendition.value.annotations.remove(cfiRange, 'highlight')
-  selections.value = selections.value.filter((item, j) => j !== index)
+    rendition.annotations.remove(cfiRange, 'highlight')
+    selections.value = selections.value.filter((item, j) => j !== index)
 }
 
 onUnmounted(() => {
-  rendition.value.off('selected', setRenderSelection)
+    rendition.off('selected', setRenderSelection)
 })
 </script>
-
+  
 <style scoped>
 .selection {
-  position: absolute;
-  bottom: 1rem;
-  right: 1rem;
-  z-index: 1;
-  background-color: white;
-  color: #000;
+    z-index: 1;
+    background-color: white;
+    color: #000;
 }
 </style>
 ```
@@ -350,8 +343,7 @@ EpubJS will try to parse the epub-file you pass to it, but if the server send wr
     <div style="height: 100vh">
         <VueReader 
             url="/my-epub-service" 
-            :epubInitOptions="{
-            openAs: 'epub'}">
+            :epubInitOptions="{openAs: 'epub'}">
         </VueReader>
     </div>
 </template>

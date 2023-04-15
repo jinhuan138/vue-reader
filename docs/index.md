@@ -13,7 +13,7 @@ And in your vue-component...
 
 ```vue
 <template>
-   <div style="height: 100vh">
+   <div style="height: 50vh">
       <VueReader url="/docs/files/啼笑因缘.epub"/>
    </div>
 </template>
@@ -75,9 +75,11 @@ And in your vue-component...
 
 Saving the current page on storage is pretty simple, but we need to keep in mind that `locationChanged` also gets called on the very first render of our app.
 
+:::demo save progress 
+
 ```vue
 <template>
-    <div style="height: 100vh">
+    <div style="height: 50vh">
         <VueReader :location="location" url="/files/啼笑因缘.epub" @update:location="locationChange"/>
     </div>
 </template>
@@ -102,20 +104,24 @@ const locationChange = (epubcifi) => {
     // And then rendering it.
     location.value = epubcifi// Or setLocation(localStorage.getItem("book-progress"))
 }
-<script/>
+</script>
 ```
+
+:::
 
 ## Display page number for current chapter
 
 We store the epubjs rendition in a ref, and get the page numbers in the callback when location is changed. Note that in this example we also find them name of the current chapter from the toc. Also see limitation for pagination for the whole book.
 
+:::demo display page number
+
 ```vue
 <template>
-    <div style="height: 100vh">
+    <div style="height: 50vh">
         <VueReader 
             url="/files/啼笑因缘.epub" 
-            :getRendition="val => rendition = val" 
-            :tocChanged="val => toc = val"
+            :getRendition="getRendition"
+            :tocChanged="tocChanged" 
             @update:location="locationChange">
         </VueReader>
         <div class="page">
@@ -124,14 +130,14 @@ We store the epubjs rendition in a ref, and get the page numbers in the callback
     </div>
 </template>
 <script setup>
-import { ref, markRaw } from "vue";
-import { VueReader } from "vue-reader"
+import { ref } from 'vue'
 
-let rendition = markRaw({})
-const location = ref(null)
-let toc = markRaw([])
+let rendition = null, toc = []
 const page = ref('')
 const firstRenderDone = ref(false)
+
+const getRendition = val => rendition = val
+const tocChanged = val => toc = val
 
 const getLabel = (toc, href) => {
     let label = 'n/a';
@@ -162,10 +168,6 @@ const locationChange = (epubcifi) => {
 </script>
 <style scoped>
 .page {
-    position: absolute;
-    bottom: 1rem;
-    right: 1rem;
-    left: 1rem;
     text-align: center;
     z-index: 1;
     color: #000;
@@ -173,27 +175,30 @@ const locationChange = (epubcifi) => {
 </style>
 ```
 
+:::
+
 ## Change font-size
 
 Hooking into epubJS rendition object is the key for this also.
 
+:::demo change font-size
+
 ```vue
 <template>
-    <div style="height: 100vh">
+    <div style="height: 50vh">
         <VueReader url="/files/啼笑因缘.epub" :getRendition="getRendition">
         </VueReader>
         <div class="size">
-            <button @click='changeSize(Math.max(80, size - 10))'>-</button>
+            <button @click='changeSize(Math.max(80, size - 10))' class='reader-button'>-</button>
             <span>Current size: {{ size }}%</span>
-            <button @click='changeSize(Math.min(130, size + 10))'>+</button>
+            <button @click='changeSize(Math.min(130, size + 10))' class='reader-button'>+</button>
         </div>
     </div>
 </template>
 <script setup>
-import { VueReader } from "vue-reader";
-import { ref, markRaw } from "vue"
+import { ref } from 'vue'
 
-let rendition = markRaw({})
+let rendition = null
 const size = ref(100)
 const changeSize = (val) => {
     size.value = val
@@ -206,10 +211,6 @@ const getRendition = (val) => {
 </script>
 <style scoped>
 .size {
-    position: absolute;
-    bottom: 1rem;
-    right: 1rem;
-    left: 1rem;
     text-align: center;
     z-index: 1;
     color: #000;
@@ -217,23 +218,27 @@ const getRendition = (val) => {
 </style>
 ```
 
+:::
+
 ## Add / adjust custom css for the epub-html
 
 EpubJS render the epub-file inside a iframe so you will need to create a custom theme and apply it.  
 This is useful for when you want to set custom font families, custom background and text colors, and everything CSS related.
 
+:::demo custom css
+
 ```vue
 <template>
-    <div style="height: 100vh">
-        <VueReader url="/files/啼笑因缘.epub" :getRendition="getRendition">
+    <div style="height:50vh">
+        <VueReader 
+            url="/files/啼笑因缘.epub" 
+            :getRendition="getRendition">
         </VueReader>
     </div>
 </template>
 <script setup>
-import { VueReader } from "vue-reader";
-import { markRaw } from "vue";
 
-let rendition = markRaw({})
+let rendition = null
 const getRendition = (val) => {
     rendition = val
     rendition.themes.register('custom', {
@@ -241,11 +246,10 @@ const getRendition = (val) => {
             color: '#fff',
             'background-color': "#252525",
         },
-
-        img: {
+        'image': {
             border: '1px solid red'
         },
-        p: {
+        'p': {
             'font-family': 'Helvetica, sans-serif',
             'font-weight': '400',
             'font-size': '20px',
@@ -257,36 +261,37 @@ const getRendition = (val) => {
 </script>
 ```
 
+:::
+
 ## Hightlight selection in epub
 
 This shows how to hook into epubJS annotations object and let the user highlight selection and store this in a list where user can go to a selection or delete it.
 
+:::demo hightlight 
+
 ```vue
 <template>
-    <div style="height: 100vh">
-        <VueReader url="/files/啼笑因缘.epub" :getRendition="getRendition">
+    <div style="height: 50vh">
+        <VueReader 
+            url="/files/啼笑因缘.epub" 
+            :getRendition="getRendition">
         </VueReader>
         <div class="selection">
             Selection:
             <ul>
                 <li v-for="({ text, cfiRange }, index) in selections" :key="index">
                     {{ text || '' }}
-                    <button @click="rendition.display(cfiRange)">
-                        show
-                    </button>
-                    <button @click="remove(cfiRange, index)">
-                        x
-                    </button>
+                    <button @click="rendition.display(cfiRange)" class='reader-button'>show</button>
+                    <button @click="remove(cfiRange, index)" class='reader-button'>x</button>
                 </li>
             </ul>
         </div>
     </div>
 </template>
 <script setup>
-import { VueReader } from "vue-reader";
-import { ref, onUnmounted, markRaw } from "vue";
+import { ref, onUnmounted } from 'vue'
 
-let rendition = markRaw({})
+let rendition = null
 const selections = ref([])
 
 const setRenderSelection = (cfiRange, contents) => {
@@ -329,15 +334,14 @@ onUnmounted(() => {
   
 <style scoped>
 .selection {
-    position: absolute;
-    bottom: 1rem;
-    right: 1rem;
     z-index: 1;
     background-color: white;
     color: #000;
 }
 </style>
 ```
+
+:::
 
 ## Handling missing mime-types on server
 
@@ -348,23 +352,21 @@ EpubJS will try to parse the epub-file you pass to it, but if the server send wr
     <div style="height: 100vh">
         <VueReader 
             url="/my-epub-service" 
-            :epubInitOptions="{
-            openAs: 'epub'}">
+            :epubInitOptions="{openAs: 'epub'}">
         </VueReader>
     </div>
 </template>
-<script setup>
-import { VueReader } from "vue-reader";
-</script>
 ```
 
 ## Display a scrolled epub-view
 
 Pass options for this into epubJS in the prop `epubOptions`
 
+:::demo scrolle
+
 ```vue
 <template>
-    <div style="height: 100vh">
+    <div style="height: 50vh">
         <VueReader 
             url="/files/啼笑因缘.epub" 
             :epubOptions="{
@@ -373,8 +375,23 @@ Pass options for this into epubJS in the prop `epubOptions`
         </VueReader>
     </div>
 </template>
-<script setup>
-import { VueReader } from "vue-reader";
-</script>
 ```
 
+:::
+
+<style>
+    .reader-button{
+        width: 35px;
+        height: 24px;
+        border:1px solid #dcdfe6;
+        border-radius:4px;
+        text-align: center;
+        color:#606266;
+    }
+    .reader-button:hover,reader-button:focus{
+        color: #409eff;
+        border-color: #c6e2ff;
+        background-color: ecf5ff;
+        outline: none;
+    }
+</style>

@@ -39,7 +39,7 @@ onMounted(async () => {
     // console.log(url)
 })
 
-const rendition = ref(null)
+const rendition = null
 const location = ref(2)
 const toc = ref([])
 const page = ref('')
@@ -63,8 +63,8 @@ const getLabel = (toc, href) => {
 const locationChange = (epubcifi) => {
     //翻页
     if (epubcifi) {
-        const { displayed, href } = rendition.value.location.start
-        const { cfi } = rendition.value.location.end
+        const { displayed, href } = rendition.location.start
+        const { cfi } = rendition.end
         if (href !== 'titlepage.xhtml') {
             const label = getLabel(toc.value, href)
             page.value = `${displayed.page}/${displayed.total} ${label}`

@@ -2,11 +2,13 @@
 //https://github.com/troyeguo/koodo-reader
 //https://www.npmjs.com/package/react-reader
 //https://github.com/janglee123/eplee
+//https://github.com/weijan-vscode/vscode-epub-viewer.git
+//https://github.com/m8524769/espacio.git
 import { createApp } from 'vue'
 import ElementPlus from 'element-plus'
+import 'element-plus/dist/index.css'
 import router from 'router'
 import './style.css'
-import 'element-plus/dist/index.css'
 import App from './App.vue'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 const app = createApp(App)

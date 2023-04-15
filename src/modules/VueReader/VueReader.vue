@@ -36,14 +36,20 @@
           <button type="button" class="tocAreaButton" @click="setLocation(item.href)">
             {{ item.label }}
             <!-- 展开 -->
-            <!-- <div class="expansion" v-if="item.subitems && item.subitems.length > 0"></div> -->
+            <div class="expansion" v-if="item.subitems && item.subitems.length > 0"
+              :style="{ transform: item.expansion ? 'rotate(180deg)' : 'rotate(0deg)' }"
+              @click.stop="item.expansion = !item.expansion"></div>
           </button>
           <!-- 二级目录 -->
           <template v-if="item.subitems && item.subitems.length > 0">
-            <button type="button" v-for="(subitem, index) in item.subitems" :key="index" class="tocAreaButton"
-              @click="setLocation(subitem.href)">
-              {{ "&nbsp;".repeat(4) + subitem.label }}
-            </button>
+            <Transition name="subitem">
+              <div v-show="item.expansion">
+                <button type="button" v-for="(subitem, index) in item.subitems" :key="index" class="tocAreaButton"
+                  @click="setLocation(subitem['href'])">
+                  {{ "&nbsp;".repeat(4) + subitem['label'] }}
+                </button>
+              </div>
+            </Transition>
           </template>
         </div>
       </div>
@@ -56,9 +62,14 @@
 import { ref, reactive, toRefs, computed } from "vue";
 import { Book } from 'epubjs'
 import EpubView from "../EpubView/EpubView.vue";
-type EpubViewInstance = InstanceType<typeof EpubView>
-
-const epubRef = ref<EpubViewInstance>()
+interface NavItem {
+  id: string,
+  href: string,
+  label: string,
+  subitems?: Array<NavItem>,
+  parent?: string,
+  expansion: boolean
+}
 
 interface Props {
   url: any,
@@ -67,13 +78,15 @@ interface Props {
   tocChanged?: (toc: Book['navigation']['toc']) => void
 }
 
+const epubRef = ref<InstanceType<typeof EpubView>>()
+
 const props = withDefaults(defineProps<Props>(), {
   showToc: true
 })
 const { title, tocChanged, url } = props
 
 interface EpubBook {
-  toc: Book['navigation']['toc'],
+  toc: Array<NavItem>,
   expandedToc: boolean
 }
 const book: EpubBook = reactive({
@@ -100,11 +113,10 @@ const toggleToc = () => {
   expandedToc.value = !expandedToc.value
 }
 
-const onTocChange = (_toc: Book['navigation']['toc']) => {
-  toc.value = _toc
+const onTocChange = (_toc) => {
+  toc.value = _toc.map(i => ({ ...i, expansion: false }))
   tocChanged && tocChanged(_toc)
 }
-
 
 const setLocation = (href: string | number) => {
   epubRef?.value?.setLocation(href);
@@ -173,6 +185,16 @@ const pre = () => {
   padding: 10px 0;
 }
 
+.tocArea::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+.tocArea::-webkit-scrollbar-thumb:vertical {
+  height: 5px;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
 .tocArea .tocAreaButton {
   user-select: none;
   appearance: none;
@@ -189,6 +211,7 @@ const pre = () => {
   box-sizing: border-box;
   outline: none;
   cursor: pointer;
+  position: relative;
 }
 
 .tocArea .tocAreaButton:hover {
@@ -199,6 +222,36 @@ const pre = () => {
   background: rgba(0, 0, 0, 0.1);
 }
 
+/* 二级目录 */
+.tocArea .tocAreaButton .expansion {
+  position: absolute;
+  cursor: pointer;
+  right: 12px;
+  top: 50%;
+  margin-top: -12px;
+}
+
+.subitem-enter-active,
+.subitem-leave-active {
+  transition: opacity 0 ease;
+}
+
+.subitem-enter-from,
+.subitem-leave-to {
+  opacity: 0;
+}
+
+.tocArea .tocAreaButton .expansion::after {
+  border-style: solid;
+  border-width: 0 2px 2px 0;
+  content: "";
+  display: inline-block;
+  padding: 3px;
+  transform: rotate(45deg);
+  vertical-align: middle;
+}
+
+/* tocButton */
 .tocButton {
   background: none;
   border: none;
@@ -212,7 +265,6 @@ const pre = () => {
   cursor: pointer;
 }
 
-/* tocButton */
 .tocButtonBar {
   position: absolute;
   width: 60%;
