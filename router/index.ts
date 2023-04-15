@@ -6,6 +6,7 @@ const routes: Array<RouteRecordRaw> = [
     { name: "library", path: '/library', component: () => import('comps/Library.vue') },
     { name: "reader", path: '/reader/:id?/:name?', component: () => import('comps/Reader.vue'), props: true },
     { name: "test", path: '/test', component: () => import('comps/Test.vue') },
+    { name: "demo", path: '/demo', component: () => import('comps/Demo.vue') },
 ]
 
 const router = createRouter({
