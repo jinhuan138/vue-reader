@@ -358,7 +358,7 @@ Pass options for this into epubJS in the prop `epubOptions`
 
 ```vue
 <template>
-    <div style="height: 100vh">
+    <div style="height: 50vh">
         <VueReader 
             url="/files/啼笑因缘.epub" 
             :epubOptions="{
