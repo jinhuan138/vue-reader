@@ -184,7 +184,7 @@ const pre = () => {
   background: #f2f2f2;
   padding: 10px 0;
 }
-
+/* 滚动条 */
 .tocArea::-webkit-scrollbar {
   width: 5px;
   height: 5px;
@@ -193,8 +193,8 @@ const pre = () => {
 .tocArea::-webkit-scrollbar-thumb:vertical {
   height: 5px;
   background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 0.5rem;
 }
-
 .tocArea .tocAreaButton {
   user-select: none;
   appearance: none;

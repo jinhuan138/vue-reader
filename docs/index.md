@@ -80,7 +80,7 @@ Saving the current page on storage is pretty simple, but we need to keep in mind
 ```vue
 <template>
     <div style="height: 50vh">
-        <VueReader :location="location" url="/files/啼笑因缘.epub" @update:location="locationChange"/>
+        <VueReader :location="location" url="/docs/files/啼笑因缘.epub" @update:location="locationChange"/>
     </div>
 </template>
 <script setup>
@@ -119,7 +119,7 @@ We store the epubjs rendition in a ref, and get the page numbers in the callback
 <template>
     <div style="height: 50vh">
         <VueReader 
-            url="/files/啼笑因缘.epub" 
+            url="/docs/files/啼笑因缘.epub" 
             :getRendition="getRendition"
             :tocChanged="tocChanged" 
             @update:location="locationChange">
@@ -186,7 +186,7 @@ Hooking into epubJS rendition object is the key for this also.
 ```vue
 <template>
     <div style="height: 50vh">
-        <VueReader url="/files/啼笑因缘.epub" :getRendition="getRendition">
+        <VueReader url="/docs/files/啼笑因缘.epub" :getRendition="getRendition">
         </VueReader>
         <div class="size">
             <button @click='changeSize(Math.max(80, size - 10))' class='reader-button'>-</button>
@@ -231,7 +231,7 @@ This is useful for when you want to set custom font families, custom background 
 <template>
     <div style="height:50vh">
         <VueReader 
-            url="/files/啼笑因缘.epub" 
+            url="/docs/files/啼笑因缘.epub" 
             :getRendition="getRendition">
         </VueReader>
     </div>
@@ -273,7 +273,7 @@ This shows how to hook into epubJS annotations object and let the user highlight
 <template>
     <div style="height: 50vh">
         <VueReader 
-            url="/files/啼笑因缘.epub" 
+            url="/docs/files/啼笑因缘.epub" 
             :getRendition="getRendition">
         </VueReader>
         <div class="selection">
@@ -368,7 +368,7 @@ Pass options for this into epubJS in the prop `epubOptions`
 <template>
     <div style="height: 50vh">
         <VueReader 
-            url="/files/啼笑因缘.epub" 
+            url="/docs/files/啼笑因缘.epub" 
             :epubOptions="{
             flow: 'scrolled',
             manager: 'continuous'}">
@@ -379,9 +379,75 @@ Pass options for this into epubJS in the prop `epubOptions`
 
 :::
 
+## speak the text
+
+:::demo speak the text
+
+```vue
+<template>
+    <div style="height: 100vh">
+        <VueReader url="/docs/files/啼笑因缘.epub" :getRendition="getRendition" />
+        <div style=" text-align: center">
+            <button class='reader-button' @click="speak('click')">
+                {{ isReading ? 'cancel' : 'speak' }}
+    		</button>
+         </div>
+    </div>
+</template>
+<script setup>
+import { nextTick, ref } from 'vue'
+
+let rendition = null, isAudioOn = false, text = null
+let isReading = ref(false)
+const getRendition = val => rendition = val
+
+const speak = (type) => {
+    if (type === 'click') isReading.value = !isReading.value
+    if (isReading.value) {
+        voice(text)
+    } else {
+        isAudioOn = false
+        window.speechSynthesis.cancel()
+    }
+}
+
+const voice = (text, rate = 1) => {
+    isAudioOn = true
+    const msg = new SpeechSynthesisUtterance()
+    msg.text = text;
+    msg.voice = window.speechSynthesis.getVoices()[0];
+    msg.rate = rate
+    window.speechSynthesis.speak(msg);
+    msg.onerror = (err) => {
+        console.log(err);
+    };
+    msg.onend = async (event) => {
+        if (!isReading.value && !isAudioOn) return
+        rendition.next()
+        speak()
+    };
+}
+
+nextTick(() => {
+    rendition?.hooks.content.register((contents, view) => {
+        let textContent = contents.document.body.textContent
+        textContent = textContent
+            .replace(/\s\s/g, "")
+            .replace(/\r/g, "")
+            .replace(/\n/g, "")
+            .replace(/\t/g, "")
+            .replace(/\f/g, "")
+        text = textContent
+    })
+})
+</script>
+```
+
+:::
+
 <style>
     .reader-button{
-        width: 35px;
+        width: 48px;
         height: 24px;
         border:1px solid #dcdfe6;
         border-radius:4px;
@@ -395,3 +461,4 @@ Pass options for this into epubJS in the prop `epubOptions`
         outline: none;
     }
 </style>
+

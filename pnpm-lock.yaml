@@ -40,7 +40,7 @@ specifiers:
   vitepress: 1.0.0-alpha.30
   vitepress-theme-demoblock: ^2.0.2
   vue: 3.2.44
-  vue-reader: ^1.1.0
+  vue-reader: ^1.1.1
   vue-router: '4'
 
 dependencies:
@@ -85,7 +85,7 @@ devDependencies:
   vitepress: registry.npmjs.org/vitepress/1.0.0-alpha.30_g772r5w5ng27elj5pzc7q7vnhy
   vitepress-theme-demoblock: registry.npmjs.org/vitepress-theme-demoblock/2.0.2_g772r5w5ng27elj5pzc7q7vnhy
   vue: registry.npmjs.org/vue/3.2.44
-  vue-reader: registry.npmjs.org/vue-reader/1.1.0
+  vue-reader: registry.npmjs.org/vue-reader/1.1.1
   vue-router: registry.npmjs.org/vue-router/4.1.6_vue@3.2.44
 
 packages:
@@ -6351,10 +6351,10 @@ packages:
       vue: registry.npmjs.org/vue/3.2.44
     dev: true
 
-  registry.npmjs.org/vue-reader/1.1.0:
-    resolution: {integrity: sha512-pZZ7MCE/mzBP2+k3MauYWtf8/5uhuhlBuQL6RTgq+H4uAxrqThRYY7J61TXIEy0tODlhDSLs7AwmdLwb1eAfNg==, registry: https://registry.npmjs.com/, tarball: https://registry.npmjs.org/vue-reader/-/vue-reader-1.1.0.tgz}
+  registry.npmjs.org/vue-reader/1.1.1:
+    resolution: {integrity: sha512-tJjJEvGivgskcCfWxJz34294ZiYRZI+96RYb0SLWuvyG+fs+zwueGSAebFimzC2+lxtGyKrdajmeH2U0za3F3A==, registry: https://registry.npmjs.com/, tarball: https://registry.npmjs.org/vue-reader/-/vue-reader-1.1.1.tgz}
     name: vue-reader
-    version: 1.1.0
+    version: 1.1.1
     dependencies:
       epubjs: registry.npmjs.org/epubjs/0.3.93
     dev: true

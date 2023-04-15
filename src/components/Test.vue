@@ -31,7 +31,7 @@ const voice = (text, rate = 1) => {
         console.log(err);
     };
     msg.onend = async (event) => {
-        // this.handleAudio();
+        rendition.next()
     };
 }
 
