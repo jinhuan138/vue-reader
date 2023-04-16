@@ -1,6 +1,6 @@
 <template>
-    <div style="height: 100vh">
-        <VueReader :location="location" :url="url" @update:location="locationChange" :getRendition="val => rendition = val"
+    <div style="height: 90vh">
+        <VueReader :location="location" :url="url" @update:location="locationChange" :getRendition="getRendition"
             :tocChanged="val => toc = val">
         </VueReader>
         <div class="page">
@@ -11,11 +11,15 @@
 <script setup>
 import { VueReader } from "vue-reader";
 import { db } from "../utils/db";
-import { useRoute } from 'vue-router'
-import { ref, computed, onMounted, markRaw } from "vue";
+// import { useRoute } from 'vue-router'
+import { ref, computed, onMounted } from "vue";
+import { useData ,useRoute} from 'vitepress'
+
 
 const route = useRoute()
-const { name, id } = route.params
+console.log(route)
+const { name, id } = route.query
+console.log(name)
 const defaultBook = '啼笑因缘'
 const book = name ? name.replace(".epub", '') : defaultBook
 const url = computed(() => {
@@ -32,14 +36,17 @@ const url = computed(() => {
     }
 })
 onMounted(async () => {
-    console.log(rendition)
+
+    console.log(route)
+    console.log(useData())
     // const res = await db.books.get({
     //     id: 2
     // })
     // console.log(url)
 })
 
-const rendition = null
+let rendition = null
+const getRendition = val => rendition = val
 const location = ref(2)
 const toc = ref([])
 const page = ref('')
@@ -64,18 +71,18 @@ const locationChange = (epubcifi) => {
     //翻页
     if (epubcifi) {
         const { displayed, href } = rendition.location.start
-        const { cfi } = rendition.end
+        const { cfi } = rendition.location.end
         if (href !== 'titlepage.xhtml') {
             const label = getLabel(toc.value, href)
             page.value = `${displayed.page}/${displayed.total} ${label}`
         }
     }
     //存储
-    if (!firstRenderDone.value) {
-        location.value = localStorage.getItem(book)
-        return firstRenderDone.value = true
-    }
-    localStorage.setItem(book, epubcifi)
+    // if (!firstRenderDone.value) {
+    //     location.value = localStorage.getItem(book)
+    //     return firstRenderDone.value = true
+    // }
+    // localStorage.setItem(book, epubcifi)
 }
 </script>
   

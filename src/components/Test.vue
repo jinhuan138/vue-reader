@@ -1,89 +1,62 @@
 <template>
     <div style="height: 100vh">
-        <VueReader :location="location" :url="url" @update:location="locationChange" :getRendition="val => rendition = val"
-            :tocChanged="val => toc = val">
+        <VueReader id="readerRef" :epubOptions='{
+            allowPopups: true,
+                allowScriptedContent: true,
+                    script: "/node_modules/medium-zoom/dist/medium-zoom.min.js"
+        }' :location="location" :url="url" :getRendition="getRendition" :tocChanged="val => toc = val">
         </VueReader>
     </div>
 </template>
 <script setup>
 // import { VueReader } from "/lib/index.min.js";
-import VueReader from "@/modules/VueReader/VueReader.vue";
+import VueReader from "@/modules/index";
 import mediumZoom from 'medium-zoom'
-import { ref, nextTick, computed, markRaw } from "vue";
-
-const book = 'alice'
+import { ref, nextTick, computed } from "vue";
+const readerRef = ref(null)
+const book = 'alice' //alice,啼笑因缘
 const url = ref(`/files/${book}.epub`)
-let rendition = markRaw({})
-let epubBook = markRaw({})
+let rendition = null
 const location = ref(null)
-let toc = markRaw([])
+const getRendition = val => rendition = val
+const toc = ref([])
 const page = ref('')
-const firstRenderDone = ref(false)
 
-//朗读
-const voice = (text, rate = 1) => {
-    const msg = new SpeechSynthesisUtterance()
-    msg.text = text;
-    sg.voice = window.speechSynthesis.getVoices()[0];
-    msg.rate = rate
-    window.speechSynthesis.speak(msg);
-    msg.onerror = (err) => {
-        console.log(err);
-    };
-    msg.onend = async (event) => {
-        rendition.next()
-    };
-}
+nextTick(async () => {
+    // const locations = await rendition.book.locations.generate()
+    // console.log('locations', locations)
+    const { book } = rendition
+    // rendition.on('relocated', function (locations) {
+       
+    //     let progress = book.locations.percentageFromCfi(locations.start.cfi);
+    //     console.log('Progress:', progress); // The % of how far along in the book you are
+    //     console.log('Current Page:', book.locations.locationFromCfi(locations.start.cfi))
+    //     console.log('Total Pages:', book.locations.total);
+    // });
+    book.ready.then((book) => {
+        console.log(book)
+        // return book.locations.generate();
+    }).then(locations => {
+        console.log("Total Pages?: ", locations.length);
+    });
+    rendition.hooks.content.register(async (contents, view) => {
+        console.log(rendition.currentLocation())
+        // console.log(toc.value)
+        const { document } = contents
 
-nextTick(() => {
-    rendition.hooks.content.register((contents, view) => {
-        // let msg = new SpeechSynthesisUtterance()
-        // let text = contents.document.body.textContent
-        // text = text
-        //     .replace(/\s\s/g, "")
-        //     .replace(/\r/g, "")
-        //     .replace(/\n/g, "")
-        //     .replace(/\t/g, "")
-        //     .replace(/\f/g, "");
-        //图片放大
-        // console.log(contents.document.querySelectorAll('img'))
-        mediumZoom(contents.document.querySelectorAll('img'))
+        const images = [...document.querySelectorAll('img'), ...document.querySelectorAll('image')]
+        // console.log(images)
+        // console.log(readerRef.value)
+        contents.window.mediumZoom(images, {
+            // // background: '#BADA55',
+            // scrollOffset: 0,
+            // container: 'body',
+            // template: "#reader",
+            // // template: '#zoom-template',
+        })
     })
 })
 
-const getLabel = (toc, href) => {
-    let label = 'n/a';
-    toc.some(item => {
-        if (item.subitems.length > 0) {
-            const subChapter = getLabel(item.subitems, href);
-            if (subChapter !== 'n/a') {
-                label = subChapter
-                return true
-            }
-        } else if (item.href.includes(href)) {
-            label = item.label
-            return true
-        }
-    })
-    return label;
-}
-const locationChange = (epubcifi) => {
-    //翻页
-    if (epubcifi) {
-        const { displayed, href } = rendition.location.start
-        const { cfi } = rendition.location.end
-        if (href !== 'titlepage.xhtml') {
-            const label = getLabel(toc, href)
-            page.value = `${displayed.page}/${displayed.total} ${label}`
-        }
-    }
-    //存储
-    if (!firstRenderDone.value) {
-        location.value = localStorage.getItem(book)
-        return firstRenderDone.value = true
-    }
-    localStorage.setItem(book, epubcifi)
-}
 </script>
   
 <style scoped>

@@ -17,7 +17,7 @@
                         <p v-if="book.language">语言: {{ book.language }}</p>
                     </div> -->
                     <!-- 主体 -->
-                    <router-link :to="{ name: 'reader', params: { name: book.url } }" slot="reference">
+                    <router-link :to="{ name: 'reader', query: { name: book.url } }" slot="reference">
                         <el-card ref="card" shadow="hover" class='box-card' :body-style="{ padding: '0px' }">
                             <el-image :src="coverPath(book.url)" fit='fill' class='el-image'>
                                 <div slot="error" class="image-slot">

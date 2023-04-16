@@ -3,7 +3,7 @@ import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 
 const routes: Array<RouteRecordRaw> = [
     { name: "library", path: '/library', component: () => import('comps/Library.vue') },
-    { name: "reader", path: '/reader/:id?/:name?', component: () => import('comps/Reader.vue'), props: true },
+    { name: "reader", path: '/reader', component: () => import('comps/Reader.vue') },
     { name: "test", path: '/test', component: () => import('comps/Test.vue') },
 ]
 
