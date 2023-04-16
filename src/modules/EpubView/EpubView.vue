@@ -110,8 +110,8 @@ const registerEvents = () => {
     if (rendition) {
         rendition.on('rendered', (e: Event, iframe: any) => {
             iframe?.iframe?.contentWindow.focus()
-            clickListener(iframe?.document, rendition as Rendition, flipPage);
-            // selectListener(iframe.document, rendition, toggleBuble);
+            // clickListener(iframe?.document, rendition as Rendition, flipPage);
+            // // selectListener(iframe.document, rendition, toggleBuble);
             swipListener(iframe.document, flipPage);
             wheelListener(iframe.document, flipPage);
             keyListener(iframe.document, flipPage);

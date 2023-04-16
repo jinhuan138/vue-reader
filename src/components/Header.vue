@@ -1,14 +1,14 @@
 <template>
     <el-header height="40px">
         <span id="left">
-            <el-upload :auto-upload="false" v-show="false" ref="input" title="导入图书" accept=".epub" :on-change="selectFile"
+            <el-upload :auto-upload="false" v-show="false" ref="input" accept=".epub" :on-change="selectFile"
                 :multiple="false">
             </el-upload>
             <el-button size="small" :icon="Plus" circle @click="select" title="导入图书"></el-button>
             <!-- <input type="file" name="select" :multiple="false" :visible="false" accept=".epub" v-show="false" ref="input"
                 :onchange="onchange" /> -->
         </span>
-        <span id="center">vue-reader</span>
+        <!-- <span id="center">vue-reader</span> -->
         <span id="right">
             <el-button size="small" :icon="Minus" circle />
             <el-button size="small" :icon="FullScreen" circle />

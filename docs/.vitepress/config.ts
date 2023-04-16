@@ -15,6 +15,9 @@ export default defineConfig({
         }
     },
     themeConfig: {
+        nav: [
+            { text: "library", link: "/guild/library" },
+        ],
     },
     vue: {
     },
@@ -29,6 +32,7 @@ export default defineConfig({
         resolve: {
             alias: [
                 { find: '@', replacement: resolve(__dirname, '../../src') },
+                { find: '/', replacement: resolve(__dirname, '../../') },
                 { find: 'comps', replacement: resolve(__dirname, '../../src/components') },
             ]
         }

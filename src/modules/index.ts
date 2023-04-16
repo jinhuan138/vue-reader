@@ -4,3 +4,5 @@ import VueReader from './VueReader/VueReader.vue'
 export {
     EpubView, VueReader
 }
+
+export default VueReader
