@@ -13,8 +13,8 @@ And in your vue-component...
 
 ```vue
 <template>
-   <div style="height: 50vh">
-      <VueReader url="/docs/files/啼笑因缘.epub"/>
+   <div style='height: 100vh'>
+      <VueReader url='/docs/files/啼笑因缘.epub'/>
    </div>
 </template>
 ```
@@ -79,12 +79,12 @@ Saving the current page on storage is pretty simple, but we need to keep in mind
 
 ```vue
 <template>
-    <div style="height: 50vh">
-        <VueReader :location="location" url="/docs/files/啼笑因缘.epub" @update:location="locationChange"/>
+    <div style='height: 100vh'>
+        <VueReader :location='location' url='/docs/files/啼笑因缘.epub' @update:location='locationChange'/>
     </div>
 </template>
 <script setup>
-import { ref } from 'vue';
+import { ref } from 'vue'
 
 const location = ref(null)
 const firstRenderDone = ref(false)
@@ -117,14 +117,14 @@ We store the epubjs rendition in a ref, and get the page numbers in the callback
 
 ```vue
 <template>
-    <div style="height: 50vh">
+    <div style='height: 100vh'>
         <VueReader 
-            url="/docs/files/啼笑因缘.epub" 
-            :getRendition="getRendition"
-            :tocChanged="tocChanged" 
-            @update:location="locationChange">
+            url='/docs/files/啼笑因缘.epub' 
+            :getRendition='getRendition'
+            :tocChanged='tocChanged' 
+            @update:location='locationChange'>
         </VueReader>
-        <div class="page">
+        <div class='page'>
             {{ page }}
         </div>
     </div>
@@ -185,10 +185,10 @@ Hooking into epubJS rendition object is the key for this also.
 
 ```vue
 <template>
-    <div style="height: 50vh">
-        <VueReader url="/docs/files/啼笑因缘.epub" :getRendition="getRendition">
+    <div style='height: 100vh'>
+        <VueReader url='/docs/files/啼笑因缘.epub' :getRendition='getRendition'>
         </VueReader>
-        <div class="size">
+        <div class='size'>
             <button @click='changeSize(Math.max(80, size - 10))' class='reader-button'>-</button>
             <span>Current size: {{ size }}%</span>
             <button @click='changeSize(Math.min(130, size + 10))' class='reader-button'>+</button>
@@ -229,10 +229,10 @@ This is useful for when you want to set custom font families, custom background 
 
 ```vue
 <template>
-    <div style="height:50vh">
+    <div style='height:100vh'>
         <VueReader 
-            url="/docs/files/啼笑因缘.epub" 
-            :getRendition="getRendition">
+            url='/docs/files/啼笑因缘.epub' 
+            :getRendition='getRendition'>
         </VueReader>
     </div>
 </template>
@@ -271,18 +271,18 @@ This shows how to hook into epubJS annotations object and let the user highlight
 
 ```vue
 <template>
-    <div style="height: 50vh">
+    <div style='height: 100vh'>
         <VueReader 
-            url="/docs/files/啼笑因缘.epub" 
-            :getRendition="getRendition">
+            url='/docs/files/啼笑因缘.epub' 
+            :getRendition='getRendition'>
         </VueReader>
-        <div class="selection">
+        <div class='selection'>
             Selection:
             <ul>
-                <li v-for="({ text, cfiRange }, index) in selections" :key="index">
+                <li v-for='({ text, cfiRange }, index) in selections' :key='index'>
                     {{ text || '' }}
-                    <button @click="rendition.display(cfiRange)" class='reader-button'>show</button>
-                    <button @click="remove(cfiRange, index)" class='reader-button'>x</button>
+                    <button @click='rendition.display(cfiRange)' class='reader-button'>show</button>
+                    <button @click='remove(cfiRange, index)' class='reader-button'>x</button>
                 </li>
             </ul>
         </div>
@@ -349,9 +349,9 @@ EpubJS will try to parse the epub-file you pass to it, but if the server send wr
 
 ```vue
 <template>
-    <div style="height: 100vh">
+    <div style='height: 100vh'>
         <VueReader 
-            url="/my-epub-service" 
+            url='/my-epub-service' 
             :epubInitOptions="{openAs: 'epub'}">
         </VueReader>
     </div>
@@ -366,12 +366,12 @@ Pass options for this into epubJS in the prop `epubOptions`
 
 ```vue
 <template>
-    <div style="height: 50vh">
+    <div style='height: 100vh'>
         <VueReader 
-            url="/docs/files/啼笑因缘.epub" 
-            :epubOptions="{
-            flow: 'scrolled',
-            manager: 'continuous'}">
+            url='/docs/files/啼笑因缘.epub' 
+            :epubOptions='{
+            flow: "scrolled",
+            manager: "continuous"}'>
         </VueReader>
     </div>
 </template>
@@ -385,21 +385,33 @@ Pass options for this into epubJS in the prop `epubOptions`
 
 ```vue
 <template>
-    <div style="height: 50vh">
-        <VueReader url="/docs/files/啼笑因缘.epub" :getRendition="getRendition" />
-        <div style=" text-align: center">
-            <button class='reader-button' @click="speak('click')">
+    <div style='height: 100vh'>
+        <VueReader url='/docs/files/啼笑因缘.epub' :getRendition='getRendition' />
+        <div style='text-align: center'>
+            <button class='reader-button' @click='speak("click")'>
                 {{ isReading ? 'cancel' : 'speak' }}
     		</button>
          </div>
     </div>
 </template>
 <script setup>
-import { nextTick, ref } from 'vue'
+import { ref } from 'vue'
 
 let rendition = null, isAudioOn = false, text = null
 let isReading = ref(false)
-const getRendition = val => rendition = val
+const getRendition = (val)=>{
+    rendition = val
+    rendition.hooks.content.register((contents, view) => {
+        let textContent = contents.document.body.textContent
+        textContent = textContent
+            .replace(/\s\s/g, '')
+            .replace(/\r/g, '')
+            .replace(/\n/g, '')
+            .replace(/\t/g, '')
+            .replace(/\f/g, '')
+        text = textContent
+    })
+} 
 
 const speak = (type) => {
     if (type === 'click') isReading.value = !isReading.value
@@ -428,18 +440,6 @@ const voice = (text, rate = 1) => {
     };
 }
 
-nextTick(() => {
-    rendition?.hooks.content.register((contents, view) => {
-        let textContent = contents.document.body.textContent
-        textContent = textContent
-            .replace(/\s\s/g, "")
-            .replace(/\r/g, "")
-            .replace(/\n/g, "")
-            .replace(/\t/g, "")
-            .replace(/\f/g, "")
-        text = textContent
-    })
-})
 </script>
 ```
 
@@ -451,17 +451,15 @@ nextTick(() => {
 npm install medium-zoom --save
 ```
 
-:::demo zoom the image
-
 ```vue
 <template>
-    <div style="height: 50vh">
+    <div style='height: 100vh'>
         <VueReader 
             :epubOptions='{
             allowPopups: true,
             allowScriptedContent: true,
             script: "/node_modules/medium-zoom/dist/medium-zoom.min.js"}' 
-            url="/files/alice.epub" :getRendition="getRendition">
+            url='/files/啼笑因缘.epub' :getRendition='getRendition'>
         </VueReader>
     </div>
 </template>
@@ -477,6 +475,65 @@ nextTick(async () => {
         contents.window.mediumZoom(images)
     })
 })
+</script>
+```
+
+## get book information
+
+::: demo get book information
+
+```vue
+<template>
+    <div style='height: 100vh'>
+        <VueReader :epubOptions='{
+            allowPopups: true,
+            allowScriptedContent: true,
+        }' url='/files/啼笑因缘.epub' :getRendition='getRendition'>
+        </VueReader>
+    </div>
+</template>
+<script setup>
+let rendition = null, book = null
+const image2Base64 = (url) => new Promise((resolve, reject) => {
+    if (!url) return resolve('');
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.src = url;
+    img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+        ctx?.drawImage(img, 0, 0);
+        const data = canvas.toDataURL();
+        resolve(data);
+    };
+    img.onerror = () => {
+        reject('');
+    };
+})
+const getRendition = (val) => {
+    rendition = val
+    book = rendition.book
+    book.ready.then(() => {
+        book.loaded.metadata.then(async (metadata) => {
+            const cover = await book.coverUrl()
+            const { title, identifier, creator, publisher, language, pubdate, description, modified_date } = metadata
+         	 const  bookDetail = {
+                identifier,//id
+                title,//标题
+                creator,//作者
+                publisher,//出版社
+                language,//语言
+                pubdate,//出版日期
+                modified_date,//修改日期
+                description,//介绍
+                cover: await image2Base64(cover),//封面
+            }
+            console.log(bookDetail)
+        })
+    })
+}
 </script>
 ```
 

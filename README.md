@@ -14,12 +14,12 @@ And in your vue-component...
 
 ```vue
 <template>
-   <div style="height: 100vh">
-      <VueReader url="/files/啼笑因缘.epub"/>
+   <div style='height: 100vh'>
+      <VueReader url='/files/啼笑因缘.epub'/>
    </div>
 </template>
 <script setup>
-import { VueReader } from "vue-reader"
+import { VueReader } from 'vue-reader'
 </script>
 ```
 
@@ -80,12 +80,12 @@ Saving the current page on storage is pretty simple, but we need to keep in mind
 
 ```vue
 <template>
-    <div style="height: 100vh">
-        <VueReader url="/files/啼笑因缘.epub" :location="location" @update:location="locationChange"/>
+    <div style='height: 100vh'>
+        <VueReader url='/files/啼笑因缘.epub" :location="location' @update:location='locationChange'/>
     </div>
 </template>
 <script setup>
-import { ref } from 'vue';
+import { ref } from 'vue'
 
 const location = ref(null)
 const firstRenderDone = ref(false)
@@ -114,21 +114,21 @@ We store the epubjs rendition in a ref, and get the page numbers in the callback
 
 ```vue
 <template>
-    <div style="height: 100vh">
+    <div style='height: 100vh'>
         <VueReader 
-            url="/files/啼笑因缘.epub" 
-            :getRendition="getRendition"
+            url='/files/啼笑因缘.epub' 
+            :getRendition='getRendition'
             :tocChanged="tocChanged" 
-            @update:location="locationChange">
+            @update:location='locationChange'>
         </VueReader>
-        <div class="page">
+        <div class='page'>
             {{ page }}
         </div>
     </div>
 </template>
 <script setup>
-import { ref } from "vue";
-import { VueReader } from "vue-reader"
+import { ref } from 'vue'
+import { VueReader } from 'vue-reader'
 
 let rendition = null, toc = []
 const page = ref('')
@@ -183,10 +183,10 @@ Hooking into epubJS rendition object is the key for this also.
 
 ```vue
 <template>
-    <div style="height: 100vh">
-        <VueReader url="/files/啼笑因缘.epub" :getRendition="getRendition">
+    <div style='height: 100vh'>
+        <VueReader url='/files/啼笑因缘.epub' :getRendition='getRendition'>
         </VueReader>
-        <div class="size">
+        <div class='size'>
             <button @click='changeSize(Math.max(80, size - 10))'>-</button>
             <span>Current size: {{ size }}%</span>
             <button @click='changeSize(Math.min(130, size + 10))'>+</button>
@@ -194,8 +194,8 @@ Hooking into epubJS rendition object is the key for this also.
     </div>
 </template>
 <script setup>
-import { VueReader } from "vue-reader"
-import { ref } from "vue"
+import { VueReader } from 'vue-reader'
+import { ref } from 'vue'
 
 let rendition = null
 const size = ref(100)
@@ -224,15 +224,15 @@ This is useful for when you want to set custom font families, custom background 
 
 ```vue
 <template>
-    <div style="height: 100vh">
+    <div style='height: 100vh'>
         <VueReader 
-            url="/files/啼笑因缘.epub" 
-            :getRendition="getRendition">
+            url='/files/啼笑因缘.epub' 
+            :getRendition='getRendition'>
         </VueReader>
     </div>
 </template>
 <script setup>
-import { VueReader } from "vue-reader";
+import { VueReader } from 'vue-reader'
 
 let rendition = null
 const getRendition = (val) => {
@@ -240,7 +240,7 @@ const getRendition = (val) => {
     rendition.themes.register('custom', {
         "*": {
             color: '#fff',
-            'background-color': "#252525",
+            'background-color': '#252525',
         },
         'image': {
             border: '1px solid red'
@@ -263,26 +263,26 @@ This shows how to hook into epubJS annotations object and let the user highlight
 
 ```vue
 <template>
-    <div style="height: 100vh">
+    <div style='height: 100vh'>
         <VueReader 
-            url="/files/啼笑因缘.epub" 
-            :getRendition="getRendition">
+            url='/files/啼笑因缘.epub' 
+            :getRendition='getRendition'>
         </VueReader>
-        <div class="selection">
+        <div class='selection'>
             Selection:
             <ul>
-                <li v-for="({ text, cfiRange }, index) in selections" :key="index">
+                <li v-for='({ text, cfiRange }, index) in selections' :key="index">
                     {{ text || '' }}
-                    <button @click="rendition.display(cfiRange)">show</button>
-                    <button @click="remove(cfiRange, index)">x</button>
+                    <button @click='rendition.display(cfiRange)'>show</button>
+                    <button @click='remove(cfiRange, index)'>x</button>
                 </li>
             </ul>
         </div>
     </div>
 </template>
 <script setup>
-import { VueReader } from "vue-reader";
-import { ref, onUnmounted } from "vue";
+import { VueReader } from 'vue-reader'
+import { ref, onUnmounted } from 'vue'
 
 let rendition = null
 const selections = ref([])
@@ -340,15 +340,15 @@ EpubJS will try to parse the epub-file you pass to it, but if the server send wr
 
 ```vue
 <template>
-    <div style="height: 100vh">
+    <div style='height: 100vh'>
         <VueReader 
-            url="/my-epub-service" 
-            :epubInitOptions="{openAs: 'epub'}">
+            url='/my-epub-service'
+            :epubInitOptions='{openAs: "epub"}'>
         </VueReader>
     </div>
 </template>
 <script setup>
-import { VueReader } from "vue-reader";
+import { VueReader } from 'vue-reader'
 </script>
 ```
 
@@ -358,17 +358,17 @@ Pass options for this into epubJS in the prop `epubOptions`
 
 ```vue
 <template>
-    <div style="height: 50vh">
+    <div style='height: 50vh'>
         <VueReader 
-            url="/files/啼笑因缘.epub" 
-            :epubOptions="{
-            flow: 'scrolled',
-            manager: 'continuous'}">
+            url='/files/啼笑因缘.epub' 
+            :epubOptions='{
+            flow: "scrolled",
+            manager: "continuous"}'>
         </VueReader>
     </div>
 </template>
 <script setup>
-import { VueReader } from "vue-reader";
+import { VueReader } from 'vue-reader'
 </script>
 ```
 
