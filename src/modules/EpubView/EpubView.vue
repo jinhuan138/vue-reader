@@ -15,7 +15,6 @@
 import { ref, onMounted, onUnmounted, toRefs, watch } from "vue";
 import ePub, { Book, Rendition, Contents } from 'epubjs';
 import { clickListener, swipListener, wheelListener, keyListener } from '../utils/listener/listener';
-// import Vibrant from 'node-vibrant/dist/vibrant'
 
 interface Props {
     url: any,  // string | ArrayBuffer
@@ -46,7 +45,6 @@ const toc = ref<Book['navigation']['toc']>([])
 const isLoaded = ref(false)
 let book: null | Book = null
 let rendition: null | Rendition = null;
-// let bookDetail = {}
 
 const initBook = async () => {
     if (book) book.destroy()
@@ -58,25 +56,6 @@ const initBook = async () => {
             toc.value = _toc
             tocChanged && tocChanged(_toc)
         });
-        // book.loaded.metadata.then(async (metadata) => {
-        //     const cover = await book.coverUrl()
-        //     const palette = await Vibrant.from(cover).getPalette()
-        //     const { title, identifier, creator, publisher, language, pubdate, description, modified_date } = metadata
-        //     bookDetail = {
-        //         identifier,//id
-        //         title,//标题
-        //         creator,//作者
-        //         publisher,//出版社
-        //         language,//语言
-        //         pubdate,//出版日期
-        //         modified_date,//修改日期
-        //         description,//介绍
-        //         cover,//封面
-        //         bgColorFromCover: palette.DarkVibrant.hex,//主题色
-        //     }
-        //     console.log(bookDetail)
-        // });
-        // ;
     });
     initReader()
 };
