@@ -312,9 +312,7 @@ const getRendition = (val) => {
             background: 'orange'
         }
     })
-    if (rendition) {
-        rendition.on('selected', setRenderSelection)
-    }
+    rendition.on('selected', setRenderSelection)
 }
 
 const remove = (cfiRange, index) => {

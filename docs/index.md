@@ -323,9 +323,7 @@ const getRendition = (val) => {
             background: 'orange'
         }
     })
-    if (rendition) {
-        rendition.on('selected', setRenderSelection)
-    }
+    rendition.on('selected', setRenderSelection)
 }
 
 const remove = (cfiRange, index) => {
@@ -389,7 +387,7 @@ Pass options for this into epubJS in the prop `epubOptions`
 
 :::
 
-## speak the text
+## Speak the text
 
 :::demo speak the text
 
@@ -467,8 +465,38 @@ const voice = (text, rate = 1) => {
 
 :::
 
+## Zoom the image
 
-## get book information
+::: demo zoom the image
+
+```vue
+<template>
+    <div style='height: 100vh'>
+        <VueReader :epubOptions='{
+            allowPopups: true,
+            allowScriptedContent: true,
+            script: "https://cdn.jsdelivr.net/npm/medium-zoom@1.0.8/dist/medium-zoom.min.js"
+        }'
+            url='/docs/files/alice.epub' :getRendition='getRendition'>
+        </VueReader>
+    </div>
+</template>
+<script setup>
+let rendition = null
+const getRendition = (val) => {
+    rendition = val
+    rendition.hooks.content.register((contents, view) => {
+        const { document } = contents
+        const images = [...document.querySelectorAll('img'), ...document.querySelectorAll('image')]
+        contents.window.mediumZoom(images)
+    })
+} 
+</script>
+```
+
+:::
+
+## Get book information
 
 ::: demo get book information
 
