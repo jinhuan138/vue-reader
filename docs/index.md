@@ -502,13 +502,25 @@ const getRendition = (val) => {
 
 ```vue
 <template>
-    <VueReader 
-       v-show='false'
-       url='/docs/files/啼笑因缘.epub' :getRendition='getRendition'>      
-	</VueReader>
+    <VueReader v-show='false' url='/docs/files/啼笑因缘.epub' :getRendition='getRendition'>
+    </VueReader>
+    <div v-if='information' style='color: #000'>
+        <img :src='information.cover' :alt='information.title' style="width: 100px">
+        <p>标题:{{ information.title }}</p>
+        <p>作者:{{ information.creator }}</p>
+        <p>出版社:{{ information.publisher }}</p>
+        <p>语言:{{ information.language }}</p>
+        <p>出版日期:{{ information.pubdate }}</p>
+        <p>修改日期:{{ information.modified_date }}</p>
+        <p>介绍:{{ information.description }}</p>
+    </div>
 </template>
 <script setup>
+import { ref } from 'vue'
+
 let rendition = null, book = null
+const information = ref(null)
+
 const image2Base64 = (url) => new Promise((resolve, reject) => {
     if (!url) return resolve('');
     const img = new Image();
@@ -527,29 +539,59 @@ const image2Base64 = (url) => new Promise((resolve, reject) => {
         reject('');
     };
 })
+
 const getRendition = (val) => {
     rendition = val
     book = rendition.book
     book.ready.then(() => {
         book.loaded.metadata.then(async (metadata) => {
             const cover = await book.coverUrl()
-            const { title, identifier, creator, publisher, language, pubdate, description, modified_date } = metadata
-         	 const  information = {
-                identifier,//id
-                title,//标题
-                creator,//作者
-                publisher,//出版社
-                language,//语言
-                pubdate,//出版日期
-                modified_date,//修改日期
-                description,//介绍
-                cover: await image2Base64(cover),//封面
-            }
-            console.log('book',information)
+            information.value = { ...metadata, cover: await image2Base64(cover) }
         })
     })
 }
 </script>
+```
+
+:::
+
+## Input file
+
+::: demo input file
+
+```vue
+<template>
+    <div style='position: relative' :style='{ height:url ? "100vh" : "50px" }'>
+        <div style='height: 100vh' v-if="url">
+            <VueReader :url='url' :title='title' />
+        </div>
+        <input type="file" :multiple="false" accept=".epub" :onchange="onchange" class="input">
+    </div>
+</template>
+<script setup>
+import { ref } from 'vue'
+
+const url = ref(null), title = ref('')
+const onchange = (e) => {
+    const file = e.target.files[0];
+    const { name } = file
+    title.value = name.replace('.epub', '')
+    if (window.FileReader) {
+        var reader = new FileReader();
+        reader.onloadend = e => url.value = reader.result
+        reader.readAsArrayBuffer(file);
+    }
+}
+</script>
+<style>
+.input {
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+    left: 1rem;
+    z-index: 1;
+}
+</style>
 ```
 
 :::

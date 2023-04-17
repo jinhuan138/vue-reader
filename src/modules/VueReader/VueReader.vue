@@ -12,7 +12,7 @@
         <div class="titleArea">{{ bookName }}</div>
       </slot>
       <!-- 阅读 -->
-      <epub-view ref="epubRef" v-bind="$attrs" :url="url" :tocChanged="onTocChange">
+      <epub-view ref="epubRef" v-bind="$attrs" :url="props.url" :tocChanged="onTocChange">
         <template #loadingView>
           <slot name="loadingView">
             <div class="loadingView">
@@ -83,7 +83,7 @@ const epubRef = ref<InstanceType<typeof EpubView>>()
 const props = withDefaults(defineProps<Props>(), {
   showToc: true
 })
-const { title, tocChanged, url } = props
+const { title, tocChanged } = props
 
 interface EpubBook {
   toc: Array<NavItem>,
@@ -100,9 +100,9 @@ const bookName = computed(() => {
     return title
   } else {
     let title = ''
-    if (typeof (url) === 'string' && url.endsWith('.epub')) {
-      const num = url.lastIndexOf('/') + 1
-      const name = url.substring(num)
+    if (typeof (props.url.value) === 'string' && props.url.value.endsWith('.epub')) {
+      const num = props.url.value.lastIndexOf('/') + 1
+      const name = props.url.value.substring(num)
       title = name.replace(".epub", '')
     }
     return title

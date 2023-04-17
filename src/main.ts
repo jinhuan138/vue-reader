@@ -1,5 +1,5 @@
 //reference
-//https://github.com/troyeguo/koodo-reader
+// 
 //https://www.npmjs.com/package/react-reader
 //https://github.com/janglee123/eplee
 //https://github.com/weijan-vscode/vscode-epub-viewer.git
