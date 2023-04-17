@@ -27,7 +27,7 @@ import { VueReader } from 'vue-reader'
 
 | **Name** | **Description**         | **Type**               | **Default** |
 | -------- | ----------------------- | ---------------------- | ----------- |
-| url      | book url or arrayBuffer | `string`|`ArrayBuffer` | —           |
+| url      | book url or arrayBuffer | `string`|`ArrayBuffer` |— |
 | title    | the title of the book   | `string`               | —           |
 | showToc  | whether to show the toc | `boolean`              | true        |
 
@@ -46,7 +46,7 @@ import { VueReader } from 'vue-reader'
 | url                | the path or arrayBuffer of the book                          | `string`                      | —           |
 | location           | set / update location of the epub                            | `string`/`number`             | —           |
 | tocChanged         | when the reader has parsed the book you will receive an array of the chapters | `function(toc)`               | —           |
-| handleKeyPress     | when press the key                                           | `function()`                  |             |
+| handleKeyPress     | when press the key                                           | `function(event)`             |             |
 | handleTextSelected | when select text                                             | `function(cfiRange,contents)` |             |
 | epubInitOptions    | pass custom properties to the epub init function, see [epub.js](http://epubjs.org/documentation/0.3/#epub) | `object`                      | —           |
 | epubOptions        | pass custom properties to the epub rendition, see [epub.js's book.renderTo function](http://epubjs.org/documentation/0.3/#rendition) | `object`                      | —           |
@@ -121,9 +121,9 @@ We store the epubjs rendition in a ref, and get the page numbers in the callback
             :tocChanged="tocChanged" 
             @update:location='locationChange'>
         </VueReader>
-        <div class='page'>
-            {{ page }}
-        </div>
+    </div>
+    <div class='page'>
+        {{ page }}
     </div>
 </template>
 <script setup>
@@ -186,11 +186,11 @@ Hooking into epubJS rendition object is the key for this also.
     <div style='height: 100vh'>
         <VueReader url='/files/啼笑因缘.epub' :getRendition='getRendition'>
         </VueReader>
-        <div class='size'>
-            <button @click='changeSize(Math.max(80, size - 10))'>-</button>
-            <span>Current size: {{ size }}%</span>
-            <button @click='changeSize(Math.min(130, size + 10))'>+</button>
-        </div>
+    </div>
+    <div class='size'>
+        <button @click='changeSize(Math.max(80, size - 10))'>-</button>
+        <span>Current size: {{ size }}%</span>
+        <button @click='changeSize(Math.min(130, size + 10))'>+</button>
     </div>
 </template>
 <script setup>
@@ -210,8 +210,12 @@ const getRendition = (val) => {
 </script>
 <style scoped>
 .size {
-    text-align: center;
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+    left: 1rem;
     z-index: 1;
+    text-align: center;
     color: #000;
 }
 </style>
@@ -264,20 +268,18 @@ This shows how to hook into epubJS annotations object and let the user highlight
 ```vue
 <template>
     <div style='height: 100vh'>
-        <VueReader 
-            url='/files/啼笑因缘.epub' 
-            :getRendition='getRendition'>
+        <VueReader url='/files/啼笑因缘.epub' :getRendition='getRendition'>
         </VueReader>
-        <div class='selection'>
-            Selection:
-            <ul>
-                <li v-for='({ text, cfiRange }, index) in selections' :key="index">
-                    {{ text || '' }}
-                    <button @click='rendition.display(cfiRange)'>show</button>
-                    <button @click='remove(cfiRange, index)'>x</button>
-                </li>
-            </ul>
-        </div>
+    </div>
+    <div class='selection'>
+        Selection:
+        <ul>
+            <li v-for='({ text, cfiRange }, index) in selections' :key="index">
+                {{ text || '' }}
+                <button @click='rendition.display(cfiRange)'>show</button>
+                <button @click='remove(cfiRange, index)'>x</button>
+            </li>
+        </ul>
     </div>
 </template>
 <script setup>
@@ -324,9 +326,12 @@ onUnmounted(() => {
     rendition.off('selected', setRenderSelection)
 })
 </script>
-  
 <style scoped>
 .selection {
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+    left: 1rem;
     z-index: 1;
     background-color: white;
     color: #000;
@@ -371,4 +376,8 @@ Pass options for this into epubJS in the prop `epubOptions`
 import { VueReader } from 'vue-reader'
 </script>
 ```
+
+##  Related
+
++ [react-reader](https://github.com/gerhardsletten/react-reader)
 

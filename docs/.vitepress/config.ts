@@ -16,7 +16,7 @@ export default defineConfig({
     },
     themeConfig: {
         nav: [
-            { text: "library", link: "/guild/library" },
+            // { text: "library", link: "/library" },
         ],
     },
     vue: {
