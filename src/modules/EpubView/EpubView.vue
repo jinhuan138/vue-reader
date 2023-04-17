@@ -6,7 +6,6 @@
                 <slot name="loadingView">
                 </slot>
             </div>
-
         </div>
     </div>
 </template>
@@ -43,8 +42,7 @@ const emit = defineEmits<{
 const viewer = ref<HTMLDivElement | null>(null)
 const toc = ref<Book['navigation']['toc']>([])
 const isLoaded = ref(false)
-let book: null | Book = null
-let rendition: null | Rendition = null;
+let book: null | Book = null, rendition: null | Rendition = null;
 
 const initBook = async () => {
     if (book) book.destroy()

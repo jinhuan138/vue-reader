@@ -4,6 +4,7 @@
 //https://github.com/janglee123/eplee
 //https://github.com/weijan-vscode/vscode-epub-viewer.git
 //https://github.com/m8524769/espacio.git
+//http://futurepress.github.io/epub.js/examples/
 import { createApp } from 'vue'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
