@@ -60,7 +60,6 @@ const initBook = async () => {
 
 const initReader = () => {
     rendition = book!.renderTo(viewer.value as HTMLDivElement, {
-        // contained: true,
         width: '100%',
         height: '100%',
         ...epubOptions

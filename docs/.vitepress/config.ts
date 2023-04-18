@@ -1,5 +1,4 @@
 //https://vitepress.dev/
-//https://1006008051.github.io/vitepress-demoblock/demo/guide/quickstart.html
 
 import { defineConfig } from 'vitepress'
 import { demoBlockPlugin } from 'vitepress-theme-demoblock'
