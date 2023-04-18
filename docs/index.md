@@ -561,11 +561,11 @@ const getRendition = (val) => {
 
 ```vue
 <template>
-    <div style='position: relative' :style='{ height:url ? "100vh" : "50px" }'>
+    <div style='position: relative' :style='{ height: url ? "100vh" : "50px" }'>
         <div style='height: 100vh' v-if="url">
             <VueReader :url='url' :title='title' />
         </div>
-        <input type="file" :multiple="false" accept=".epub" :onchange="onchange" class="input">
+        <input type="file" :multiple="false" accept=".epub" @change="onchange" class="input">
     </div>
 </template>
 <script setup>
