@@ -8,11 +8,11 @@
         <span class="tocButtonBar" style="top: 66%"></span>
       </button>
       <!-- 书名 -->
-      <slot name="title" :title='bookName'>
+      <slot name="title">
         <div class="titleArea">{{ bookName }}</div>
       </slot>
       <!-- 阅读 -->
-      <epub-view ref="epubRef" v-bind="$attrs" :url="props.url" :tocChanged="onTocChange">
+      <epub-view ref="epubRef" v-bind="$attrs" :url="url" :tocChanged="onTocChange">
         <template #loadingView>
           <slot name="loadingView">
             <div class="loadingView">
@@ -83,7 +83,8 @@ const epubRef = ref<InstanceType<typeof EpubView>>()
 const props = withDefaults(defineProps<Props>(), {
   showToc: true
 })
-const { title, tocChanged } = props
+const { tocChanged } = props
+const { title, url } = toRefs(props)
 
 interface EpubBook {
   toc: Array<NavItem>,
@@ -96,13 +97,13 @@ const book: EpubBook = reactive({
 const { toc, expandedToc } = toRefs(book)
 
 const bookName = computed(() => {
-  if (title) {
-    return title
+  if (title?.value) {
+    return title.value
   } else {
     let title = ''
-    if (typeof (props.url.value) === 'string' && props.url.value.endsWith('.epub')) {
-      const num = props.url.value.lastIndexOf('/') + 1
-      const name = props.url.value.substring(num)
+    if (typeof (url.value) === 'string' && url.value.endsWith('.epub')) {
+      const num = url.value.lastIndexOf('/') + 1
+      const name = url.value.substring(num)
       title = name.replace(".epub", '')
     }
     return title
