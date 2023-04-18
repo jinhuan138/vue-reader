@@ -1,66 +1,65 @@
 <template>
-    <div style='position: relative'>
-        <div style='height: 100vh' v-show="true">
-            <VueReader :getRendition="getRendition" url="/files/啼笑因缘.epub">
+    <div>
+        <div style='height: 100vh' id="#container">
+            <VueReader :epubOptions='{
+                allowPopups: true,
+                allowScriptedContent: true,
+                script: "/node_modules/medium-zoom/dist/medium-zoom.js"
+            }' url='/files/alice.epub' :getRendition='getRendition'>
             </VueReader>
-        </div>
-        <div class="progress">
-            <input type="number" :value="current" :min="0" :max="100" @change="change">%
-            <input type="range" :value="current" :min="0" :max="100" :step="1" @change="change">
         </div>
     </div>
 </template>
 <script setup>
-import { ref } from 'vue'
-import { VueReader } from '@/modules/index'
+import { VueReader } from "@/modules/"
+import mediumZoom from 'medium-zoom'
 
-const current = ref(0)
-let rendition, book, displayed
-
+let rendition = null
 const getRendition = (val) => {
     rendition = val
-    book = rendition.book
-    displayed = rendition.display();
-    book.ready.then(() => {
-        return book.locations.generate(1600);
-    }).then(locations => {
-        // Wait for book to be rendered to get current page
-        displayed.then(function () {
-            // Get the current CFI
-            var currentLocation = rendition.currentLocation();
-            // Get the Percentage (or location) from that CFI
-            const currentPage = book.locations.percentageFromCfi(currentLocation.start.cfi);
-            current.value = currentPage
-        });
-        rendition.on('relocated', (location) => {
-            const percent = book.locations.percentageFromCfi(location.start.cfi);
-            const percentage = Math.floor(percent * 100);
-            current.value = percentage
-        });
+    rendition.hooks.content.register((contents, view) => {
+        const images = [...contents.document.querySelectorAll('img'), ...contents.document.querySelectorAll('image')]
+        const zoom = mediumZoom(images, {
+            background: 'rgba(247, 249, 250, 0.97)'
+        })
+        contents.document.addEventListener('click', (e) => {
+            e.target.style.zIndex = 5
+            zoom.open({ target: e.target })
+        })
     })
-}
-
-const change = (e) => {
-    const value = e.target.value
-    current.value = value
-    var cfi = book.locations.cfiFromPercentage(value / 100);
-    rendition.display(cfi);
 }
 </script>
 <style>
-.progress {
-    position: absolute;
-    bottom: 1rem;
-    right: 1rem;
-    left: 1rem;
-    z-index: 1;
-    color: #000;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+.paper-container {
+    width: 100%;
+    height: calc(100% - 64px);
+    margin: 0 auto;
 }
 
-.progress>input[type=range] {
+.paper-header {
+    display: flex;
+    align-items: center;
+    height: 64px;
+    padding: 16px;
+}
+
+.paper-main {
+    flex: 1;
+    height: 100%;
+}
+
+.paper-close {
+    width: 24px;
+    cursor: pointer;
+    fill: #637282;
+}
+
+.paper-wrapper {
+    position: fixed;
+    display: flex;
+    top: 0;
+    left: 0;
     width: 100%;
+    height: 100vh;
 }
 </style>
