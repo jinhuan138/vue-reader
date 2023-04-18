@@ -12,6 +12,10 @@
     "reader"
   ],
   "homepage": "https://jinhuan138.github.io/docs/",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:jinhuan138/docs.git"
+  },
   "type": "module",
   "scripts": {
     "dev": "vite",
