@@ -474,7 +474,7 @@ const voice = (text, rate = 1) => {
             allowPopups: true,
             allowScriptedContent: true,
             script: "https://cdn.jsdelivr.net/npm/medium-zoom@1.0.8/dist/medium-zoom.min.js"
-        }' url='/files/alice.epub' :getRendition='getRendition'>
+        }' url='/docs/files/alice.epub' :getRendition='getRendition'>
         </VueReader>
     </div>
 </template>
@@ -483,9 +483,7 @@ import { onBeforeUnmount } from 'vue'
 
 let zoom = null
 const closeZoom = () => {
-    if (zoom && zoom.getZoomedImage()) {
-        zoom.close()
-    }
+    if (zoom && zoom.getZoomedImage()) zoom.close()
 }
 const getRendition = (rendition) => {
     rendition.hooks.content.register((contents, view) => {
