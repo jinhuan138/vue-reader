@@ -12,7 +12,7 @@
         <div class="titleArea">{{ bookName }}</div>
       </slot>
       <!-- 阅读 -->
-      <epub-view ref="epubRef" v-bind="$attrs" :url="url" :tocChanged="onTocChange">
+      <epub-view ref="epubRef" v-bind="$attrs" :url="url" :location="location" :tocChanged="onTocChange" >
         <template #loadingView>
           <slot name="loadingView">
             <div class="loadingView">
@@ -22,10 +22,10 @@
         </template>
       </epub-view>
       <!-- 翻页 -->
-      <button class="arrow pre" @click="pre">
+      <button class="arrow pre" @click="pre" :disabled="location.atStart">
         ‹
       </button>
-      <button class="arrow next" @click="next">
+      <button class="arrow next" @click="next" :disabled="location.atEnd">
         ›
       </button>
     </div>
@@ -73,6 +73,7 @@ interface NavItem {
 
 interface Props {
   url: any,
+  location?: any,
   title?: string,
   showToc?: boolean,
   tocChanged?: (toc: Book['navigation']['toc']) => void
@@ -84,7 +85,7 @@ const props = withDefaults(defineProps<Props>(), {
   showToc: true
 })
 const { tocChanged } = props
-const { title, url } = toRefs(props)
+const { title, url, location } = toRefs(props)
 
 interface EpubBook {
   toc: Array<NavItem>,
