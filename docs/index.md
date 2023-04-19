@@ -1,4 +1,5 @@
 # Vue Reader - an easy way to embed a ePub into your webapp
+
 An vue-reader for vue powered by EpubJS
 
 ## Basic usage
@@ -208,7 +209,7 @@ const changeSize = (val) => {
 }
 const getRendition = (val) => {
     rendition = val
-    rendition.themes.fontSize(`${size}%`)
+    rendition.themes.fontSize(`${size.value}%`)
 }
 </script>
 <style scoped>
@@ -244,9 +245,7 @@ This is useful for when you want to set custom font families, custom background 
 </template>
 <script setup>
 
-let rendition = null
-const getRendition = (val) => {
-    rendition = val
+const getRendition = (rendition) => {
     rendition.themes.register('custom', {
         "*": {
             color: '#fff',
@@ -407,11 +406,10 @@ Pass options for this into epubJS in the prop `epubOptions`
 <script setup>
 import { ref } from 'vue'
 
-let rendition = null, isAudioOn = false, text = null
+let isAudioOn = false, text = null
 let isReading = ref(false)
 
-const getRendition = (val) => {
-    rendition = val
+const getRendition = (rendition) => {
     rendition.hooks.content.register((contents, view) => {
         let textContent = contents.document.body.textContent
         textContent = textContent
@@ -467,7 +465,7 @@ const voice = (text, rate = 1) => {
 
 ## Zoom the image
 
-::: demo zoom the image
+::: demo
 
 ```vue
 <template>
@@ -476,21 +474,40 @@ const voice = (text, rate = 1) => {
             allowPopups: true,
             allowScriptedContent: true,
             script: "https://cdn.jsdelivr.net/npm/medium-zoom@1.0.8/dist/medium-zoom.min.js"
-        }'
-            url='/docs/files/alice.epub' :getRendition='getRendition'>
+        }' url='/files/alice.epub' :getRendition='getRendition'>
         </VueReader>
     </div>
 </template>
 <script setup>
-let rendition = null
-const getRendition = (val) => {
-    rendition = val
+import { onBeforeUnmount } from 'vue'
+
+let zoom = null
+const closeZoom = () => {
+    if (zoom && zoom.getZoomedImage()) {
+        zoom.close()
+    }
+}
+const getRendition = (rendition) => {
     rendition.hooks.content.register((contents, view) => {
-        const { document } = contents
-        const images = [...document.querySelectorAll('img'), ...document.querySelectorAll('image')]
-        contents.window.mediumZoom(images)
+        const contentsDom = contents.document
+        const images = [...contentsDom.querySelectorAll('img'), ...contentsDom.querySelectorAll('image')]
+        zoom = mediumZoom(images, {
+            background: 'rgba(247, 249, 250, 0.97)'
+        })
+        contentsDom.addEventListener('click', (e) => {
+            if (zoom.getImages().includes(e.target)) {
+                e.target.style.zIndex = 5
+                zoom.open({ target: e.target })
+            } else {
+                zoom.close()
+            }
+        })
+        document.addEventListener('click', closeZoom)
     })
-} 
+}
+onBeforeUnmount(() => {
+    document.removeEventListener('click', closeZoom)
+})
 </script>
 ```
 
@@ -518,35 +535,13 @@ const getRendition = (val) => {
 <script setup>
 import { ref } from 'vue'
 
-let rendition = null, book = null
 const information = ref(null)
-
-const image2Base64 = (url) => new Promise((resolve, reject) => {
-    if (!url) return resolve('');
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
-    img.src = url;
-    img.onload = () => {
-        const canvas = document.createElement('canvas');
-        canvas.width = img.width;
-        canvas.height = img.height;
-        const ctx = canvas.getContext('2d');
-        ctx?.drawImage(img, 0, 0);
-        const data = canvas.toDataURL();
-        resolve(data);
-    };
-    img.onerror = () => {
-        reject('');
-    };
-})
-
-const getRendition = (val) => {
-    rendition = val
-    book = rendition.book
+const getRendition = (rendition) => {
+    const book = rendition.book
     book.ready.then(() => {
         book.loaded.metadata.then(async (metadata) => {
             const cover = await book.coverUrl()
-            information.value = { ...metadata, cover: await image2Base64(cover) }
+            information.value = { ...metadata, cover }
         })
     })
 }
@@ -673,6 +668,10 @@ const change = (e) => {
 ```
 
 :::
+
+<script setup lang="ts">
+import mediumZoom from 'medium-zoom'
+</script>
 
 <style>
     .reader-button{

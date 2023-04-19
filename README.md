@@ -205,7 +205,7 @@ const changeSize = (val) => {
 }
 const getRendition = (val) => {
     rendition = val
-    rendition.themes.fontSize(`${size}%`)
+    rendition.themes.fontSize(`${size.value}%`)
 }
 </script>
 <style scoped>
@@ -238,9 +238,7 @@ This is useful for when you want to set custom font families, custom background 
 <script setup>
 import { VueReader } from 'vue-reader'
 
-let rendition = null
-const getRendition = (val) => {
-    rendition = val
+const getRendition = (rendition) => {
     rendition.themes.register('custom', {
         "*": {
             color: '#fff',

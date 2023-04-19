@@ -3,8 +3,7 @@ import { EnhanceAppContext } from "vitepress"
 import 'vitepress-theme-demoblock/dist/theme/styles/index.css'
 import Demo from 'vitepress-theme-demoblock/dist/client/components/Demo.vue'
 import DemoBlock from 'vitepress-theme-demoblock/dist/client/components/DemoBlock.vue'
-// import { VueReader } from "vue-reader";
-import { VueReader } from "@/modules/index";
+import { VueReader } from "vue-reader"
 // import ElementPlus from 'element-plus'
 // import 'element-plus/dist/index.css'
 // import Library from 'comps/Library.vue'
