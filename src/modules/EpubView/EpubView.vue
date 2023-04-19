@@ -20,19 +20,17 @@ interface Props {
     location?: any, //当前页 number | string | Rendition['location']['start']
     tocChanged?: (toc: Book['navigation']['toc']) => void,
     getRendition?: (rendition: Rendition) => void,
-    getBook?: (book: Book) => void,
     handleTextSelected?: (cfiRange: string, contents: Contents) => void,
     handleKeyPress?: void,
     epubInitOptions?: Book['settings'],
     epubOptions?: Rendition['settings'],
 }
 const props = withDefaults(defineProps<Props>(), {
-    location: 0,
     epubInitOptions: () => ({}),
     epubOptions: () => ({})
 })
 
-const { tocChanged, getRendition, getBook, handleTextSelected, handleKeyPress, epubInitOptions, epubOptions } = props
+const { tocChanged, getRendition, handleTextSelected, handleKeyPress, epubInitOptions, epubOptions } = props
 const { url, location } = toRefs(props)
 
 const emit = defineEmits<{
@@ -47,15 +45,12 @@ let book: null | Book = null, rendition: null | Rendition = null;
 const initBook = async () => {
     if (book) book.destroy()
     book = ePub(url.value, epubInitOptions);
-    if (getBook) getBook(book)
-    book!.ready.then(() => {
-        book!.loaded.navigation.then(({ toc: _toc }) => {
-            isLoaded.value = true
-            toc.value = _toc
-            tocChanged && tocChanged(_toc)
-        });
+    book!.loaded.navigation.then(({ toc: _toc }) => {
+        isLoaded.value = true
+        toc.value = _toc
+        tocChanged && tocChanged(_toc)
+        initReader()
     });
-    initReader()
 };
 
 const initReader = () => {
@@ -106,7 +101,7 @@ const registerEvents = () => {
 
 const onLocationChange = (loc: Rendition['location']) => {//监听翻页
     const newLocation = loc && loc.start
-    if (location.value !== newLocation) {
+    if (location?.value !== newLocation) {
         emit('update:location', newLocation)
     }
 }
@@ -123,17 +118,19 @@ const debounce = (func: Function, wait: number = 500) => {
     };
 };
 
-watch(location, debounce((val: string | number, old: string | number) => {
-    if (val === old) return
-    if (typeof val === 'string') {
-        rendition?.display(val)
-    }
-    if (typeof val === 'number') {
-        rendition?.display(val)
-    }
-}), {
-    immediate: true
-})
+if (location) {
+    watch(location, debounce((val: string | number, old: string | number) => {
+        if (val === old) return
+        if (typeof val === 'string') {
+            rendition?.display(val)
+        }
+        if (typeof val === 'number') {
+            rendition?.display(val)
+        }
+    }), {
+        immediate: true
+    })
+}
 
 watch(url, () => {
     initBook()
