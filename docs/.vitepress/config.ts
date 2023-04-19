@@ -17,6 +17,9 @@ export default defineConfig({
         nav: [
             // { text: "library", link: "/library" },
         ],
+        socialLinks: [
+            { icon: 'github', link: 'https://github.com/jinhuan138/docs' }
+        ],
     },
     vue: {
     },

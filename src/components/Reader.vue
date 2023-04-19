@@ -13,7 +13,7 @@ import { VueReader } from "vue-reader";
 import { db } from "../utils/db";
 // import { useRoute } from 'vue-router'
 import { ref, computed, onMounted } from "vue";
-import { useData ,useRoute} from 'vitepress'
+import { useData, useRoute } from 'vitepress'
 
 
 const route = useRoute()
@@ -34,6 +34,24 @@ const url = computed(() => {
     } else {
         return `/files/${defaultBook}.epub`
     }
+})
+const image2Base64 = (url) => new Promise((resolve, reject) => {
+    if (!url) return resolve('');
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.src = url;
+    img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+        ctx?.drawImage(img, 0, 0);
+        const data = canvas.toDataURL();
+        resolve(data);
+    };
+    img.onerror = () => {
+        reject('');
+    };
 })
 onMounted(async () => {
 
