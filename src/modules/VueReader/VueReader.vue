@@ -12,7 +12,7 @@
         <div class="titleArea">{{ bookName }}</div>
       </slot>
       <!-- 阅读 -->
-      <epub-view ref="epubRef" v-bind="$attrs" :url="url" :location="location" :tocChanged="onTocChange" >
+      <epub-view ref="epubRef" v-bind="$attrs" :url="url" :tocChanged="onTocChange" :getRendition="getRendition">
         <template #loadingView>
           <slot name="loadingView">
             <div class="loadingView">
@@ -22,10 +22,10 @@
         </template>
       </epub-view>
       <!-- 翻页 -->
-      <button class="arrow pre" @click="pre" :disabled="location.atStart">
+      <button class="arrow pre" @click="pre" :disabled="currentLocation && currentLocation.atStart">
         ‹
       </button>
-      <button class="arrow next" @click="next" :disabled="location.atEnd">
+      <button class="arrow next" @click="next" :disabled="currentLocation && currentLocation.atEnd">
         ›
       </button>
     </div>
@@ -33,7 +33,8 @@
     <div v-if="showToc">
       <div class="tocArea">
         <div v-for="(item, index) in toc" :key="index">
-          <button type="button" class="tocAreaButton" @click="setLocation(item.href)">
+          <button type="button" class="tocAreaButton" @click="setLocation(item.href)"
+            :class="{ active: currentLocation ? item.href.includes(currentLocation.start.href) : false }">
             {{ item.label }}
             <!-- 展开 -->
             <div class="expansion" v-if="item.subitems && item.subitems.length > 0"
@@ -45,7 +46,8 @@
             <Transition name="subitem">
               <div v-show="item.expansion">
                 <button type="button" v-for="(subitem, index) in item.subitems" :key="index" class="tocAreaButton"
-                  @click="setLocation(subitem['href'])">
+                  @click="setLocation(subitem['href'])"
+                  :class="{ active: currentLocation ? subitem.href.includes(currentLocation.start.href) : false }">
                   {{ "&nbsp;".repeat(4) + subitem['label'] }}
                 </button>
               </div>
@@ -73,19 +75,19 @@ interface NavItem {
 
 interface Props {
   url: any,
-  location?: any,
   title?: string,
   showToc?: boolean,
-  tocChanged?: (toc: Book['navigation']['toc']) => void
+  tocChanged?: (toc: Book['navigation']['toc']) => void,
 }
 
 const epubRef = ref<InstanceType<typeof EpubView>>()
+const currentLocation = ref()
 
 const props = withDefaults(defineProps<Props>(), {
   showToc: true
 })
 const { tocChanged } = props
-const { title, url, location } = toRefs(props)
+const { title, url } = toRefs(props)
 
 interface EpubBook {
   toc: Array<NavItem>,
@@ -118,6 +120,16 @@ const toggleToc = () => {
 const onTocChange = (_toc) => {
   toc.value = _toc.map(i => ({ ...i, expansion: false }))
   tocChanged && tocChanged(_toc)
+}
+
+const getRendition = (rendition) => {
+  rendition.on("relocated", (location) => {
+    //使用href确定当前目录章节
+    //todo
+    // console.log(location.start.href)
+    // console.log(toc.value)
+    currentLocation.value = location
+  })
 }
 
 const setLocation = (href: string | number) => {
@@ -226,6 +238,11 @@ const pre = () => {
   background: rgba(0, 0, 0, 0.1);
 }
 
+.tocArea .tocAreaButton.active {
+  color: #1565C0;
+  border-bottom: 2px solid #1565C0;
+}
+
 /* 二级目录 */
 .tocArea .tocAreaButton .expansion {
   position: absolute;
@@ -304,6 +321,11 @@ const pre = () => {
 
 .arrow:hover {
   color: #777
+}
+
+.arrow:disabled {
+  cursor: not-allowed;
+  color: #E2E2E2;
 }
 
 .prev {

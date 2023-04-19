@@ -34,7 +34,7 @@ const { tocChanged, getRendition, handleTextSelected, handleKeyPress, epubInitOp
 const { url, location } = toRefs(props)
 
 const emit = defineEmits<{
-    (e: 'update:location', location: Props['location']): void
+    (e: 'update:location', location: Props['location'], loc: Rendition['location']): void
 }>()
 
 const viewer = ref<HTMLDivElement | null>(null)
@@ -102,7 +102,7 @@ const registerEvents = () => {
 const onLocationChange = (loc: Rendition['location']) => {//监听翻页
     const newLocation = loc && loc.start
     if (location?.value !== newLocation) {
-        emit('update:location', newLocation)
+        emit('update:location', newLocation, loc)
     }
 }
 

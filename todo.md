@@ -2,7 +2,7 @@
 # 页码左侧显示
 # 引用
 # 激活当前页码
-
+# vue2 support
 ## Document
 [document](https://jinhuan138.github.io/docs/)
 

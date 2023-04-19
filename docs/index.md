@@ -359,7 +359,7 @@ EpubJS will try to parse the epub-file you pass to it, but if the server send wr
     <div style='height: 100vh'>
         <VueReader 
             url='/my-epub-service' 
-            :epubInitOptions="{openAs: 'epub'}">
+            :epubInitOptions="{ openAs: 'epub' }">
         </VueReader>
     </div>
 </template>
@@ -465,16 +465,17 @@ const voice = (text, rate = 1) => {
 
 ## Zoom the image
 
-::: demo
+::: demo use medium-zoom
 
 ```vue
 <template>
     <div style='height: 100vh'>
-        <VueReader :epubOptions='{
+        <VueReader 
+            :epubOptions='{
             allowPopups: true,
             allowScriptedContent: true,
-            script: "https://cdn.jsdelivr.net/npm/medium-zoom@1.0.8/dist/medium-zoom.min.js"
-        }' url='/docs/files/alice.epub' :getRendition='getRendition'>
+            script: "https://cdn.jsdelivr.net/npm/medium-zoom@1.0.8/dist/medium-zoom.min.js"}' 					        url='/docs/files/alice.epub' 
+            :getRendition='getRendition'>
         </VueReader>
     </div>
 </template>
@@ -492,8 +493,9 @@ const getRendition = (rendition) => {
         zoom = mediumZoom(images, {
             background: 'rgba(247, 249, 250, 0.97)'
         })
-        contentsDom.addEventListener('click', (e) => {
+        contentsDom.addEventListener('click',async (e) => {
             if (zoom.getImages().includes(e.target)) {
+                if (zoom.getZoomedImage()) await zoom.close()
                 e.target.style.zIndex = 5
                 zoom.open({ target: e.target })
             } else {
