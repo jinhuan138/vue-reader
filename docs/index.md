@@ -734,6 +734,7 @@ const go = (href, e) => {
     text-align: center;
     z-index: 1;
     color: #000;
+    background: #fff;
     display: flex;
     align-items: center;
     justify-content: center;
