@@ -1,8 +1,6 @@
-# 页码显示
-# 页码左侧显示
-# 引用
-# 激活当前页码
+# custom style
 # vue2 support
+# search
 ## Document
 [document](https://jinhuan138.github.io/docs/)
 
