@@ -12,7 +12,7 @@
         <div class="titleArea">{{ bookName }}</div>
       </slot>
       <!-- 阅读 -->
-      <epub-view ref="epubRef" v-bind="$attrs" :url="url" :tocChanged="onTocChange" :getRendition="getRendition">
+      <epub-view ref="epubRef" v-bind="$attrs" :url="url" :tocChanged="onTocChange" :getRendition="onGetRendition">
         <template #loadingView>
           <slot name="loadingView">
             <div class="loadingView">
@@ -62,7 +62,7 @@
 </template>
 <script setup lang="ts">
 import { ref, reactive, toRefs, computed } from "vue";
-import { Rendition } from 'epubjs';
+import { Rendition, Book } from 'epubjs';
 import EpubView from "../EpubView/EpubView.vue";
 interface NavItem {
   id: string,
@@ -77,6 +77,8 @@ interface Props {
   url: any,
   title?: string,
   showToc?: boolean,
+  tocChanged?: (toc: Book['navigation']['toc']) => void,
+  getRendition?: (rendition: Rendition) => void,
 }
 
 const epubRef = ref<InstanceType<typeof EpubView>>()
@@ -85,6 +87,8 @@ const currentLocation = ref<Rendition['location'] | null>(null)
 const props = withDefaults(defineProps<Props>(), {
   showToc: true
 })
+
+const { tocChanged, getRendition } = props
 
 const { title, url } = toRefs(props)
 
@@ -118,14 +122,12 @@ const toggleToc = () => {
 
 const onTocChange = (_toc) => {
   toc.value = _toc.map(i => ({ ...i, expansion: false }))
+  tocChanged && tocChanged(_toc)
 }
 
-const getRendition = (rendition) => {
+const onGetRendition = (rendition) => {
+  getRendition && getRendition(rendition)
   rendition.on("relocated", (location) => {
-    //使用href确定当前目录章节
-    //todo
-    // console.log(location.start.href)
-    // console.log(toc.value)
     currentLocation.value = location
   })
 }

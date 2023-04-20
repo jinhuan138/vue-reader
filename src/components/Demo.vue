@@ -1,59 +1,91 @@
 <template>
-    <div style='height: 100vh'>
-        <VueReader :epubOptions='{
-            allowPopups: true,
-            allowScriptedContent: true,
-            script: "/node_modules/medium-zoom/dist/medium-zoom.js"
-        }' url='/files/啼笑因缘.epub' :getRendition='getRendition'>
-        </VueReader>
+    <div>
+        <div style='height: 100vh'>
+            <VueReader url='/files/啼笑因缘.epub' :getRendition='getRendition'>
+            </VueReader>
+        </div>
+        <div class="search">
+            <input v-model.trim="searchText" type="text" placeholder="search" @keyup.enter="search" />
+            <div class="searchResults">
+                <div class="item" v-for="(item, index) in searchResults" :key="index" @click="go(item.cfi, $event)">
+                    {{ index }}
+                    <span
+                        v-html='item.excerpt.trim().replace(searchText, `<span style="color: orange">${searchText}</span>`)'>
+                    </span>
+                </div>
+                <div v-if="!searchResults.length">Empty</div>
+            </div>
+        </div>
     </div>
 </template>
 <script setup>
-import { VueReader } from '@/modules/index'
-import { onBeforeUnmount } from 'vue'
-import mediumZoom from 'medium-zoom'
+import { ref } from 'vue'
 
-let zoom = null
-const closeZoom = () => {
-    if (zoom && zoom.getZoomedImage()) zoom.close()
-}
-const getRendition = (rendition) => {
-    rendition.hooks.content.register((contents, view) => {
-        const contentsDom = contents.document
-        const images = [...contentsDom.querySelectorAll('img'), ...contentsDom.querySelectorAll('image')]
-        zoom = mediumZoom(images, {
-            background: 'rgba(247, 249, 250, 0.97)'
-        })
-        contentsDom.addEventListener('click', async (e) => {
-            if (zoom.getImages().includes(e.target)) {
-                if (zoom.getZoomedImage()) await zoom.close()
-                // e.target.style.zIndex = 5
-                zoom.open({ target: e.target })
-            } else {
-                zoom.close()
-            }
-        })
-        document.addEventListener('click', closeZoom)
+let rendition = null
+const searchText = ref('只在捻花一笑中')
+const searchResults = ref([])
+const getRendition = (val) => {
+    rendition = val
+    rendition.themes.default({
+        '::selection': {
+            background: 'orange'
+        }
     })
-    rendition.on("relocated", function (location) {
-        console.log(location);
-        //   var next = book.package.metadata.direction === "rtl" ?  document.getElementById("prev") : document.getElementById("next");
-        //   var prev = book.package.metadata.direction === "rtl" ?  document.getElementById("next") : document.getElementById("prev");
-
-        //   if (location.atEnd) {
-        //     next.style.visibility = "hidden";
-        //   } else {
-        //     next.style.visibility = "visible";
-        //   }
-
-        //   if (location.atStart) {
-        //     prev.style.visibility = "hidden";
-        //   } else {
-        //     prev.style.visibility = "visible";
-        //   }
-    });
 }
-onBeforeUnmount(() => {
-    document.removeEventListener('click', closeZoom)
-})
+
+const search = async () => {
+    if (!searchText.value) return searchResults.value = []
+    const res = await doSearch(searchText.value)
+    searchResults.value = res.slice(0, 5)
+}
+
+const doSearch = (value) => {
+    const { book } = rendition
+    return Promise.all(book.spine.spineItems.map(item => {
+        return item.load(book.load.bind(book)).then(doc => {
+            const res = item.find(value);
+            item.unload();
+            return Promise.resolve(res);
+        });
+    })).then(res => Promise.resolve([].concat.apply([], res)));
+}
+
+const go = (href, e) => {
+    rendition.display(href)
+    e.stopPropagation();
+    e.preventDefault();
+}
+
 </script>
+<style scoped>
+.search {
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+    left: 1rem;
+    text-align: center;
+    z-index: 1;
+    color: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+.search .searchResults {
+    width: 200px;
+}
+
+.search .searchResults .item {
+    cursor: pointer;
+    border-radius: 4px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    border-bottom: 1px solid #000;
+}
+
+.search .searchResults .item:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+</style>
