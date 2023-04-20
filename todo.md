@@ -1,6 +1,7 @@
 # custom style
 # vue2 support
 # search
+# 章节阅读
 ## Document
 [document](https://jinhuan138.github.io/docs/)
 
