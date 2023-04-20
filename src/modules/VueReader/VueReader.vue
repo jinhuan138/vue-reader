@@ -47,7 +47,7 @@
               <div v-show="item.expansion">
                 <button type="button" v-for="(subitem, index) in item.subitems" :key="index" class="tocAreaButton"
                   @click="setLocation(subitem['href'])"
-                  :class="{ active: currentLocation ? subitem.href.includes(currentLocation.start.href) : false }">
+                  :class="{ active: currentLocation ? subitem && subitem['href'].includes(currentLocation.start.href) : false }">
                   {{ "&nbsp;".repeat(4) + subitem['label'] }}
                 </button>
               </div>
@@ -62,7 +62,7 @@
 </template>
 <script setup lang="ts">
 import { ref, reactive, toRefs, computed } from "vue";
-import { Book } from 'epubjs'
+import { Rendition } from 'epubjs';
 import EpubView from "../EpubView/EpubView.vue";
 interface NavItem {
   id: string,
@@ -77,16 +77,15 @@ interface Props {
   url: any,
   title?: string,
   showToc?: boolean,
-  tocChanged?: (toc: Book['navigation']['toc']) => void,
 }
 
 const epubRef = ref<InstanceType<typeof EpubView>>()
-const currentLocation = ref()
+const currentLocation = ref<Rendition['location'] | null>(null)
 
 const props = withDefaults(defineProps<Props>(), {
   showToc: true
 })
-const { tocChanged } = props
+
 const { title, url } = toRefs(props)
 
 interface EpubBook {
@@ -119,7 +118,6 @@ const toggleToc = () => {
 
 const onTocChange = (_toc) => {
   toc.value = _toc.map(i => ({ ...i, expansion: false }))
-  tocChanged && tocChanged(_toc)
 }
 
 const getRendition = (rendition) => {
