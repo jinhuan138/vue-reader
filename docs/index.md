@@ -394,7 +394,7 @@ Pass options for this into epubJS in the prop `epubOptions`
 <template>
     <div style='position: relative'>
         <div style='height: 100vh'>
-            <VueReader url='/docs/files/啼笑因缘.epub' :getRendition='getRendition' />
+            <VueReader url='/docs/files/啼笑因缘.epub' :getRendition='getRendition' @update:location='locationChange' />
         </div>
         <div class='speak'>
             <button class='reader-button' @click='speak("click")'>
@@ -406,20 +406,20 @@ Pass options for this into epubJS in the prop `epubOptions`
 <script setup>
 import { ref } from 'vue'
 
-let isAudioOn = false, text = null
+let isAudioOn = false, text = '', rendition
 let isReading = ref(false)
 
-const getRendition = (rendition) => {
-    rendition.hooks.content.register((contents, view) => {
-        let textContent = contents.document.body.textContent
-        textContent = textContent
-            .replace(/\s\s/g, '')
-            .replace(/\r/g, '')
-            .replace(/\n/g, '')
-            .replace(/\t/g, '')
-            .replace(/\f/g, '')
-        text = textContent
-    })
+const getRendition = val => rendition = val
+const locationChange = () => {
+    const range = rendition.getRange(rendition.currentLocation().start.cfi);
+    const endRange = rendition.getRange(rendition.currentLocation().end.cfi);
+    range.setEnd(endRange.startContainer, endRange.startOffset);
+
+    text = range.toString().replace(/\s\s/g, '')
+        .replace(/\r/g, '')
+        .replace(/\n/g, '')
+        .replace(/\t/g, '')
+        .replace(/\f/g, '')
 }
 
 const speak = (type) => {

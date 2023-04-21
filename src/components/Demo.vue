@@ -1,91 +1,69 @@
 <template>
-    <div>
+    <div style='position: relative'>
         <div style='height: 100vh'>
-            <VueReader url='/files/啼笑因缘.epub' :getRendition='getRendition'>
-            </VueReader>
+            <VueReader url='/files/啼笑因缘.epub' :getRendition='getRendition' @update:location='locationChange' />
         </div>
-        <div class="search">
-            <input v-model.trim="searchText" type="text" placeholder="search" @keyup.enter="search" />
-            <div class="searchResults">
-                <div class="item" v-for="(item, index) in searchResults" :key="index" @click="go(item.cfi, $event)">
-                    {{ index }}
-                    <span
-                        v-html='item.excerpt.trim().replace(searchText, `<span style="color: orange">${searchText}</span>`)'>
-                    </span>
-                </div>
-                <div v-if="!searchResults.length">Empty</div>
-            </div>
+        <div class='speak'>
+            <button class='reader-button' @click='speak("click")'>
+                {{ isReading ? 'cancel' : 'speak' }}
+            </button>
         </div>
     </div>
 </template>
 <script setup>
 import { ref } from 'vue'
+import { VueReader } from '../../lib/index.min.js'
 
-let rendition = null
-const searchText = ref('只在捻花一笑中')
-const searchResults = ref([])
-const getRendition = (val) => {
-    rendition = val
-    rendition.themes.default({
-        '::selection': {
-            background: 'orange'
-        }
-    })
+let isAudioOn = false, text = '', rendition
+let isReading = ref(false)
+
+const getRendition = val => rendition = val
+const locationChange = () => {
+    const range = rendition.getRange(rendition.currentLocation().start.cfi);
+    const endRange = rendition.getRange(rendition.currentLocation().end.cfi);
+    range.setEnd(endRange.startContainer, endRange.startOffset);
+
+    text = range.toString().replace(/\s\s/g, '')
+        .replace(/\r/g, '')
+        .replace(/\n/g, '')
+        .replace(/\t/g, '')
+        .replace(/\f/g, '')
 }
 
-const search = async () => {
-    if (!searchText.value) return searchResults.value = []
-    const res = await doSearch(searchText.value)
-    searchResults.value = res.slice(0, 5)
+const speak = (type) => {
+    if (type === 'click') isReading.value = !isReading.value
+    if (isReading.value) {
+        voice(text)
+    } else {
+        isAudioOn = false
+        window.speechSynthesis.cancel()
+    }
 }
 
-const doSearch = (value) => {
-    const { book } = rendition
-    return Promise.all(book.spine.spineItems.map(item => {
-        return item.load(book.load.bind(book)).then(doc => {
-            const res = item.find(value);
-            item.unload();
-            return Promise.resolve(res);
-        });
-    })).then(res => Promise.resolve([].concat.apply([], res)));
+const voice = (text, rate = 1) => {
+    isAudioOn = true
+    const msg = new SpeechSynthesisUtterance()
+    msg.text = text;
+    msg.voice = window.speechSynthesis.getVoices()[0];
+    msg.rate = rate
+    window.speechSynthesis.speak(msg);
+    msg.onerror = (err) => {
+        console.log(err);
+    };
+    msg.onend = async (event) => {
+        if (!isReading.value && !isAudioOn) return
+        rendition.next()
+        speak()
+    };
 }
-
-const go = (href, e) => {
-    rendition.display(href)
-    e.stopPropagation();
-    e.preventDefault();
-}
-
 </script>
-<style scoped>
-.search {
+<style>
+.speak {
     position: absolute;
     bottom: 1rem;
     right: 1rem;
     left: 1rem;
-    text-align: center;
     z-index: 1;
-    color: #000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-
-.search .searchResults {
-    width: 200px;
-}
-
-.search .searchResults .item {
-    cursor: pointer;
-    border-radius: 4px;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    border-bottom: 1px solid #000;
-}
-
-.search .searchResults .item:hover {
-    background: rgba(0, 0, 0, 0.05);
+    text-align: center;
 }
 </style>
