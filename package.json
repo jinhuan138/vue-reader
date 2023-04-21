@@ -22,6 +22,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "compile": "rollup -c",
+    "format": "prettier --write src/modules/**/*.{ts,vue}",
     "book": "node build/book",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",

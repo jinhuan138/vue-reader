@@ -21,7 +21,7 @@ interface Props {
     tocChanged?: (toc: Book['navigation']['toc']) => void,
     getRendition?: (rendition: Rendition) => void,
     handleTextSelected?: (cfiRange: string, contents: Contents) => void,
-    handleKeyPress?: void,
+    handleKeyPress?: () => void,
     epubInitOptions?: Book['settings'],
     epubOptions?: Rendition['settings'],
 }
@@ -142,7 +142,7 @@ const nextPage = () => {
 
 const prevPage = () => {
     rendition?.prev();
-};
+}
 
 const setLocation = (href: number | string) => {
     if (typeof (href) === 'string')
@@ -157,7 +157,7 @@ onMounted(() => {
 
 onUnmounted(() => {
     book?.destroy()
-});
+})
 
 defineExpose({
     nextPage, prevPage, setLocation
