@@ -22,10 +22,10 @@
         </template>
       </epub-view>
       <!-- 翻页 -->
-      <button class="arrow pre" @click="pre" :disabled="currentLocation && currentLocation.atStart">
+      <button class="arrow pre" @click="pre" :disabled="currentLocation?.atStart">
         ‹
       </button>
-      <button class="arrow next" @click="next" :disabled="currentLocation && currentLocation.atEnd">
+      <button class="arrow next" @click="next" :disabled="currentLocation?.atEnd">
         ›
       </button>
     </div>
@@ -34,7 +34,7 @@
       <div class="tocArea">
         <div v-for="(item, index) in toc" :key="index">
           <button type="button" class="tocAreaButton" @click="setLocation(item.href)"
-            :class="{ active: currentLocation ? item.href.includes(currentLocation.start.href) : false }">
+            :class="{ active: currentLocation ? item.href.includes(currentLocation!.start.href) : false }">
             {{ item.label }}
             <!-- 展开 -->
             <div class="expansion" v-if="item.subitems && item.subitems.length > 0"
@@ -47,7 +47,7 @@
               <div v-show="item.expansion">
                 <button type="button" v-for="(subitem, index) in item.subitems" :key="index" class="tocAreaButton"
                   @click="setLocation(subitem['href'])"
-                  :class="{ active: currentLocation ? subitem && subitem['href'].includes(currentLocation.start.href) : false }">
+                  :class="{ active: currentLocation ? subitem['href'].includes(currentLocation!.start.href) : false }">
                   {{ "&nbsp;".repeat(4) + subitem['label'] }}
                 </button>
               </div>
@@ -61,14 +61,14 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, reactive, toRefs, computed } from "vue";
+import { ref, reactive, toRefs, computed } from "vue-demi";
 import { Rendition, Book } from 'epubjs';
 import EpubView from "../EpubView/EpubView.vue";
 interface NavItem {
   id: string,
   href: string,
   label: string,
-  subitems?: Array<NavItem>,
+  subitems: Array<NavItem>,
   parent?: string,
   expansion: boolean
 }
@@ -238,7 +238,7 @@ const pre = () => {
   background: rgba(0, 0, 0, 0.1);
 }
 
-.tocArea .tocAreaButton.active {
+.tocArea .active {
   color: #1565C0;
   border-bottom: 2px solid #1565C0;
 }

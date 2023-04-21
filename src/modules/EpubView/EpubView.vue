@@ -11,7 +11,7 @@
 </template>
 <script setup lang="ts">
 //http://epubjs.org/documentation/0.3/
-import { ref, onMounted, onUnmounted, toRefs, watch } from "vue";
+import { ref, onMounted, onUnmounted, toRefs, watch } from "vue-demi";
 import ePub, { Book, Rendition, Contents } from 'epubjs';
 import { clickListener, swipListener, wheelListener, keyListener } from '../utils/listener/listener';
 
