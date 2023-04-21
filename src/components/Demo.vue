@@ -12,7 +12,7 @@
 </template>
 <script setup>
 import { ref } from 'vue'
-import { VueReader } from '../../lib/index.min.js'
+import { VueReader } from '@/modules/index'
 
 let isAudioOn = false, text = '', rendition
 let isReading = ref(false)

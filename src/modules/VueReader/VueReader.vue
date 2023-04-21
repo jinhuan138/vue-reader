@@ -63,7 +63,8 @@
 <script setup lang="ts">
 import { ref, reactive, toRefs, computed } from "vue-demi";
 import { Rendition, Book } from 'epubjs';
-import EpubView from "../EpubView/EpubView.vue";
+// import EpubView from "../EpubView/EpubView.vue";
+import EpubView from "../EpubView/EpubView";
 interface NavItem {
   id: string,
   href: string,

@@ -1,0 +1,14 @@
+.reader {
+    position: absolute;
+    inset: 50px 50px 20px;
+}
+
+.viewHolder {
+    height: 100%;
+    width: 100%;
+    position: relative;
+}
+
+.view {
+    height: 100%;
+}
