@@ -29,6 +29,9 @@ export default defineConfig({
       { find: 'comps', replacement: resolve(__dirname, 'src/components') }
     ]
   },
+  optimizeDeps: {
+    exclude: ['vue-demi']
+  },
   server: {
     port: 8025,
   }

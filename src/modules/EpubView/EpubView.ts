@@ -1,5 +1,7 @@
+//https://github.com/takuma-ru/vue-swipe-modal/blob/main/packages/lib/src/components/swipe-modal.ts
+//https://github.com/KaygNas/rollup-plugin-vue-demi
 import "./style.css";
-import { ref, h, onMounted, onUnmounted, toRefs, watch, defineComponent, defineExpose, type PropType } from "vue-demi";
+import { ref, h as _h, onMounted, onUnmounted, toRefs, watch, defineComponent, getCurrentInstance, type PropType } from "vue-demi";
 import ePub, { Book, Rendition, Contents } from 'epubjs';
 import { clickListener, swipListener, wheelListener, keyListener } from '../utils/listener/listener';
 
@@ -18,7 +20,6 @@ export default defineComponent({
     name: "EpubView",
     props: {
         url: {
-            type: Object as PropType<Props['url']>,
             required: true,
         },
         location: {
@@ -47,11 +48,14 @@ export default defineComponent({
     },
     emits: {
         'update:location'(location: Props['location'], loc: Rendition['location']) {
+            return true
         }
     },
     setup(props, { emit, slots }) {
+        const vm = getCurrentInstance();
+        const h = _h.bind(vm);
         const { url, location } = toRefs(props)
-        const { tocChanged, getRendition, handleKeyPress, epubInitOptions, epubOptions } = props
+        const { tocChanged, getRendition, handleKeyPress, handleTextSelected, epubInitOptions, epubOptions } = props
 
         const viewer = ref<HTMLDivElement | null>(null)
         const toc = ref<Book['navigation']['toc']>([])
@@ -174,15 +178,15 @@ export default defineComponent({
             book?.destroy()
         })
 
-        defineExpose({
-            nextPage, prevPage, setLocation
-        })
-        return h('div', { class: 'reader' }, [
-            h('div', { class: 'viewHolder' }, [
-                isLoaded
-                    ? h('div', { ref: 'viewer', id: 'viewer', class: { hidden: !isLoaded } })
-                    : h('div', [slots.loadingView])
-            ])
-        ])
+        return {
+            render: () => h('div', { class: 'reader' }, [
+                h('div', { class: 'viewHolder' }, [
+                    isLoaded
+                        ? h('div', { ref: viewer, id: 'viewer', class: { hidden: !isLoaded } })
+                        : h('div', [slots.loadingView])
+                ])
+            ]),
+            // nextPage, prevPage, setLocation
+        }
     }
 })
