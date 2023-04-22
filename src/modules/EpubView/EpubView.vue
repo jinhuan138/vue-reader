@@ -176,7 +176,7 @@ defineExpose({
     position: relative;
 }
 
-.view {
+#viewer {
     height: 100%;
 }
 </style>
