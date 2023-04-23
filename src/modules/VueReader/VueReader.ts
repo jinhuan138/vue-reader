@@ -1,5 +1,5 @@
 import "./style.css";
-import { ref, h as _h, toRefs, reactive, computed, defineComponent, getCurrentInstance, type PropType } from "vue-demi";
+import { ref, h as _h, toRefs, reactive, computed, defineComponent, getCurrentInstance, type PropType, Transition } from "vue-demi";
 import { Rendition, Book } from 'epubjs';
 import EpubView from "../EpubView/EpubView";
 
@@ -103,6 +103,84 @@ export default defineComponent({
             epubRef.value?.prevPage()
         }
 
-        return 
+        return () => h('div', { class: 'container' }, [
+            h('div', { class: ['readerArea', { containerExpanded: expandedToc.value }] }, [
+                // 展开目录
+                showToc && h('button', {
+                    class: ['tocButton', { tocButtonExpanded: expandedToc.value }],
+                    type: 'button',
+                    onClick: toggleToc
+                }, [
+                    h('span', { class: 'tocButtonBar', style: 'top: 35%' }),
+                    h('span', { class: 'tocButtonBar', style: 'top: 66%' }),
+                ]),
+                // 书名
+                slots.title ? slots.name : h('div', { class: 'titleArea' }, bookName),
+                // 阅读
+                h(EpubView, {
+                    ref: epubRef,
+                    ...props,
+                    tocChanged: onTocChange,
+                    getRendition: onGetRendition,
+                }, {
+                    // 加载中的组件
+                    loadingView: () => h('slot', { name: 'loadingView' }, [
+                        h('div', { class: 'loadingView' }, 'Loading...')
+                    ])
+                }),
+                // 翻页
+                h('button', {
+                    class: 'arrow pre',
+                    onClick: pre,
+                    disabled: currentLocation.value?.atStart
+                }, '‹'),
+                h('button', {
+                    class: 'arrow next',
+                    onClick: next,
+                    disabled: currentLocation.value?.atEnd
+                }, '›')
+            ]),
+            // 目录
+            showToc && h('div', [
+                h('div', { class: 'tocArea' }, toc.value.map((item, index) => {
+                    return h('div', { key: index }, [
+                        h('button', {
+                            class: ['tocAreaButton', { active: currentLocation.value?.start.href.includes(item.href) }],
+                            onClick: () => setLocation(item.href),
+                        }, [
+                            item.label,
+                            // 展开
+                            item.subitems && item.subitems.length > 0 && h('div', {
+                                class: 'expansion',
+                                onClick: (event) => {
+                                    event.stopPropagation()
+                                    item.expansion = !item.expansion
+                                },
+                                style: {
+                                    transform: item.expansion ? 'rotate(180deg)' : 'rotate(0deg)'
+                                }
+                            }),
+                        ]),
+                        // 二级目录
+                        item.subitems && item.subitems.length > 0 && h(Transition, { name: 'subitem' }, h('div', {
+                            style: { display: 'flex', flexDirection: 'column' },
+                            vShow: item.expansion,
+                        }, item.subitems.map((subitem, subindex) => {
+                            return h('button', {
+                                key: subindex,
+                                class: ['tocAreaButton', { active: currentLocation.value?.start.href.includes(subitem.href) }],
+                                onClick: () => setLocation(subitem.href)
+                            }, "&nbsp;".repeat(4) + subitem.label)
+                        })))
+                    ])
+                })),
+                // 目录遮罩
+                h('div', {
+                    class: ['tocBackground', { expandedToc: expandedToc.value }],
+                    onClick: toggleToc,
+                    vShow: expandedToc.value
+                })
+            ])
+        ])
     }
 })
