@@ -17,7 +17,7 @@
                         <p v-if="book.language">语言: {{ book.language }}</p>
                     </div> -->
                     <!-- 主体 -->
-                    <router-link :to="{ name: 'reader', query: { name: book.url } }" slot="reference">
+                    <a :href="'/docs/reader?name='+book.url" target="_self">
                         <el-card ref="card" shadow="hover" class='box-card' :body-style="{ padding: '0px' }">
                             <el-image :src="coverPath(book.url)" fit='fill' class='el-image'>
                                 <div slot="error" class="image-slot">
@@ -27,14 +27,14 @@
                             </el-image>
                             <div class='title'
                                 :style="{
-                                    background: book.bgColorFromCover
-                                        ? book.bgColorFromCover
-                                        : '#6d6d6d',
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    }">
+                                        background: book.bgColorFromCover
+                                            ? book.bgColorFromCover
+                                            : '#6d6d6d',
+                                    }">
                                 {{ trunc(book.title, 30) }}
                             </div>
                         </el-card>
-                    </router-link>
+                    </a>
                 </div>
             </div>
         </el-main>
@@ -70,7 +70,7 @@ const props = defineProps({
 const { useMin, maxCols } = props
 
 onBeforeMount(() => {
-    // bookList.value = books
+    bookList.value = books.splice(0, 1)
 })
 onMounted(() => {
     if (!bookList.value.length) return

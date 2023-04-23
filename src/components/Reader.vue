@@ -13,13 +13,11 @@ import { VueReader } from "vue-reader";
 import { db } from "../utils/db";
 // import { useRoute } from 'vue-router'
 import { ref, computed, onMounted } from "vue";
-import { useData, useRoute } from 'vitepress'
+import { useRoute } from 'vue-router'
 
 
 const route = useRoute()
-console.log(route)
 const { name, id } = route.query
-console.log(name)
 const defaultBook = '啼笑因缘'
 const book = name ? name.replace(".epub", '') : defaultBook
 const url = computed(() => {
@@ -54,9 +52,12 @@ const image2Base64 = (url) => new Promise((resolve, reject) => {
     };
 })
 onMounted(async () => {
-
-    console.log(route)
-    console.log(useData())
+    if (window.firstLoad)
+        window.location.reload()
+    window.firstLoad = false
+    setTimeout(() => {
+        console.log(route.query)
+    }, 2000)
     // const res = await db.books.get({
     //     id: 2
     // })
