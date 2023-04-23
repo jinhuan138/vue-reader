@@ -186,7 +186,7 @@ export default defineComponent({
             h('div', { class: 'viewHolder' }, [
                 isLoaded
                     ? h('div', { ref: viewer, id: 'viewer', class: { hidden: !isLoaded } })
-                    : h('div', [slots.loadingView])
+                    : h('div',{}, [slots.loadingView])
             ])
         ])
     }
