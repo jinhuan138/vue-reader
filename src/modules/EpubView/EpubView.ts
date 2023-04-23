@@ -51,9 +51,11 @@ export default defineComponent({
             return true
         }
     },
-    setup(props, { emit, slots }) {
+    setup(props, context) {
+        const { emit, slots } = context
         const vm = getCurrentInstance();
         const h = _h.bind(vm);
+        
         const { url, location } = toRefs(props)
         const { tocChanged, getRendition, handleKeyPress, handleTextSelected, epubInitOptions, epubOptions } = props
 
@@ -178,15 +180,14 @@ export default defineComponent({
             book?.destroy()
         })
 
-        return {
-            render: () => h('div', { class: 'reader' }, [
-                h('div', { class: 'viewHolder' }, [
-                    isLoaded
-                        ? h('div', { ref: viewer, id: 'viewer', class: { hidden: !isLoaded } })
-                        : h('div', [slots.loadingView])
-                ])
-            ]),
-            // nextPage, prevPage, setLocation
-        }
+        context.expose({ nextPage, prevPage, setLocation });
+
+        return () => h('div', { class: 'reader' }, [
+            h('div', { class: 'viewHolder' }, [
+                isLoaded
+                    ? h('div', { ref: viewer, id: 'viewer', class: { hidden: !isLoaded } })
+                    : h('div', [slots.loadingView])
+            ])
+        ])
     }
 })

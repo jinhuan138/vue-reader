@@ -8,6 +8,7 @@ export default defineConfig({
     title: 'vue-reader',
     description: 'vue-reader document',
     base: '/docs/',
+    cleanUrls:true,
     markdown: {
         config: (md) => {
             md.use(demoBlockPlugin)

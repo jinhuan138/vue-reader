@@ -18,6 +18,7 @@ specifiers:
   epub: ^1.2.1
   epubjs: ^0.3.93
   file-saver: ^2.0.5
+  gsap: ^3.11.5
   i: ^0.3.7
   medium-zoom: ^1.0.8
   node-vibrant: 3.2.1-alpha.1
@@ -46,6 +47,7 @@ specifiers:
 
 dependencies:
   epubjs: 0.3.93
+  gsap: 3.11.5
   vue-demi: 0.14.0_vue@3.2.44
 
 devDependencies:
@@ -2669,6 +2671,10 @@ packages:
   /graceful-fs/4.2.11:
     resolution: {integrity: sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==}
     dev: true
+
+  /gsap/3.11.5:
+    resolution: {integrity: sha512-Q89nKCLgoX5xUjznh9LcaIUkz54k1voNucT1Rpf9SJNFIQznBwFqt5qUUQbeVInFyN/n18OUJkpeI6CNEDt74w==}
+    dev: false
 
   /has-flag/3.0.0:
     resolution: {integrity: sha512-sKJf1+ceQBr4SMkvQnBDNDtf4TXpVhVGateu0t918bl30FnbE2m4vNLX+VWe/dpjlb+HugGYzW7uQXH98HPEYw==}
