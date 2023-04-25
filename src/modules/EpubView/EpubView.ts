@@ -21,6 +21,7 @@ export default defineComponent({
     props: {
         url: {
             required: true,
+            type: [String, ArrayBuffer]
         },
         location: {
             type: Object as PropType<Props['location']>,
@@ -55,7 +56,7 @@ export default defineComponent({
         const { emit, slots } = context
         const vm = getCurrentInstance();
         const h = _h.bind(vm);
-        
+
         const { url, location } = toRefs(props)
         const { tocChanged, getRendition, handleKeyPress, handleTextSelected, epubInitOptions, epubOptions } = props
 
@@ -186,7 +187,7 @@ export default defineComponent({
             h('div', { class: 'viewHolder' }, [
                 isLoaded
                     ? h('div', { ref: viewer, id: 'viewer', class: { hidden: !isLoaded } })
-                    : h('div',{}, [slots.loadingView])
+                    : h('div', null, { loadingView: () => slots.loadingView })
             ])
         ])
     }
