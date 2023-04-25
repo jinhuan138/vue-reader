@@ -29,7 +29,8 @@ export default defineComponent({
     name: "VueReader",
     props: {
         url: {
-            required: true
+            required: true,
+            type: [String, ArrayBuffer]
         },
         title: String,
         showToc: {
@@ -45,6 +46,7 @@ export default defineComponent({
     },
     setup(props, context) {
         const { emit, slots } = context
+        console.log(slots)
         const vm = getCurrentInstance();
         const h = _h.bind(vm);
 
@@ -91,22 +93,24 @@ export default defineComponent({
         }
 
         const setLocation = (href: string | number) => {
-            epubRef?.value?.setLocation(href);
+            const instance: any = epubRef.value
+            instance.setLocation(href);
             expandedToc.value = false;
         };
 
         const next = () => {
-            epubRef.value?.nextPage()
+            const instance: any = epubRef.value
+            instance?.nextPage()
         }
 
         const pre = () => {
-            epubRef.value?.prevPage()
+            const instance: any = epubRef.value
+            instance.prevPage()
         }
-
         return () => h('div', { class: 'container' }, [
             h('div', { class: ['readerArea', { containerExpanded: expandedToc.value }] }, [
                 // 展开目录
-                showToc && h('button', {
+                showToc.value && h('button', {
                     class: ['tocButton', { tocButtonExpanded: expandedToc.value }],
                     type: 'button',
                     onClick: toggleToc
@@ -115,7 +119,7 @@ export default defineComponent({
                     h('span', { class: 'tocButtonBar', style: 'top: 66%' }),
                 ]),
                 // 书名
-                slots.title ? slots.name : h('div', { class: 'titleArea' }, bookName),
+                // slots.title || h('div', { class: 'titleArea' }, bookName.value),
                 // 阅读
                 h(EpubView, {
                     ref: epubRef,
@@ -124,9 +128,7 @@ export default defineComponent({
                     getRendition: onGetRendition,
                 }, {
                     // 加载中的组件
-                    loadingView: () => h('slot', { name: 'loadingView' }, [
-                        h('div', { class: 'loadingView' }, 'Loading...')
-                    ])
+                    loadingView: () => h('template', slots.loadingView || h('div', { class: 'loadingView' }, 'Loading...'))
                 }),
                 // 翻页
                 h('button', {
@@ -141,7 +143,7 @@ export default defineComponent({
                 }, '›')
             ]),
             // 目录
-            showToc && h('div', [
+            showToc.value && h('div', [
                 h('div', { class: 'tocArea' }, toc.value.map((item, index) => {
                     return h('div', { key: index }, [
                         h('button', {
