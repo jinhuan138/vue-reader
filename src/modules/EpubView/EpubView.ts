@@ -1,7 +1,7 @@
 //https://github.com/takuma-ru/vue-swipe-modal/blob/main/packages/lib/src/components/swipe-modal.ts
 //https://github.com/KaygNas/rollup-plugin-vue-demi
 import "./style.css";
-import { ref, h as _h, onMounted, onUnmounted, toRefs, watch, defineComponent, getCurrentInstance, type PropType } from "vue-demi";
+import { ref, h as _h, onMounted, onUnmounted, toRefs, watch, defineComponent, getCurrentInstance, type PropType, isVue3 } from "vue-demi";
 import ePub, { Book, Rendition, Contents } from 'epubjs';
 import { clickListener, swipListener, wheelListener, keyListener } from '../utils/listener/listener';
 
@@ -24,25 +24,31 @@ export default defineComponent({
             type: [String, ArrayBuffer]
         },
         location: {
+            required: false,
             type: Object as PropType<Props['location']>,
         },
         tocChanged: {
+            required: false,
             type: Function as PropType<Props['tocChanged']>,
         },
         getRendition: {
+            required: false,
             type: Function as PropType<Props['getRendition']>,
         },
         handleTextSelected: {
+            required: false,
             type: Function as PropType<Props['handleTextSelected']>,
         },
         handleKeyPress: {
             type: Function as PropType<Props['handleKeyPress']>,
         },
         epubInitOptions: {
+            required: false,
             type: Object as PropType<Props['epubInitOptions']>,
             default: () => ({})
         },
         epubOptions: {
+            required: false,
             type: Object as PropType<Props['epubOptions']>,
             default: () => ({})
         },
@@ -181,7 +187,7 @@ export default defineComponent({
             book?.destroy()
         })
 
-        context.expose({ nextPage, prevPage, setLocation });
+        if (isVue3) context.expose({ nextPage, prevPage, setLocation });
 
         return () => h('div', { class: 'reader' }, [
             h('div', { class: 'viewHolder' }, [
