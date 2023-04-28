@@ -22,6 +22,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "compile": "rollup -c",
+    "test:2": "vue-demi-switch 2 vue2 && npm run dev",
+    "test:3": "vue-demi-switch 3 && npm run dev",
     "format": "prettier --write src/modules/**/*.{ts,vue}",
     "book": "node build/book",
     "docs:dev": "vitepress dev docs",

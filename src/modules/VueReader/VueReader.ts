@@ -1,5 +1,5 @@
 import "./style.css";
-import { ref, h as _h, toRefs, reactive, computed, defineComponent, getCurrentInstance, type PropType, Transition } from "vue-demi";
+import { ref, h as _h, toRefs, reactive, computed, defineComponent, getCurrentInstance, type PropType } from "vue-demi";
 import { Rendition, Book } from 'epubjs';
 import EpubView from "../EpubView/EpubView";
 
@@ -47,6 +47,7 @@ export default defineComponent({
     setup(props, context) {
         const { emit, slots } = context
         console.log(slots)
+        console.log(context)
         const vm = getCurrentInstance();
         const h = _h.bind(vm);
 
@@ -122,10 +123,11 @@ export default defineComponent({
                 // slots.title || h('div', { class: 'titleArea' }, bookName.value),
                 // 阅读
                 h(EpubView, {
-                    ref: epubRef,
-                    ...props,
-                    tocChanged: onTocChange,
-                    getRendition: onGetRendition,
+                    // ref: epubRef,
+                    // tocChanged,
+                    // getRendition,
+                    // url,
+                    ...context.attrs,
                 }, {
                     // 加载中的组件
                     loadingView: () => h('template', slots.loadingView || h('div', { class: 'loadingView' }, 'Loading...'))
@@ -164,7 +166,7 @@ export default defineComponent({
                             }),
                         ]),
                         // 二级目录
-                        item.subitems && item.subitems.length > 0 && h(Transition, { name: 'subitem' }, h('div', {
+                        item.subitems && item.subitems.length > 0 && h('div', { name: 'subitem' }, h('div', {
                             style: { display: 'flex', flexDirection: 'column' },
                             vShow: item.expansion,
                         }, item.subitems.map((subitem, subindex) => {

@@ -43,7 +43,6 @@
           </button>
           <!-- 二级目录 -->
           <template v-if="item.subitems && item.subitems.length > 0">
-            <Transition name="subitem">
               <div v-show="item.expansion">
                 <button type="button" v-for="(subitem, index) in item.subitems" :key="index" class="tocAreaButton"
                   @click="setLocation(subitem['href'])"
@@ -51,7 +50,6 @@
                   {{ "&nbsp;".repeat(4) + subitem['label'] }}
                 </button>
               </div>
-            </Transition>
           </template>
         </div>
       </div>
