@@ -46,8 +46,6 @@ export default defineComponent({
     },
     setup(props, context) {
         const { emit, slots } = context
-        console.log(slots)
-        console.log(context)
         const vm = getCurrentInstance();
         const h = _h.bind(vm);
 
@@ -108,6 +106,7 @@ export default defineComponent({
             const instance: any = epubRef.value
             instance.prevPage()
         }
+
         return () => h('div', { class: 'container' }, [
             h('div', { class: ['readerArea', { containerExpanded: expandedToc.value }] }, [
                 // 展开目录
@@ -120,16 +119,16 @@ export default defineComponent({
                     h('span', { class: 'tocButtonBar', style: 'top: 66%' }),
                 ]),
                 // 书名
-                // slots.title || h('div', { class: 'titleArea' }, bookName.value),
+                h('div', { class: 'titleArea' }, slots.title || bookName.value),
                 // 阅读
                 h(EpubView, {
-                    // ref: epubRef,
-                    // tocChanged,
-                    // getRendition,
-                    // url,
+                    ref: epubRef,
+                    url: url.value,
+                    tocChanged: onTocChange,
+                    getRendition: onGetRendition,
                     ...context.attrs,
                 }, {
-                    // 加载中的组件
+                    // loading
                     loadingView: () => h('template', slots.loadingView || h('div', { class: 'loadingView' }, 'Loading...'))
                 }),
                 // 翻页
@@ -167,14 +166,14 @@ export default defineComponent({
                         ]),
                         // 二级目录
                         item.subitems && item.subitems.length > 0 && h('div', { name: 'subitem' }, h('div', {
-                            style: { display: 'flex', flexDirection: 'column' },
+                            style: { display: expandedToc.value ? 'flex' : 'none', flexDirection: 'column' },
                             vShow: item.expansion,
                         }, item.subitems.map((subitem, subindex) => {
                             return h('button', {
                                 key: subindex,
                                 class: ['tocAreaButton', { active: currentLocation.value?.start.href.includes(subitem.href) }],
                                 onClick: () => setLocation(subitem.href)
-                            }, "&nbsp;".repeat(4) + subitem.label)
+                            }, " ".repeat(4) + subitem.label)
                         })))
                     ])
                 })),
@@ -182,7 +181,7 @@ export default defineComponent({
                 h('div', {
                     class: ['tocBackground', { expandedToc: expandedToc.value }],
                     onClick: toggleToc,
-                    vShow: expandedToc.value
+                    style: { display: expandedToc.value ? undefined : 'none' }
                 })
             ])
         ])

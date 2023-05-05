@@ -11,12 +11,12 @@
 </template>
 <script setup lang="ts">
 //http://epubjs.org/documentation/0.3/
-import { ref, onMounted, onUnmounted, toRefs, watch } from "vue-demi";
+import { ref, onMounted, onUnmounted, toRefs, watch, unref } from "vue";
 import ePub, { Book, Rendition, Contents } from 'epubjs';
 import { clickListener, swipListener, wheelListener, keyListener } from '../utils/listener/listener';
 
 interface Props {
-    url: any,  // string | ArrayBuffer
+    url: string | ArrayBuffer,
     location?: any, //当前页 number | string | Rendition['location']['start']
     tocChanged?: (toc: Book['navigation']['toc']) => void,
     getRendition?: (rendition: Rendition) => void,
@@ -44,7 +44,7 @@ let book: null | Book = null, rendition: null | Rendition = null;
 
 const initBook = async () => {
     if (book) book.destroy()
-    book = ePub(url.value, epubInitOptions);
+    book = ePub(unref(url.value), epubInitOptions);
     book!.loaded.navigation.then(({ toc: _toc }) => {
         isLoaded.value = true
         toc.value = _toc

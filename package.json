@@ -33,7 +33,6 @@
   "license": "ISC",
   "dependencies": {
     "epubjs": "^0.3.93",
-    "gsap": "^3.11.5",
     "vue-demi": "latest"
   },
   "devDependencies": {
@@ -79,7 +78,6 @@
     "vue-router": "4"
   },
   "peerDependencies": {
-    "@vue/composition-api": "1.0.0-rc.1",
     "vue": "^2.0.0 || >=3.0.0"
   },
   "peerDependenciesMeta": {

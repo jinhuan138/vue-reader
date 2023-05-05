@@ -28,7 +28,7 @@ export default {
       targets: ['lib'],
       watch: true,
     }),
-    externals({ devDeps: false, }),
+    externals({ devDeps: false }),
     strip({
       labels: ['unittest']
     }),
@@ -50,5 +50,5 @@ export default {
     }),
     cleanup()
   ],
-  external: ['vue', 'Epub']
+  external: ['vue', 'Epub','vue-demi']
 };
