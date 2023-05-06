@@ -1,5 +1,5 @@
 import "./style.css";
-import { ref, h as _h, toRefs, reactive, computed, defineComponent, getCurrentInstance, type PropType } from "vue-demi";
+import { ref, h as _h, toRefs, reactive, computed, defineComponent, getCurrentInstance, type PropType, isVue3, onBeforeUnmount } from "vue-demi";
 import { Rendition, Book } from 'epubjs';
 import EpubView from "../EpubView/EpubView";
 
@@ -27,6 +27,7 @@ interface EpubBook {
 
 export default defineComponent({
     name: "VueReader",
+
     props: {
         url: {
             required: true,
@@ -44,8 +45,9 @@ export default defineComponent({
             type: Function as PropType<Props['getRendition']>,
         }
     },
+
     setup(props, context) {
-        const { emit, slots } = context
+        const { emit, slots, expose } = context
         const vm = getCurrentInstance();
         const h = _h.bind(vm);
 
@@ -92,19 +94,43 @@ export default defineComponent({
         }
 
         const setLocation = (href: string | number) => {
-            const instance: any = epubRef.value
+            const instance: any = isVue3 ? epubRef.value : vm?.refs['epubRef']
             instance.setLocation(href);
             expandedToc.value = false;
         };
 
         const next = () => {
-            const instance: any = epubRef.value
+            const instance: any = isVue3 ? epubRef.value : vm?.refs['epubRef']
             instance?.nextPage()
         }
 
         const pre = () => {
-            const instance: any = epubRef.value
+            const instance: any = isVue3 ? epubRef.value : vm?.refs['epubRef']
             instance.prevPage()
+        }
+
+        if (isVue3) {
+            expose({ setLocation, next, pre });
+        } else {
+            const expose = (exposing: Record<string, any>) => {
+                const instance = getCurrentInstance()
+                if (!instance) {
+                    throw new Error('expose should be called in setup().')
+                }
+
+                const keys = Object.keys(exposing)
+
+                keys.forEach(key => {
+                    instance.proxy![key] = exposing[key]
+                })
+
+                onBeforeUnmount(() => {
+                    keys.forEach(key => {
+                        instance.proxy![key] = undefined
+                    })
+                })
+            }
+            expose({ setLocation, next, pre });
         }
 
         return () => h('div', { class: 'container' }, [
@@ -113,33 +139,49 @@ export default defineComponent({
                 showToc.value && h('button', {
                     class: ['tocButton', { tocButtonExpanded: expandedToc.value }],
                     type: 'button',
-                    onClick: toggleToc
+                    on: {
+                        click: () => toggleToc
+                    },
+                    onClick: () => { toggleToc }
                 }, [
                     h('span', { class: 'tocButtonBar', style: 'top: 35%' }),
                     h('span', { class: 'tocButtonBar', style: 'top: 66%' }),
                 ]),
                 // 书名
-                h('div', { class: 'titleArea' }, slots.title || bookName.value),
+                h('div', { class: 'titleArea' }, slots.title?.() || bookName.value),
                 // 阅读
                 h(EpubView, {
-                    ref: epubRef,
+                    ref: isVue3 ? epubRef : "epubRef",
                     url: url.value,
                     tocChanged: onTocChange,
                     getRendition: onGetRendition,
                     ...context.attrs,
+                    //vue2
+                    attrs: {
+                        url: url.value,
+                        tocChanged: onTocChange,
+                        getRendition: onGetRendition,
+                        ...context.attrs,
+                    }
                 }, {
                     // loading
-                    loadingView: () => h('template', slots.loadingView || h('div', { class: 'loadingView' }, 'Loading...'))
+                    loadingView: () => h('template', slots.loadingView?.() || h('div', { class: 'loadingView' }, 'Loading...'))
                 }),
                 // 翻页
                 h('button', {
                     class: 'arrow pre',
-                    onClick: pre,
+                    // on: {
+                    //     click: () => { pre }
+                    // },
+                    // onClick: pre,
                     disabled: currentLocation.value?.atStart
                 }, '‹'),
                 h('button', {
                     class: 'arrow next',
-                    onClick: next,
+                    // on: {
+                    //     click: () => { next() }
+                    // },
+                    // onClick: next,
                     disabled: currentLocation.value?.atEnd
                 }, '›')
             ]),
@@ -149,12 +191,21 @@ export default defineComponent({
                     return h('div', { key: index }, [
                         h('button', {
                             class: ['tocAreaButton', { active: currentLocation.value?.start.href.includes(item.href) }],
-                            onClick: () => setLocation(item.href),
+                            on: {
+                                click: () => setLocation(item.href)
+                            },
+                            onClick: setLocation(item.href),
                         }, [
                             item.label,
                             // 展开
                             item.subitems && item.subitems.length > 0 && h('div', {
                                 class: 'expansion',
+                                on: {
+                                    click: (event) => {
+                                        event.stopPropagation()
+                                        item.expansion = !item.expansion
+                                    }
+                                },
                                 onClick: (event) => {
                                     event.stopPropagation()
                                     item.expansion = !item.expansion
@@ -165,23 +216,26 @@ export default defineComponent({
                             }),
                         ]),
                         // 二级目录
-                        item.subitems && item.subitems.length > 0 && h('div', { name: 'subitem' }, h('div', {
-                            style: { display: expandedToc.value ? 'flex' : 'none', flexDirection: 'column' },
-                            vShow: item.expansion,
-                        }, item.subitems.map((subitem, subindex) => {
-                            return h('button', {
-                                key: subindex,
-                                class: ['tocAreaButton', { active: currentLocation.value?.start.href.includes(subitem.href) }],
-                                onClick: () => setLocation(subitem.href)
-                            }, " ".repeat(4) + subitem.label)
-                        })))
+                        item.subitems && item.subitems.length > 0 && h('div', { style: { display: item.expansion ? undefined : 'none' } },
+                            item.subitems.map((subitem, subindex) => {
+                                return h('button', {
+                                    key: subindex,
+                                    class: ['tocAreaButton', { active: currentLocation.value?.start.href.includes(subitem.href) }],
+                                    onClick: () => setLocation(subitem.href),
+                                    on: {
+                                        click: () => setLocation(subitem.href)
+                                    },
+                                }, " ".repeat(4) + subitem.label)
+                            }))
                     ])
                 })),
                 // 目录遮罩
-                h('div', {
-                    class: ['tocBackground', { expandedToc: expandedToc.value }],
+                expandedToc.value && h('div', {
+                    class: ['tocBackground'],
                     onClick: toggleToc,
-                    style: { display: expandedToc.value ? undefined : 'none' }
+                    on: {
+                        click: () => { toggleToc }
+                    }
                 })
             ])
         ])
