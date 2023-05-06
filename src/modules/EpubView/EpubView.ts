@@ -1,7 +1,8 @@
 //https://github.com/takuma-ru/vue-swipe-modal/blob/main/packages/lib/src/components/swipe-modal.ts
 //https://github.com/KaygNas/rollup-plugin-vue-demi
+//git@github.com:takuma-ru/vue-swipe-modal.git
 import "./style.css";
-import { ref, h as _h, onMounted, onUnmounted, toRefs, watch, defineComponent, getCurrentInstance, type PropType, isVue3, unref } from "vue-demi";
+import { ref, h as _h, onMounted, onUnmounted, toRefs, watch, defineComponent, getCurrentInstance, type PropType, isVue3, onBeforeUnmount } from "vue-demi";
 import ePub, { Book, Rendition, Contents } from 'epubjs';
 import { clickListener, swipListener, wheelListener, keyListener } from '../utils/listener/listener';
 
@@ -18,6 +19,12 @@ interface Props {
 
 export default defineComponent({
     name: "EpubView",
+
+    model: {
+        prop: 'location',
+        event: 'update:location',
+    },
+
     props: {
         url: {
             required: true,
@@ -47,13 +54,15 @@ export default defineComponent({
             default: () => ({})
         },
     },
+
     emits: {
-        ''(location: Props['location'], loc: Rendition['location']) {
+        'update:location'(location: Props['location'], loc: Rendition['location']) {
             return true
         }
     },
+
     setup(props, context) {
-        const { emit, slots } = context
+        const { emit, slots, expose } = context
         const vm = getCurrentInstance();
         const h = _h.bind(vm);
 
@@ -77,7 +86,7 @@ export default defineComponent({
         };
 
         const initReader = () => {
-            rendition = book!.renderTo(viewer.value as HTMLDivElement, {
+            rendition = book!.renderTo('viewer', {
                 width: '100%',
                 height: '100%',
                 ...epubOptions
@@ -181,14 +190,46 @@ export default defineComponent({
             book?.destroy()
         })
 
-        if (isVue3) context.expose({ nextPage, prevPage, setLocation });
+        if (isVue3) {
+            expose({ nextPage, prevPage, setLocation });
+        }
+        else {
+            const expose = (exposing: Record<string, any>) => {
+                const instance = getCurrentInstance()
+                if (!instance) {
+                    throw new Error('expose should be called in setup().')
+                }
+
+                const keys = Object.keys(exposing)
+
+                keys.forEach(key => {
+                    instance.proxy![key] = exposing[key]
+                })
+
+                onBeforeUnmount(() => {
+                    keys.forEach(key => {
+                        instance.proxy![key] = undefined
+                    })
+                })
+            }
+            expose({ nextPage, prevPage, setLocation });
+        }
 
         return () => h('div', { class: 'reader' }, [
             h('div', { class: 'viewHolder' }, [
-                isLoaded
-                    ? h('div', { ref: viewer, id: 'viewer', class: { hidden: !isLoaded } })
-                    : h('div', null, { loadingView: () => slots.loadingView })
+                isLoaded.value
+                    ? h('div', {
+                        ref: viewer,
+                        id: 'viewer',
+                        domProps: {
+                            id: 'viewer'
+                        },
+                        style: {
+                            display: !isLoaded.value ? 'hidden' : undefined
+                        }
+                    })
+                    : h('div', null, { loadingView: () => slots.loadingView?.() })
             ])
         ])
-    }
+    },
 })
