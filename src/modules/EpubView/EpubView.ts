@@ -107,7 +107,7 @@ export default defineComponent({
                     // clickListener(iframe?.document, rendition as Rendition, flipPage);
                     // // selectListener(iframe.document, rendition, toggleBuble);
                     swipListener(iframe.document, flipPage);
-                    wheelListener(iframe.document, flipPage);
+                    // wheelListener(iframe.document, flipPage);
                     keyListener(iframe.document, flipPage);
                 });
                 rendition.on('locationChanged', onLocationChange)

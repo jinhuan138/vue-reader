@@ -550,7 +550,7 @@ const getRendition = (rendition) => {
 
 :::
 
-## Input file
+## Import file
 
 ::: demo input file
 
