@@ -19,19 +19,19 @@ export default {
     format: 'es',
     plugins: [terser()],
     name: 'vue-reader',
-    global: {
-      vue: "Vue"
-    }
   }],
+  global: {
+    vue: "Vue"
+  },
   plugins: [
     RollupClear({
       targets: ['lib'],
       watch: true,
     }),
-    externals({ devDeps: false, }),
-    strip({
-      labels: ['unittest']
-    }),
+    externals({ devDeps: false }),
+    // strip({
+    //   labels: ['unittest']
+    // }),
     resolve(),
     vue({
       css: true,
@@ -50,5 +50,5 @@ export default {
     }),
     cleanup()
   ],
-  external: ['vue', 'Epub']
+  external: ['vue', 'Epub', 'vue-demi']
 };
