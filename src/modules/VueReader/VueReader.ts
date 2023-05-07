@@ -140,9 +140,9 @@ export default defineComponent({
                     class: ['tocButton', { tocButtonExpanded: expandedToc.value }],
                     type: 'button',
                     on: {
-                        click: () => toggleToc
+                        click: () => toggleToc()
                     },
-                    onClick: () => { toggleToc }
+                    onClick: toggleToc
                 }, [
                     h('span', { class: 'tocButtonBar', style: 'top: 35%' }),
                     h('span', { class: 'tocButtonBar', style: 'top: 66%' }),
@@ -170,18 +170,18 @@ export default defineComponent({
                 // 翻页
                 h('button', {
                     class: 'arrow pre',
-                    // on: {
-                    //     click: () => { pre }
-                    // },
-                    // onClick: pre,
+                    on: {
+                        click: () => pre()
+                    },
+                    onClick: pre,
                     disabled: currentLocation.value?.atStart
                 }, '‹'),
                 h('button', {
                     class: 'arrow next',
-                    // on: {
-                    //     click: () => { next() }
-                    // },
-                    // onClick: next,
+                    on: {
+                        click: () => next()
+                    },
+                    onClick: next,
                     disabled: currentLocation.value?.atEnd
                 }, '›')
             ]),
@@ -190,11 +190,11 @@ export default defineComponent({
                 h('div', { class: 'tocArea' }, toc.value.map((item, index) => {
                     return h('div', { key: index }, [
                         h('button', {
-                            class: ['tocAreaButton', { active: currentLocation.value?.start.href.includes(item.href) }],
+                            class: ['tocAreaButton', currentLocation.value && item.href.includes(currentLocation.value!.start.href) ? 'active' : ''],
                             on: {
                                 click: () => setLocation(item.href)
                             },
-                            onClick: setLocation(item.href),
+                            onClick: () => setLocation(item.href),
                         }, [
                             item.label,
                             // 展开
@@ -217,10 +217,10 @@ export default defineComponent({
                         ]),
                         // 二级目录
                         item.subitems && item.subitems.length > 0 && h('div', { style: { display: item.expansion ? undefined : 'none' } },
-                            item.subitems.map((subitem, subindex) => {
+                            item.subitems.map((subitem, subIndex) => {
                                 return h('button', {
-                                    key: subindex,
-                                    class: ['tocAreaButton', { active: currentLocation.value?.start.href.includes(subitem.href) }],
+                                    key: subIndex,
+                                    class: ['tocAreaButton', currentLocation.value && subitem.href.includes(currentLocation.value!.start.href) ? 'active' : ''],
                                     onClick: () => setLocation(subitem.href),
                                     on: {
                                         click: () => setLocation(subitem.href)
@@ -234,7 +234,7 @@ export default defineComponent({
                     class: ['tocBackground'],
                     onClick: toggleToc,
                     on: {
-                        click: () => { toggleToc }
+                        click: () => toggleToc()
                     }
                 })
             ])

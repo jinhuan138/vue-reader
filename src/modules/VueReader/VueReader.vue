@@ -34,7 +34,7 @@
       <div class="tocArea">
         <div v-for="(item, index) in toc" :key="index">
           <button type="button" class="tocAreaButton" @click="setLocation(item.href)"
-            :class="{ active: currentLocation ? item.href.includes(currentLocation!.start.href) : false }">
+            :class="{ active: currentLocation ? item.href.includes(currentLocation.start.href) : false }">
             {{ item.label }}
             <!-- 展开 -->
             <div class="expansion" v-if="item.subitems && item.subitems.length > 0"
@@ -46,7 +46,7 @@
               <div v-show="item.expansion">
                 <button type="button" v-for="(subitem, index) in item.subitems" :key="index" class="tocAreaButton"
                   @click="setLocation(subitem['href'])"
-                  :class="{ active: currentLocation ? subitem['href'].includes(currentLocation!.start.href) : false }">
+                  :class="{ active: currentLocation ? subitem['href'].includes(currentLocation.start.href) : false }">
                   {{ "&nbsp;".repeat(4) + subitem['label'] }}
                 </button>
               </div>

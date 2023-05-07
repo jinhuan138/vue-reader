@@ -1,7 +1,7 @@
 <template>
     <div class="reader">
         <div class="viewHolder">
-            <div class="view" ref="viewer" id="viewer" v-show="isLoaded"></div>
+            <div ref="viewer" id="viewer" v-show="isLoaded"></div>
             <div v-if="!isLoaded">
                 <slot name="loadingView">
                 </slot>
@@ -34,7 +34,7 @@ const { tocChanged, getRendition, handleTextSelected, handleKeyPress, epubInitOp
 const { url, location } = toRefs(props)
 
 const emit = defineEmits<{
-    (e: 'update:location', location: Props['location'], loc: Rendition['location']): void
+    (e: 'update:location', location: Props['location']): void
 }>()
 
 const viewer = ref<HTMLDivElement | null>(null)
@@ -102,7 +102,7 @@ const registerEvents = () => {
 const onLocationChange = (loc: Rendition['location']) => {//监听翻页
     const newLocation = loc && loc.start
     if (location?.value !== newLocation) {
-        emit('update:location', newLocation, loc)
+        emit('update:location', newLocation)
     }
 }
 
