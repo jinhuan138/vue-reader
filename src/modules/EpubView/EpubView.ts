@@ -1,6 +1,5 @@
 //https://github.com/takuma-ru/vue-swipe-modal/blob/main/packages/lib/src/components/swipe-modal.ts
 //https://github.com/KaygNas/rollup-plugin-vue-demi
-//git@github.com:takuma-ru/vue-swipe-modal.git
 import "./style.css";
 import { ref, h as _h, onMounted, onUnmounted, toRefs, watch, defineComponent, getCurrentInstance, type PropType, isVue3, onBeforeUnmount } from "vue-demi";
 import ePub, { Book, Rendition, Contents } from 'epubjs';
@@ -8,7 +7,7 @@ import { clickListener, swipListener, wheelListener, keyListener } from '../util
 
 interface Props {
     url: string | ArrayBuffer,
-    location?: any, //当前页 number | string | Rendition['location']['start']
+    location?: number | string | Rendition['location']['start'], //当前页 
     tocChanged?: (toc: Book['navigation']['toc']) => void,
     getRendition?: (rendition: Rendition) => void,
     handleTextSelected?: (cfiRange: string, contents: Contents) => void,
@@ -31,7 +30,7 @@ export default defineComponent({
             type: [String, ArrayBuffer]
         },
         location: {
-            type: Object as PropType<Props['location']>,
+            type: [Number, String]
         },
         tocChanged: {
             type: Function as PropType<Props['tocChanged']>,
@@ -56,7 +55,7 @@ export default defineComponent({
     },
 
     emits: {
-        'update:location'(location: Props['location'], loc: Rendition['location']) {
+        'update:location'(location: Props['location']) {
             return true
         }
     },
@@ -86,7 +85,8 @@ export default defineComponent({
         };
 
         const initReader = () => {
-            rendition = book!.renderTo('viewer', {
+            const dom: HTMLDivElement = isVue3 ? viewer.value as HTMLDivElement : vm?.refs['viewer'] as HTMLDivElement
+            rendition = book!.renderTo(dom, {
                 width: '100%',
                 height: '100%',
                 ...epubOptions
@@ -114,9 +114,9 @@ export default defineComponent({
                 rendition.on('rendered', (e: Event, iframe: any) => {
                     iframe?.iframe?.contentWindow.focus()
                     // clickListener(iframe?.document, rendition as Rendition, flipPage);
-                    // // selectListener(iframe.document, rendition, toggleBuble);
-                    swipListener(iframe.document, flipPage);
+                    // selectListener(iframe.document, rendition, toggleBuble);
                     // wheelListener(iframe.document, flipPage);
+                    swipListener(iframe.document, flipPage);
                     keyListener(iframe.document, flipPage);
                 });
                 rendition.on('locationChanged', onLocationChange)
@@ -131,9 +131,9 @@ export default defineComponent({
         };
 
         const onLocationChange = (loc: Rendition['location']) => {//监听翻页
-            const newLocation = loc && loc.start
-            if (location?.value !== newLocation) {
-                emit('update:location', newLocation, loc)
+            const newLocation = loc.start.href
+            if (location.value !== newLocation) {
+                emit('update:location', newLocation)
             }
         }
 
@@ -151,12 +151,12 @@ export default defineComponent({
 
         if (location) {
             watch(location, debounce((val: string | number, old: string | number) => {
-                if (val === old) return
+                if (val && val === old) return
                 if (typeof val === 'string') {
-                    rendition?.display(val)
+                    // rendition?.display(val)
                 }
                 if (typeof val === 'number') {
-                    rendition?.display(val)
+                    // rendition?.display(val)
                 }
             }), {
                 immediate: true
@@ -217,18 +217,18 @@ export default defineComponent({
 
         return () => h('div', { class: 'reader' }, [
             h('div', { class: 'viewHolder' }, [
-                isLoaded.value
-                    ? h('div', {
-                        ref: viewer,
-                        id: 'viewer',
-                        domProps: {
-                            id: 'viewer'
-                        },
-                        style: {
-                            display: !isLoaded.value ? 'hidden' : undefined
-                        }
-                    })
-                    : h('div', null, { loadingView: () => slots.loadingView?.() })
+                h('div', {
+                    ref: isVue3 ? viewer : "viewer",
+                    class: 'view',
+                    id: 'viewer',
+                    domProps: {
+                        id: 'viewer'
+                    },
+                    style: {
+                        display: !isLoaded.value ? 'hidden' : undefined
+                    }
+                }),
+                !isLoaded.value ? h('div', null, { loadingView: () => slots.loadingView?.() }) : null
             ])
         ])
     },

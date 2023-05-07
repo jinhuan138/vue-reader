@@ -20,9 +20,6 @@ export default {
     plugins: [terser()],
     name: 'vue-reader',
   }],
-  global: {
-    vue: "Vue"
-  },
   plugins: [
     RollupClear({
       targets: ['lib'],

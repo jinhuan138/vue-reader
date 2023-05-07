@@ -21,6 +21,23 @@ And in your vue-component...
 ```
 :::
 
+vue2
+
+```vue
+<template>
+  <div style='height: 100vh'>
+    <VueReader url='/files/啼笑因缘.epub'> </VueReader>
+  </div>
+</template>
+<script>
+import VueReader from 'vue-reader'
+
+export default {
+  components: { VueReader }
+}
+</script>
+```
+
 ## VueReader Attributes
 
 | **Name** | **Description**         | **Type**               | **Default** |
