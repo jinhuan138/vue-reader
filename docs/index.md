@@ -48,7 +48,7 @@ export default {
 
 | **Name** | **Description**         | **Type**               | **Default** |
 | -------- | ----------------------- | ---------------------- | ----------- |
-| url      | book url or arrayBuffer | `string`|`ArrayBuffer` | —           |
+| url      | book url or arrayBuffer | `string`/`ArrayBuffer` |— |
 | title    | the title of the book   | `string`               | —           |
 | showToc  | whether to show the toc | `boolean`              | true        |
 
@@ -64,7 +64,7 @@ export default {
 
 | **Name**           | **Description**                                              | **Type**                      | **Default** |
 | ------------------ | ------------------------------------------------------------ | ----------------------------- | ----------- |
-| url                | the path or arrayBuffer of the book                          | `string`|`ArrayBuffer` |—        |
+| url                | the path or arrayBuffer of the book                          | `string`/`ArrayBuffer` |—        |
 | location           | set / update location of the epub                            | `string`/`number`             | —           |
 | tocChanged         | when the reader has parsed the book you will receive an array of the chapters | `function(toc)`               | —           |
 | handleKeyPress     | when press the key                                           | `function(event)`             |             |
