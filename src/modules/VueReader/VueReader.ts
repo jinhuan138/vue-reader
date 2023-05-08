@@ -177,6 +177,9 @@ export default defineComponent({
                         click: () => pre()
                     },
                     onClick: pre,
+                    domProps: {
+                        disabled: currentLocation.value?.atStart
+                    },
                     disabled: currentLocation.value?.atStart
                 }, '‹'),
                 h('button', {
@@ -185,6 +188,9 @@ export default defineComponent({
                         click: () => next()
                     },
                     onClick: next,
+                    domProps: {
+                        disabled: currentLocation.value?.atEnd
+                    },
                     disabled: currentLocation.value?.atEnd
                 }, '›')
             ]),

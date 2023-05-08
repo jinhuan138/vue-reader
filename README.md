@@ -14,6 +14,7 @@ And in your vue-component...
 
 <details>
 <summary>Vue 3</summary>
+
 ```vue
 <template>
    <div style='height: 100vh'>
@@ -24,10 +25,12 @@ And in your vue-component...
 import { VueReader } from 'vue-reader'
 </script>
 ```
+
 </details>
 
 <details>
 <summary>Vue 2</summary>
+
 ```vue
 <template>
   <div style='height: 100vh'>
@@ -41,6 +44,7 @@ export default {
 }
 </script>
 ```
+
 </details>
 
 
@@ -131,6 +135,7 @@ const locationChange = (epubcifi) => {
 
 <details>
 <summary>Vue 2</summary>
+
 ```vue
 <template>
   <div style='height: 100vh'>
@@ -160,6 +165,7 @@ export default {
 }
 </script>
 ```
+
 </details>
 
 ## Display page number for current chapter
