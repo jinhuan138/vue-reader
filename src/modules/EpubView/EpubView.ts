@@ -1,7 +1,8 @@
 //https://github.com/takuma-ru/vue-swipe-modal/blob/main/packages/lib/src/components/swipe-modal.ts
 //https://github.com/KaygNas/rollup-plugin-vue-demi
+//https://github.com/Shimada666/vue-demi-sfc-component-template.git
 import "./style.css";
-import { ref, h as _h, onMounted, onUnmounted, toRefs, watch, defineComponent, getCurrentInstance, type PropType, isVue3, onBeforeUnmount } from "vue-demi";
+import { ref, h as _h, onMounted, onUnmounted, toRefs, watch, defineComponent, getCurrentInstance, type PropType, isVue3, onBeforeUnmount, version, unref } from "vue-demi";
 import ePub, { Book, Rendition, Contents } from 'epubjs';
 import { clickListener, swipListener, wheelListener, keyListener } from '../utils/listener/listener';
 
@@ -24,13 +25,19 @@ export default defineComponent({
         event: 'update:location',
     },
 
+    emits: {
+        'update:location'(location: Props['location']) {
+            return true
+        }
+    },
+
     props: {
         url: {
             required: true,
             type: [String, ArrayBuffer]
         },
         location: {
-            type: [Number, String]
+            // type: [Number, String]
         },
         tocChanged: {
             type: Function as PropType<Props['tocChanged']>,
@@ -54,21 +61,14 @@ export default defineComponent({
         },
     },
 
-    emits: {
-        'update:location'(location: Props['location']) {
-            return true
-        }
-    },
-
-    setup(props, context) {
-        const { emit, slots, expose } = context
+    setup(props, { emit, slots, expose }) {
         const vm = getCurrentInstance();
         const h = _h.bind(vm);
 
         const { url, location } = toRefs(props)
         const { tocChanged, getRendition, handleKeyPress, handleTextSelected, epubInitOptions, epubOptions } = props
 
-        const viewer = ref<HTMLDivElement | null>(null)
+        const viewer = ref<HTMLDivElement | 'viewer'>('viewer')
         const toc = ref<Book['navigation']['toc']>([])
         const isLoaded = ref(false)
         let book: null | Book = null, rendition: null | Rendition = null;
@@ -85,7 +85,7 @@ export default defineComponent({
         };
 
         const initReader = () => {
-            const dom: HTMLDivElement = isVue3 ? viewer.value as HTMLDivElement : vm?.refs['viewer'] as HTMLDivElement
+            const dom = viewer.value as HTMLDivElement || vm?.refs['viewer'] as HTMLDivElement
             rendition = book!.renderTo(dom, {
                 width: '100%',
                 height: '100%',
@@ -131,7 +131,7 @@ export default defineComponent({
         };
 
         const onLocationChange = (loc: Rendition['location']) => {//监听翻页
-            const newLocation = loc.start.href
+            const newLocation = loc.start
             if (location.value !== newLocation) {
                 emit('update:location', newLocation)
             }
@@ -153,10 +153,10 @@ export default defineComponent({
             watch(location, debounce((val: string | number, old: string | number) => {
                 if (val && val === old) return
                 if (typeof val === 'string') {
-                    // rendition?.display(val)
+                    rendition?.display(val)
                 }
                 if (typeof val === 'number') {
-                    // rendition?.display(val)
+                    rendition?.display(val)
                 }
             }), {
                 immediate: true
@@ -190,7 +190,7 @@ export default defineComponent({
             book?.destroy()
         })
 
-        if (isVue3) {
+        if (expose) {
             expose({ nextPage, prevPage, setLocation });
         }
         else {
@@ -215,15 +215,15 @@ export default defineComponent({
             expose({ nextPage, prevPage, setLocation });
         }
 
+        // Vue 3 and Vue 2 have different vnode props format:
+        // see https://v3-migration.vuejs.org/zh/breaking-changes/render-function-api.html
         return () => h('div', { class: 'reader' }, [
             h('div', { class: 'viewHolder' }, [
                 h('div', {
-                    ref: isVue3 ? viewer : "viewer",
+                    ref: viewer,
                     class: 'view',
                     id: 'viewer',
-                    domProps: {
-                        id: 'viewer'
-                    },
+                    attrs: { id: 'viewer' },
                     style: {
                         display: !isLoaded.value ? 'hidden' : undefined
                     }
