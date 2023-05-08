@@ -151,6 +151,7 @@ export default defineComponent({
 
         if (location) {
             watch(location, debounce((val: string | number, old: string | number) => {
+                console.log(val)
                 if (val && val === old) return
                 if (typeof val === 'string') {
                     rendition?.display(val)

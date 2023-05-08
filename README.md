@@ -129,6 +129,39 @@ const locationChange = (epubcifi) => {
 </script>
 ```
 
+<details>
+<summary>Vue 2</summary>
+```vue
+<template>
+  <div style='height: 100vh'>
+    <VueReader url="/files/啼笑因缘.epub" :location='location' @update:location='locationChange'> </VueReader>
+  </div>
+</template>
+<script>
+import { VueReader } from 'vue-reader'
+export default {
+  components: { VueReader },
+  data() {
+    return {
+      location: null,
+      firstRenderDone: false
+    }
+  },
+  methods: {
+    locationChange(epubcifi) {
+      if (!this.firstRenderDone) {
+        this.location = localStorage.getItem('book-progress')
+        return this.firstRenderDone = true
+      }
+      localStorage.setItem('book-progress', epubcifi)
+      this.location = epubcifi
+    }
+  }
+}
+</script>
+```
+</details>
+
 ## Display page number for current chapter
 
 We store the epubjs rendition in a ref, and get the page numbers in the callback when location is changed. Note that in this example we also find them name of the current chapter from the toc. Also see limitation for pagination for the whole book.
