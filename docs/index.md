@@ -9,6 +9,8 @@ npm install vue-reader --save
 ```
 
 And in your vue-component...
+<details>
+<summary>Vue 3</summary>
 
 :::demo basic usage
 
@@ -20,8 +22,10 @@ And in your vue-component...
 </template>
 ```
 :::
+</details>
 
-vue2
+<details>
+<summary>Vue 2</summary>
 
 ```vue
 <template>
@@ -30,13 +34,15 @@ vue2
   </div>
 </template>
 <script>
-import VueReader from 'vue-reader'
+import { VueReader } from 'vue-reader'
 
 export default {
   components: { VueReader }
 }
 </script>
 ```
+
+</details>
 
 ## VueReader Attributes
 

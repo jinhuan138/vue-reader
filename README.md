@@ -12,6 +12,8 @@ npm install vue-reader --save
 
 And in your vue-component...
 
+<details>
+<summary>Vue 3</summary>
 ```vue
 <template>
    <div style='height: 100vh'>
@@ -22,6 +24,25 @@ And in your vue-component...
 import { VueReader } from 'vue-reader'
 </script>
 ```
+</details>
+
+<details>
+<summary>Vue 2</summary>
+```vue
+<template>
+  <div style='height: 100vh'>
+    <VueReader url='/files/啼笑因缘.epub'> </VueReader>
+  </div>
+</template>
+<script>
+import { VueReader } from 'vue-reader'
+export default {
+  components: { VueReader }
+}
+</script>
+```
+</details>
+
 
 ## VueReader Attributes
 
@@ -81,7 +102,7 @@ Saving the current page on storage is pretty simple, but we need to keep in mind
 ```vue
 <template>
     <div style='height: 100vh'>
-        <VueReader url='/files/啼笑因缘.epub" :location="location' @update:location='locationChange'/>
+        <VueReader url='/files/啼笑因缘.epub' :location='location' @update:location='locationChange'/>
     </div>
 </template>
 <script setup>

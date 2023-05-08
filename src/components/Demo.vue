@@ -1,44 +1,54 @@
 <template>
-    <div style='height: 50vh'>
-        <VueReader url='/files/alice.epub'>
+       <div style='height: 100vh'>
+        <VueReader 
+            url='/files/啼笑因缘.epub' 
+            :getRendition='getRendition'
+            :tocChanged="tocChanged"
+            @update:location='locationChange'>
         </VueReader>
     </div>
-    <div style='height: 50vh'>
-        <VueReader url='/files/alice.epub'>
-        </VueReader>
+    <div class='page'>
+        {{ page }}
     </div>
 </template>
 <script setup>
 import { VueReader } from '@/modules/index'
-import { onBeforeUnmount } from 'vue'
-import mediumZoom from "medium-zoom"
+import { ref } from 'vue'
 
-let zoom = null
-const closeZoom = () => {
-    if (zoom && zoom.getZoomedImage()) zoom.close()
-}
-const getRendition = (rendition) => {
-    rendition.hooks.content.register((contents, view) => {
-        const contentsDom = contents.document
-        const images = [...contentsDom.querySelectorAll('img'), ...contentsDom.querySelectorAll('image')]
-        zoom = mediumZoom(images, {
-            background: 'rgba(247, 249, 250, 0.97)'
-        })
-        contentsDom.addEventListener('click', async (e) => {
-            if (zoom.getImages().includes(e.target)) {
-                if (zoom.getZoomedImage()) await zoom.close()
-                e.target.style.zIndex = 5
-                zoom.open({ target: e.target })
-            } else {
-                zoom.close()
+let rendition = null, toc = []
+const page = ref('')
+const firstRenderDone = ref(false)
+
+const getRendition = val => rendition = val
+const tocChanged = val => toc = val
+
+const getLabel = (toc, href) => {
+    let label = 'n/a';
+    toc.some(item => {
+        if (item.subitems.length > 0) {
+            const subChapter = getLabel(item.subitems, href);
+            if (subChapter !== 'n/a') {
+                label = subChapter
+                return true
             }
-        })
-        document.addEventListener('click', closeZoom)
+        } else if (item.href.includes(href)) {
+            label = item.label
+            return true
+        }
     })
+    return label;
 }
-onBeforeUnmount(() => {
-    document.removeEventListener('click', closeZoom)
-})
+const locationChange = (epubcifi) => {
+    console.log("locationChange",epubcifi)
+    if (epubcifi) {
+        const { displayed, href } = rendition.location.start
+        const { cfi } = rendition.location.end
+        if (href !== 'titlepage.xhtml') {
+            const label = getLabel(toc, href)
+            page.value = `${displayed.page}/${displayed.total} ${label}`
+        }
+    }
+}
 </script>
 <style scoped>
 .page {

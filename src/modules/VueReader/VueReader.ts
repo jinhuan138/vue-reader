@@ -1,5 +1,5 @@
 import "./style.css";
-import { ref, h as _h, toRefs, reactive, computed, defineComponent, getCurrentInstance, type PropType, isVue3, onBeforeUnmount } from "vue-demi";
+import { ref, h as _h, toRefs, reactive, computed, defineComponent, getCurrentInstance, type PropType, onBeforeUnmount, version } from "vue-demi";
 import { Rendition, Book } from 'epubjs';
 import EpubView from "../EpubView/EpubView";
 
@@ -46,8 +46,8 @@ export default defineComponent({
         }
     },
 
-    setup(props, context) {
-        const { emit, slots, expose } = context
+    setup(props, context: any) {
+        const { emit, slots, expose, attrs } = context
         const vm = getCurrentInstance();
         const h = _h.bind(vm);
 
@@ -94,22 +94,22 @@ export default defineComponent({
         }
 
         const setLocation = (href: string | number) => {
-            const instance: any = isVue3 ? epubRef.value : vm?.refs['epubRef']
-            instance.setLocation(href);
+            const instance: any = epubRef.value || vm?.refs['epubRef']
+            instance?.setLocation(href);
             expandedToc.value = false;
         };
 
         const next = () => {
-            const instance: any = isVue3 ? epubRef.value : vm?.refs['epubRef']
+            const instance: any = epubRef.value || vm?.refs['epubRef']
             instance?.nextPage()
         }
 
         const pre = () => {
-            const instance: any = isVue3 ? epubRef.value : vm?.refs['epubRef']
-            instance.prevPage()
+            const instance: any = epubRef.value || vm?.refs['epubRef']
+            instance?.prevPage()
         }
 
-        if (isVue3) {
+        if (expose) {
             expose({ setLocation, next, pre });
         } else {
             const expose = (exposing: Record<string, any>) => {
@@ -151,17 +151,20 @@ export default defineComponent({
                 h('div', { class: 'titleArea' }, slots.title?.() || bookName.value),
                 // 阅读
                 h(EpubView, {
-                    ref: isVue3 ? epubRef : "epubRef",
+                    ref: parseFloat(version) < 2.7 ? 'epubRef' : epubRef,
                     url: url.value,
                     tocChanged: onTocChange,
                     getRendition: onGetRendition,
-                    ...context.attrs,
+                    ...attrs,
                     //vue2
                     attrs: {
                         url: url.value,
                         tocChanged: onTocChange,
                         getRendition: onGetRendition,
-                        ...context.attrs,
+                        ...attrs,
+                    },
+                    on: {
+                        ...context.listeners
                     }
                 }, {
                     // loading
