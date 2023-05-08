@@ -137,7 +137,7 @@ export default defineComponent({
             }
         }
 
-        const debounce = (func: Function, wait: number = 500) => {
+        const debounce = (func: Function, wait: number = 1000) => {
             let timeout: NodeJS.Timeout | null;
             return function executedFunction(...args: Array<any>) {
                 const later = () => {
@@ -151,13 +151,12 @@ export default defineComponent({
 
         if (location) {
             watch(location, debounce((val: string | number, old: string | number) => {
-                console.log(val)
                 if (val && val === old) return
                 if (typeof val === 'string') {
-                    rendition?.display(val)
+                    // rendition?.display(val)
                 }
                 if (typeof val === 'number') {
-                    rendition?.display(val)
+                    // rendition?.display(val)
                 }
             }), {
                 immediate: true

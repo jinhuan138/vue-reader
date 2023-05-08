@@ -1,10 +1,10 @@
 <template>
-       <div style='height: 100vh'>
-        <VueReader 
-            url='/files/啼笑因缘.epub' 
-            :getRendition='getRendition'
-            :tocChanged="tocChanged"
+    <div style='height: 100vh'>
+        <VueReader url='/files/啼笑因缘.epub' :location='location' :getRendition='getRendition' :tocChanged="tocChanged"
             @update:location='locationChange'>
+            <template #title>
+                啼笑因缘
+            </template>
         </VueReader>
     </div>
     <div class='page'>
@@ -17,6 +17,7 @@ import { ref } from 'vue'
 
 let rendition = null, toc = []
 const page = ref('')
+const location =ref(null)
 const firstRenderDone = ref(false)
 
 const getRendition = val => rendition = val
@@ -39,7 +40,7 @@ const getLabel = (toc, href) => {
     return label;
 }
 const locationChange = (epubcifi) => {
-    console.log("locationChange",epubcifi)
+    location.value = epubcifi
     if (epubcifi) {
         const { displayed, href } = rendition.location.start
         const { cfi } = rendition.location.end

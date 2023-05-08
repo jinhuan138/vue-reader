@@ -26,9 +26,9 @@ export default {
       watch: true,
     }),
     externals({ devDeps: false }),
-    // strip({
-    //   labels: ['unittest']
-    // }),
+    strip({
+      labels: ['unittest']
+    }),
     resolve(),
     vue({
       css: true,
