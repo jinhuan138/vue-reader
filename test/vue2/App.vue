@@ -1,10 +1,9 @@
 <template>
   <div style='height: 100vh'>
-    <VueReader url="/files/啼笑因缘.epub" :location='location' @update:location='locationChange'> 
-    <template #title>
-       啼笑因缘123456
-    </template>
+    <VueReader :url="url" :location='location' :title='title' @update:location='locationChange'>
+
     </VueReader>
+    <input type="file" :multiple="false" accept=".epub" @change="onchange" class="input">
   </div>
 </template>
 
@@ -15,7 +14,9 @@ export default {
   data() {
     return {
       location: null,
-      firstRenderDone: false
+      url: null,
+      firstRenderDone: false,
+      title:""
     }
   },
   methods: {
@@ -27,6 +28,16 @@ export default {
       }
       localStorage.setItem('book-progress', epubcifi)
       this.location = epubcifi
+    },
+    onchange(e) {
+      const file = e.target.files[0];
+      const { name } = file
+      this.title = name.replace('.epub', '')
+      if (window.FileReader) {
+        var reader = new FileReader();
+        reader.onloadend = e => this.url = reader.result
+        reader.readAsArrayBuffer(file);
+      }
     }
   }
 }

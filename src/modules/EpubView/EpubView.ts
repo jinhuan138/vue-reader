@@ -115,7 +115,7 @@ export default defineComponent({
                     iframe?.iframe?.contentWindow.focus()
                     // clickListener(iframe?.document, rendition as Rendition, flipPage);
                     // selectListener(iframe.document, rendition, toggleBuble);
-                    // wheelListener(iframe.document, flipPage);
+                    if (!epubOptions?.flow?.includes('scrolled')) wheelListener(iframe.document, flipPage);
                     swipListener(iframe.document, flipPage);
                     keyListener(iframe.document, flipPage);
                 });

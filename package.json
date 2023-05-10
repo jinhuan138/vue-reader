@@ -1,6 +1,6 @@
 {
   "name": "vue-reader",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "main": "lib/index.min.js",
   "files": [
     "lib"
@@ -23,9 +23,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "compile": "rollup -c",
-    "dev:2": "vue-demi-switch 2 vue2 && pnpm --filter test/vue2 dev",
-    "dev:2.7": "vue-demi-switch 2.7 vue2 && pnpm --filter test/vue2.7 dev",
-    "dev:3": "vue-demi-switch 3 vue3 && pnpm --filter test/vue3 dev",
+    "dev:2": "vue-demi-switch 2 vue2 && npm run dev --workspace=test/vue2",
+    "dev:2.7": "vue-demi-switch 2.7 vue2 && npm run dev --workspace=test/vue2.7",
     "format": "prettier --write src/modules/**/*.{ts,vue}",
     "book": "node build/book",
     "docs:dev": "vitepress dev docs",
@@ -33,6 +32,13 @@
     "docs:preview": "vitepress preview docs --port 3333"
   },
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jinhuan138/docs/issues"
+  },
+  "workspaces": [
+    "test/vue2",
+    "test/vue2.7"
+  ],
   "dependencies": {
     "epubjs": "^0.3.93",
     "vue-demi": "latest"
@@ -76,12 +82,13 @@
     "vitepress": "1.0.0-alpha.30",
     "vitepress-theme-demoblock": "^2.0.2",
     "vue": "3.2.44",
+    "vue-reader": "^1.2.2",
+    "vue-router": "4",
     "vue2": "npm:vue@2",
-    "vue3": "npm:vue@3",
-    "vue-reader": "^1.1.6",
-    "vue-router": "4"
+    "vue3": "npm:vue@3"
   },
   "peerDependencies": {
+    "@vue/composition-api": "^1.0.0-rc.1",
     "vue": "^2.0.0 || >=3.0.0"
   },
   "peerDependenciesMeta": {
