@@ -2,7 +2,7 @@
 //https://github.com/KaygNas/rollup-plugin-vue-demi
 //https://github.com/Shimada666/vue-demi-sfc-component-template.git
 import "./style.css";
-import { ref, h as _h, onMounted, onUnmounted, toRefs, watch, defineComponent, getCurrentInstance, type PropType, isVue3, onBeforeUnmount, version, unref } from "vue-demi";
+import { ref, h as _h, onMounted, onUnmounted, toRefs, watch, defineComponent, getCurrentInstance, type PropType, onBeforeUnmount, unref } from "vue-demi";
 import ePub, { Book, Rendition, Contents } from 'epubjs';
 import { clickListener, swipListener, wheelListener, keyListener } from '../utils/listener/listener';
 
@@ -34,7 +34,7 @@ export default defineComponent({
     props: {
         url: {
             required: true,
-            type: [String, ArrayBuffer]
+            type: Object as  PropType<Props['url']>,
         },
         location: {
             // type: [Number, String]
@@ -61,7 +61,8 @@ export default defineComponent({
         },
     },
 
-    setup(props, { emit, slots, expose }) {
+    setup(props, context: any) {
+        const { emit, slots, expose } = context
         const vm = getCurrentInstance();
         const h = _h.bind(vm);
 
@@ -75,7 +76,7 @@ export default defineComponent({
 
         const initBook = async () => {
             if (book) book.destroy()
-            book = ePub(url.value, epubInitOptions);
+            if (url.value) book = ePub(url.value, epubInitOptions);
             book!.loaded.navigation.then(({ toc: _toc }) => {
                 isLoaded.value = true
                 toc.value = _toc
@@ -132,7 +133,7 @@ export default defineComponent({
 
         const onLocationChange = (loc: Rendition['location']) => {//监听翻页
             const newLocation = loc.start
-            if (location.value !== newLocation) {
+            if (location?.value !== newLocation) {
                 emit('update:location', newLocation)
             }
         }
