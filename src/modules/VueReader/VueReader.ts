@@ -13,7 +13,7 @@ interface NavItem {
 }
 
 interface Props {
-    url: any,
+    url: string | ArrayBuffer,
     title?: string,
     showToc?: boolean,
     tocChanged?: (toc: Book['navigation']['toc']) => void,
@@ -31,7 +31,7 @@ export default defineComponent({
     props: {
         url: {
             required: true,
-            type: [String, ArrayBuffer]
+            type: Object as PropType<Props['url']>,
         },
         title: String,
         showToc: {
@@ -57,7 +57,7 @@ export default defineComponent({
         const { tocChanged, getRendition } = props
         const { title, url, showToc } = toRefs(props)
 
-        const book: EpubBook = reactive({
+        const book = reactive<EpubBook>({
             toc: [],//目录
             expandedToc: false,//目录展开
         })

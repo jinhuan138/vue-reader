@@ -1,6 +1,5 @@
-# pnpm 下载
 # 翻译
-# 滑动
+# update:loaction
 
 ## Document
 [document](https://jinhuan138.github.io/docs/)

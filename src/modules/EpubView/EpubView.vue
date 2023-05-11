@@ -44,7 +44,7 @@ let book: null | Book = null, rendition: null | Rendition = null;
 
 const initBook = async () => {
     if (book) book.destroy()
-    book = ePub(unref(url.value), epubInitOptions);
+    if (url.value) book = ePub(unref(url.value), epubInitOptions);
     book!.loaded.navigation.then(({ toc: _toc }) => {
         isLoaded.value = true
         toc.value = _toc
@@ -82,9 +82,9 @@ const registerEvents = () => {
         rendition.on('rendered', (e: Event, iframe: any) => {
             iframe?.iframe?.contentWindow.focus()
             // clickListener(iframe?.document, rendition as Rendition, flipPage);
-            // // selectListener(iframe.document, rendition, toggleBuble);
+            // selectListener(iframe.document, rendition, toggleBuble);
+            if (!epubOptions?.flow?.includes('scrolled')) wheelListener(iframe.document, flipPage);
             swipListener(iframe.document, flipPage);
-            // wheelListener(iframe.document, flipPage);
             keyListener(iframe.document, flipPage);
         });
         rendition.on('locationChanged', onLocationChange)
