@@ -13,7 +13,7 @@ interface NavItem {
 }
 
 interface Props {
-    url: string | ArrayBuffer,
+    url: any,
     title?: string,
     showToc?: boolean,
     tocChanged?: (toc: Book['navigation']['toc']) => void,
@@ -31,7 +31,7 @@ export default defineComponent({
     props: {
         url: {
             required: true,
-            type: Object as PropType<Props['url']>,
+            // type: [string | ArrayBuffer],
         },
         title: String,
         showToc: {
@@ -168,7 +168,7 @@ export default defineComponent({
                     }
                 }, {
                     // loading
-                    loadingView: () => h('template', slots.loadingView?.() || h('div', { class: 'loadingView' }, 'Loading...'))
+                    loadingView: () => slots.loadingView ? slots.loadingView?.() : h('div', { class: 'loadingView' }, 'Loading...')
                 }),
                 // 翻页
                 h('button', {
