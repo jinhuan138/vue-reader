@@ -7,7 +7,7 @@ import ePub, { Book, Rendition, Contents } from 'epubjs';
 import { clickListener, swipListener, wheelListener, keyListener } from '../utils/listener/listener';
 
 interface Props {
-    url: string | ArrayBuffer,
+    url: any,
     location?: number | string | Rendition['location']['start'], //当前页 
     tocChanged?: (toc: Book['navigation']['toc']) => void,
     getRendition?: (rendition: Rendition) => void,
@@ -34,10 +34,10 @@ export default defineComponent({
     props: {
         url: {
             required: true,
-            type: Object as  PropType<Props['url']>,
+            // type: Object as PropType<Props['url']>,
         },
         location: {
-            // type: [Number, String]
+            // type: [Number, String],
         },
         tocChanged: {
             type: Function as PropType<Props['tocChanged']>,
@@ -76,7 +76,7 @@ export default defineComponent({
 
         const initBook = async () => {
             if (book) book.destroy()
-            if (url.value) book = ePub(url.value, epubInitOptions);
+            if (url.value) book = ePub(url.value as 'string | ArrayBuffer', epubInitOptions);
             book!.loaded.navigation.then(({ toc: _toc }) => {
                 isLoaded.value = true
                 toc.value = _toc
@@ -226,10 +226,10 @@ export default defineComponent({
                     id: 'viewer',
                     attrs: { id: 'viewer' },
                     style: {
-                        display: !isLoaded.value ? 'hidden' : undefined
+                        display: !isLoaded.value ? 'none' : null
                     }
                 }),
-                !isLoaded.value ? h('div', null, { loadingView: () => slots.loadingView?.() }) : null
+                !isLoaded.value && h("div", slots.loadingView?.())
             ])
         ])
     },

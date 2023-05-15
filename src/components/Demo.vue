@@ -5,6 +5,9 @@
             <template #title>
                 啼笑因缘
             </template>
+            <!-- <template #loadingView>
+                <div class="loading">加载中...</div>
+            </template> -->
         </VueReader>
     </div>
     <div class='page'>
@@ -17,7 +20,7 @@ import { ref } from 'vue'
 
 let rendition = null, toc = []
 const page = ref('')
-const location =ref(null)
+const location = ref(null)
 const firstRenderDone = ref(false)
 
 const getRendition = val => rendition = val
@@ -51,10 +54,20 @@ const locationChange = (epubcifi) => {
     }
 }
 </script>
-<style scoped>
+<style>
 .page {
     text-align: center;
     z-index: 1;
     color: #000;
+}
+
+.loading{
+    position: absolute;
+    top: 50%;
+    left: 10%;
+    right: 10%;
+    color: #ccc;
+    text-align: center;
+    margin-top: -.5em;
 }
 </style>

@@ -2,8 +2,8 @@
     <div style="height: 100vh">
         <VueReader id="readerRef" :epubOptions='{
             allowPopups: true,
-                allowScriptedContent: true,
-                    script: "/node_modules/medium-zoom/dist/medium-zoom.min.js"
+            allowScriptedContent: true,
+            script: "/node_modules/medium-zoom/dist/medium-zoom.min.js"
         }' :location="location" :url="url" :getRendition="getRendition" :tocChanged="val => toc = val">
         </VueReader>
     </div>
@@ -27,7 +27,7 @@ nextTick(async () => {
     // console.log('locations', locations)
     const { book } = rendition
     // rendition.on('relocated', function (locations) {
-       
+
     //     let progress = book.locations.percentageFromCfi(locations.start.cfi);
     //     console.log('Progress:', progress); // The % of how far along in the book you are
     //     console.log('Current Page:', book.locations.locationFromCfi(locations.start.cfi))
