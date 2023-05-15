@@ -2,6 +2,9 @@
     <div style="height: 90vh">
         <VueReader :location="location" :url="url" @update:location="locationChange" :getRendition="getRendition"
             :tocChanged="val => toc = val">
+            <template #loadingView>
+                <div class="loading">加载中...</div>
+            </template>
         </VueReader>
         <div class="page">
             {{ page }}
@@ -52,12 +55,6 @@ const image2Base64 = (url) => new Promise((resolve, reject) => {
     };
 })
 onMounted(async () => {
-    if (window.firstLoad)
-        window.location.reload()
-    window.firstLoad = false
-    setTimeout(() => {
-        console.log(route.query)
-    }, 2000)
     // const res = await db.books.get({
     //     id: 2
     // })
@@ -114,6 +111,15 @@ const locationChange = (epubcifi) => {
     text-align: center;
     z-index: 1;
     color: #000;
+}
+.loading{
+    position: absolute;
+    top: 50%;
+    left: 10%;
+    right: 10%;
+    color: #ccc;
+    text-align: center;
+    margin-top: -.5em;
 }
 </style>
   
