@@ -2,12 +2,14 @@
     <div style='height: 100vh'>
         <VueReader url='/files/啼笑因缘.epub' :location='location' :getRendition='getRendition' :tocChanged="tocChanged"
             @update:location='locationChange'>
-            <template #title>
-                啼笑因缘
+            <template #loadingView>
+                <div class="loading">
+                    加载中...{{ process }}%
+                    <div class="outer">
+                        <div class="inner" :style="{ width: `${process}%` }"></div>
+                    </div>
+                </div>
             </template>
-            <!-- <template #loadingView>
-                <div class="loading">加载中...</div>
-            </template> -->
         </VueReader>
     </div>
     <div class='page'>
@@ -16,14 +18,22 @@
 </template>
 <script setup>
 import { VueReader } from '@/modules/index'
-import { ref } from 'vue'
+import { ref, onMounted, onBeforeMount, } from 'vue'
 
 let rendition = null, toc = []
+const process = ref(0)
 const page = ref('')
 const location = ref(null)
 const firstRenderDone = ref(false)
 
-const getRendition = val => rendition = val
+const getRendition = val => {
+    rendition = val
+    const book = rendition.book
+    book.on('book:downloadProgress', (percentage) => {
+        // this.updateDownloadProgressBar(percentage)
+        console.warn(percentage)
+    })
+}
 const tocChanged = val => toc = val
 
 const getLabel = (toc, href) => {
@@ -61,7 +71,7 @@ const locationChange = (epubcifi) => {
     color: #000;
 }
 
-.loading{
+.loading {
     position: absolute;
     top: 50%;
     left: 10%;
@@ -69,5 +79,18 @@ const locationChange = (epubcifi) => {
     color: #ccc;
     text-align: center;
     margin-top: -.5em;
+}
+
+.loading .outer {
+    height: .6rem;
+    width: 80%;
+}
+
+.loading .outer .inner {
+    animation-duration: 3s;
+    transition: width .1s ease;
+    border-radius: 100px;
+    background-color: #eb5732;
+    height: 100%;
 }
 </style>
