@@ -16,7 +16,7 @@ export default defineConfig({
     },
     themeConfig: {
         nav: [
-            // { text: "library", link: "/library" },
+            { text: "library", link: "/library" },
         ],
         socialLinks: [
             { icon: 'github', link: 'https://github.com/jinhuan138/docs' }
