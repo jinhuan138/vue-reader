@@ -3,42 +3,51 @@
         <el-container direction="vertical" v-show="!showReader">
             <!-- 头部 -->
             <Header />
-            <!-- 书籍 -->
+            <!-- 书籍列表 -->
             <el-main class='main' ref="main">
                 <div class="grid" ref="grid">
-                    <div v-for="({ url, bgColorFromCover, title }, index) in bookList" :key="index">
+                    <div v-for="({ url, bgColorFromCover, title, creator, publisher, description, date, publishDate, language }, index) in bookList"
+                        :key="index">
                         <!-- 提示 -->
-                        <!-- <div class="tip">
-                        <p v-if="book.creator">作者: {{ book.creator }}</p>
-                        <p v-if="book.description">
-                            介绍: {{ trunc(book.description, 30) }}
-                        </p>
-                        <p v-if="book.publisher">出版社: {{ book.publisher }}</p>
-                        <p v-if="book.date">出版日期: {{ book.date | book.publishDate }}</p>
-                        <p v-if="book.language">语言: {{ book.language }}</p>
-                    </div> -->
-                        <!-- 主体 -->
-                        <el-card @click="reader(url)" ref="card" shadow="hover" class='box-card'
-                            :body-style="{ padding: '0px' }">
-                            <el-image :src="coverPath(url)" fit='fill' class='el-image'>
-                                <div slot="error" class="image-slot">
-                                    <el-image src="/books/cover/default-cover.png" fit='fill'>
+                        <el-popover trigger="hover" placement='right'>
+                            <template #reference>
+                                <!-- 主体 -->
+                                <el-card @click="reader(url)" ref="card" shadow="hover" class='box-card'
+                                    :body-style="{ padding: '0px' }">
+                                    <el-image :src="coverPath(url)" fit='fill' class='el-image'>
+                                        <div slot="error" class="image-slot">
+                                            <el-image src="/books/cover/default-cover.png" fit='fill'>
+                                            </el-image>
+                                        </div>
                                     </el-image>
-                                </div>
-                            </el-image>
-                            <div class='title' :style="{
-                                background: bgColorFromCover
-                                    ? bgColorFromCover
-                                    : '#6d6d6d',
-                            }">
-                                {{ trunc(title, 30) }}
+                                    <div class='title' :style="{
+                                        background: bgColorFromCover
+                                            ? bgColorFromCover
+                                            : '#6d6d6d',
+                                    }">
+                                        {{ trunc(title, 30) }}
+                                    </div>
+                                </el-card>
+                            </template>
+                            <!-- 书籍信息 -->
+                            <div>
+                                <el-button type="primary" round icon="Download" @click="download(url)">下载</el-button>
+                                <p v-if="creator">作者: {{ creator }}</p>
+                                <p v-if="description">
+                                    介绍: {{ trunc(description, 30) }}
+                                </p>
+                                <p v-if="publisher">出版社: {{ publisher }}</p>
+                                <p v-if="date">出版日期: {{ date || publishDate }}</p>
+                                <p v-if="language">语言: {{ language }}</p>
+                                <!-- <p v-if="size">文件大小: {{ formatSize() }}</p> -->
                             </div>
-                        </el-card>
+                        </el-popover>
                     </div>
                 </div>
             </el-main>
         </el-container>
     </transition>
+    <!-- 阅读区 -->
     <transition name="el-fade-in-linear" v-show="showReader">
         <Reader :book="currentBook"></Reader>
     </transition>
@@ -188,12 +197,8 @@ const formatSize = (size) => {
         :
         "0" + "Kb"
 }
-const exportFile = (id) => {
-    saveAs(
-        new Blob([result]),
-        // this.props.currentBook.name +
-        // `.${this.props.currentBook.format.toLocaleLowerCase()}`
-    )
+const download = (url) => {
+    saveAs("/books/" + url, url);
 }
 const currentBook = ref('')
 const showReader = ref(false)
