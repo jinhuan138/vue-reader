@@ -14,8 +14,8 @@
 </template>
 <script setup>
 // import { VueReader } from "vue-reader";
-import { VueReader } from "@/modules/index";
-import { db } from "../utils/db";
+import { VueReader } from '@/modules/index'
+import { db } from "./utils/db";
 import { ref, computed, onMounted } from "vue";
 //主题
 const dark = {
@@ -252,37 +252,6 @@ trackAllDownloads((_progress) => {
 </script>
   
 <style scoped>
-.page {
-    position: absolute;
-    bottom: 1rem;
-    right: 1rem;
-    left: 1rem;
-    text-align: center;
-    z-index: 1;
-    color: #000;
-}
 
-/* .loading {
-    position: absolute;
-    top: 50%;
-    left: 10%;
-    right: 10%;
-    color: #ccc;
-    text-align: center;
-    margin-top: -.5em;
-}
-
-.loading .outer {
-    height: .6rem;
-    width: 80%;
-}
-
-.loading .outer .inner {
-    animation-duration: 3s;
-    transition: width .1s ease;
-    border-radius: 100px;
-    background-color: #eb5732;
-    height: 100%;
-} */
 </style>
   

@@ -1,8 +1,5 @@
 <template>
-    <!-- <transition name="el-fade-in-linear"> -->
     <el-container direction="vertical">
-        <!-- 头部 -->
-        <Header v-model:showReader="showReader" v-model:bookName="bookName" />
         <!-- 书籍列表 -->
         <el-main class='main' ref="main" v-show="!showReader">
             <div class="grid" ref="grid">
@@ -45,21 +42,13 @@
                 </div>
             </div>
         </el-main>
-        <!-- 阅读区 -->
-        <div v-show="showReader">
-            <Reader :book="currentBook"></Reader>
-        </div>
     </el-container>
-    <!-- </transition> -->
-    <!-- <transition name="el-fade-in-linear" v-show="showReader"> -->
-    <!-- </transition> -->
 </template>
   
 <script setup>
-import Reader from './Reader.vue'
-import Header from "comps/Header.vue"
+
 import { saveAs } from 'file-saver';
-import books from "../../public/books/books.json";
+import books from "../../../public/books/books.json";
 import { ref, reactive, toRefs, onBeforeMount, onMounted, onBeforeUnmount } from "vue"
 
 const grid = ref(null)
@@ -81,8 +70,11 @@ const props = defineProps({
         type: Number, // Maximum number of colums. Default: Infinite
         default: Infinity,
     },
+    showReader:{
+        type:Boolean
+    }
 })
-const { useMin, maxCols } = props
+const { useMin, maxCols,showReader } = props
 
 onBeforeMount(() => {
     bookList.value = books
@@ -191,7 +183,6 @@ const resize = () => {
     setTimeout(positionItems(), 200);
 }
 //book info
-const bookName = ref('')
 const formatSize = (size) => {
     return size / 1024 / 1024 > 1 ? parseFloat(size / 1024 / 1024 + "").toFixed(2) + "Mb"
         : parseInt(size / 1024 + "") + "Kb"
@@ -199,12 +190,9 @@ const formatSize = (size) => {
 const download = (url) => {
     saveAs("/books/" + url, url);
 }
-const currentBook = ref('')
-const showReader = ref(false)
+const emit=defineEmits(['update:currentBook'])
 const reader = (url) => {
-    currentBook.value = url
-    showReader.value = true
-    bookName.value = url.replace('.epub', '')
+    emit('update:currentBook',url)
 }
 </script>
   

@@ -168,7 +168,7 @@ export default defineComponent({
                     }
                 }, {
                     // loading
-                    loadingView: () => slots.loadingView ? slots.loadingView?.() : h('div', { class: 'loadingView' }, 'Loading...')
+                    loadingView: () => h('div', { class: 'loadingView' }, slots.loadingView ? slots.loadingView?.() : 'Loading...')
                 }),
                 // 翻页
                 h('button', {
