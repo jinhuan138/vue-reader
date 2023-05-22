@@ -11,20 +11,21 @@ const booksJson = []
 const parseBook = (name) => {
     return new Promise((resolve, reject) => {
         const filePath = join(libraryPath, name)
+        const { size } = fs.statSync('path/to/file');
         const book = new EPub(filePath);
         book.on("end", async () => {
             // epub is now usable
             const { title, cover } = book.metadata
-            console.log( book.metadata)
+            console.log(book.metadata)
             await book.getImage(cover, async (error, img, mimeType) => {
                 //img buffer
                 if (error) return console.log(error)
                 if (mimeType.includes('image')) {
                     const coverPath = join(libraryPath, 'cover', `./${name.replace(".epub", "")}.jpg`)
                     fs.writeFileSync(coverPath, img)
-                    // // 获取图书封面主题颜色,node-vibrant不支持webp直接使用buffer
+                    // 获取图书封面主题颜色,node-vibrant不支持webp直接使用buffer
                     const palette = await Vibrant.from(img).getPalette()
-                    booksJson.push({ ...book.metadata, url: name, bgColorFromCover: palette.DarkVibrant.hex })
+                    booksJson.push({ ...book.metadata, url: name, bgColorFromCover: palette.DarkVibrant.hex, size, })
                 }
             });
             console.log(name + ' 解析完成')
