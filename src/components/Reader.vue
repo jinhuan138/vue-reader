@@ -1,21 +1,64 @@
 <template>
     <div style="height: 90vh">
-        <VueReader :url="url" @update:location="locationChange" :getRendition="getRendition" :tocChanged="tocChanged">
+        <VueReader :url="url" @update:location="locationChange" :getRendition="getRendition" :tocChanged="tocChanged"
+            :title="page">
             <template #loadingView>
                 <el-progress :percentage="loadProcess" />
             </template>
         </VueReader>
-        <div class="page">
-            <!-- {{ page }} -->
+        <el-footer height="45">
             <el-slider v-model="sliderValue" :step="0.01" :format-tooltip="lableFromPercentage"
                 @change="onSliderValueChange"></el-slider>
-        </div>
+        </el-footer>
     </div>
 </template>
 <script setup>
-import { VueReader } from "vue-reader";
+// import { VueReader } from "vue-reader";
+import { VueReader } from "@/modules/index";
 import { db } from "../utils/db";
 import { ref, computed, onMounted } from "vue";
+//主题
+const dark = {
+    body: {
+        background: `#444 !important`,
+        color: `#fff !important`,
+    },
+    '*': {
+        color: 'inherit !important',
+        background: 'inherit !important',
+    },
+    'a:link': {
+        color: `#1e83d2 !important`,
+        'text-decoration': 'none !important',
+    },
+    'a:link:hover': {
+        background: 'rgba(0, 0, 0, 0.1) !important',
+    },
+};
+const light = {
+    body: {},
+    '*': {},
+    'a:link': {},
+    'a:link:hover': {},
+};
+const tan = {
+    body: {
+        background: `#fdf6e3 !important`,
+        color: `#002b36 !important`,
+    },
+    '*': {
+        color: 'inherit !important',
+        background: 'inherit !important',
+    },
+    'a:link': {
+        color: `#268bd2 !important`,
+        'text-decoration': 'none !important',
+    },
+    'a:link:hover': {
+        background: 'rgba(0, 0, 0, 0.1) !important',
+    },
+};
+
 const props = defineProps({
     book: {
         default: '啼笑因缘'
@@ -51,14 +94,19 @@ const image2Base64 = (url) => new Promise((resolve, reject) => {
     };
 })
 
-let rendition = null, flattenedToc = null
+let rendition = null, flattenedToc = null, processToc = []
 const getRendition = (val) => {
     rendition = val
     const book = rendition.book
     const displayed = rendition.display();
     book.ready.then(() => {
-        const processToc = parshToc(book)
-        console.log(processToc)
+        // processToc = parshToc(book)
+        // flattenedToc = (function flatten(items) {
+        //     return [].concat(...items.map(item => [item].concat(...flatten(item.children))));
+        // })(processToc);
+        // flattenedToc.sort((a, b) => {
+        //     return a.percentage - b.percentage;
+        // })
         return book.locations.generate(1600);
     }).then(locations => {
         displayed.then(() => {
@@ -71,6 +119,8 @@ const getRendition = (val) => {
             const percentage = Math.floor(percent * 100);
             sliderValue.value = percentage
         });
+        rendition.themes.registerRules('dark', dark);
+        rendition.themes.registerRules('tan', tan);
     })
 }
 // const location = ref(2)
@@ -162,11 +212,11 @@ const parshToc = (book) => {
     return tocTree;
 }
 const lableFromPercentage = (percent) => {
-    let toc = tocFromPercentage(percent)
-    // console.log(toc.label)
+    // let toc = tocFromPercentage(percent)
     // if (toc) return toc.label;
     return '';
 }
+
 const tocFromPercentage = (percent) => {
     if (!flattenedToc) return {};
     percent /= 100;

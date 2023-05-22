@@ -4,16 +4,19 @@
             <el-upload :auto-upload="false" v-show="false" ref="input" accept=".epub" :on-change="selectFile"
                 :multiple="false">
             </el-upload>
-            <el-button size="small" :icon="Plus" circle @click="select" title="导入图书"></el-button>
+            <el-button size="small" :icon="Plus" circle @click="select" title="导入图书" v-if="!showReader"></el-button>
+
+            <el-button size="small" icon="Back" circle @click="back" v-else />
+          
             <!-- <input type="file" name="select" :multiple="false" :visible="false" accept=".epub" v-show="false" ref="input"
                 :onchange="onchange" /> -->
         </span>
-        <!-- <span id="center">vue-reader</span> -->
-        <span id="right">
+        <span id="center">{{ bookName }}</span>
+        <!-- <span id="right">
             <el-button size="small" :icon="Minus" circle />
             <el-button size="small" :icon="FullScreen" circle />
             <el-button size="small" :icon="Close" circle />
-        </span>
+        </span> -->
     </el-header>
 </template>
 
@@ -22,11 +25,21 @@ import { ref } from "vue"
 import { db } from "../utils/db"
 import { getFileMD5 } from "../utils/md5"
 import { useRouter } from 'vue-router'
-import { Plus, Minus, Close, FullScreen } from '@element-plus/icons-vue'
+import { Plus, Minus, Close, FullScreen, Back } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 
 const input = ref(null)
-const router = useRouter()
+// const router = useRouter()
+const props = defineProps({
+    showReader: {
+        type: Boolean
+    },
+    bookName: {
+        type: String,
+        default: 'vue-reader'
+    }
+})
+const emit = defineEmits(['update:showReader'])
 const selectFile = async (item) => {
     const { raw, name, size } = item
     const md5 = await getFileMD5(raw)
@@ -62,6 +75,10 @@ const onchange = (e) => {
         console.log(reader.result)
     }
     reader.readAsArrayBuffer(file)
+}
+const back = () => {
+    emit('update:showReader', false)
+    emit('update:bookName', '')
 }
 </script>
 
@@ -99,6 +116,7 @@ const onchange = (e) => {
     font-size: 16px;
     line-height: 2;
     font-weight: 600;
+    color: #000;
 }
 
 #right {
