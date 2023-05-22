@@ -1,7 +1,7 @@
 <template>
     <el-container direction="vertical">
         <!-- 书籍列表 -->
-        <el-main class='main' ref="main" v-show="!showReader">
+        <el-main class='main' ref="main">
             <div class="grid" ref="grid">
                 <div v-for="({ url, bgColorFromCover, title, creator, publisher, description, date, publishDate, language, size }, index) in bookList"
                     :key="index">
@@ -69,12 +69,9 @@ const props = defineProps({
     maxCols: {
         type: Number, // Maximum number of colums. Default: Infinite
         default: Infinity,
-    },
-    showReader:{
-        type:Boolean
     }
 })
-const { useMin, maxCols,showReader } = props
+const { useMin, maxCols } = props
 
 onBeforeMount(() => {
     bookList.value = books
