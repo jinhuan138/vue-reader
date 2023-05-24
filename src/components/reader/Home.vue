@@ -1,5 +1,13 @@
 <template>
     <el-container direction="vertical">
+        <titlebar backdrop shadow>
+            <el-upload :auto-upload="false" v-show="false" ref="input" accept=".epub" :on-change="selectFile"
+                :multiple="false">
+                <!-- <input type="file" name="select" :multiple="false" :visible="false" accept=".epub" v-show="false" ref="input"
+            :onchange="onchange" /> -->
+            </el-upload>
+            <el-button size="small" :icon="Plus" circle @click="addFiles" title="导入图书"></el-button>
+        </titlebar>
         <!-- 书籍列表 -->
         <el-main class='main' ref="main">
             <div class="grid" ref="grid">
@@ -46,8 +54,10 @@
 </template>
   
 <script setup>
-
+import { Plus } from '@element-plus/icons-vue'
 import { saveAs } from 'file-saver';
+import { db } from "./utils/db"
+import { getFileMD5 } from "./utils/md5"
 import books from "../../../public/books/books.json";
 import { ref, reactive, toRefs, onBeforeMount, onMounted, onBeforeUnmount } from "vue"
 
@@ -187,9 +197,46 @@ const formatSize = (size) => {
 const download = (url) => {
     saveAs("/books/" + url, url);
 }
-const emit=defineEmits(['update:currentBook'])
+const emit = defineEmits(['update:currentBook'])
 const reader = (url) => {
-    emit('update:currentBook',url)
+    emit('update:currentBook', url)
+}
+//导入
+const selectFile = async (item) => {
+    const { raw, name, size } = item
+    const md5 = await getFileMD5(raw)
+    const res = await db.books.get({ md5 })
+    if (res) return ElMessage.error('图书重复')
+    const reader = new FileReader()
+    reader.onerror = (error) => {
+        console.log(error)
+    }
+    reader.onloadend = (e) => {
+        const file = { buffer: reader.result, size, name, md5 }
+        saveFile(file)
+    }
+    reader.readAsArrayBuffer(raw)
+}
+const saveFile = async (file) => {
+    //保存文件
+    const id = await db.books.add(file);
+    // router.push({ name: 'reader', params: { id } })
+}
+const input = ref(null)
+const addFiles = () => {
+    input.value.$refs.uploadRef.$el.click()
+}
+const onchange = (e) => {
+    //原生input获取文件
+    const file = e.target.files[0]
+    const { name, size } = file
+    console.log(file)
+    const reader = new FileReader()
+    reader.onerror = (error) => reject(error);
+    reader.onloadend = (e) => {
+        console.log(reader.result)
+    }
+    reader.readAsArrayBuffer(file)
 }
 </script>
   

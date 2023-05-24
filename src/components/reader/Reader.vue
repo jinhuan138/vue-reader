@@ -1,75 +1,62 @@
 <template>
-    <div style="height: 90vh">
-        <VueReader :url="url" @update:location="locationChange" :getRendition="getRendition" :tocChanged="tocChanged"
-            :title="page">
-            <template #loadingView>
-                <el-progress :percentage="loadProcess" />
-            </template>
-        </VueReader>
+    <el-container direction="vertical">
+        <titlebar :title="title">
+            <el-button-group>
+                <el-button size="small" :icon="Back" circle @click="onBackBtn" />
+                <el-button size="small" :icon="Grid" circle @click="onLibraryBtn" />
+            </el-button-group>
+            <toc-menu :toc="treeToc" :theme="theme" @node-click="onNodeClick"></toc-menu>
+        </titlebar>
+        <el-main class="container">
+            <EpubView :url="url" @update:location="locationChange" :getRendition="getRendition" :tocChanged="tocChanged"
+                :title="page">
+                <template #loadingView>
+                    <el-progress :percentage="loadProcess" />
+                </template>
+            </EpubView>
+        </el-main>
         <el-footer height="45">
             <el-slider v-model="sliderValue" :step="0.01" :format-tooltip="lableFromPercentage"
                 @change="onSliderValueChange"></el-slider>
         </el-footer>
-    </div>
+    </el-container>
 </template>
 <script setup>
-// import { VueReader } from "vue-reader";
-import { VueReader } from '@/modules/index'
+//https://github.com/code-farmer-i/vue-markdown-editor.git
+import { Back, Grid } from '@element-plus/icons-vue'
+import {  EpubView } from '@/modules/index'
+import titlebar from './Titlebar.vue'
+import TocMenu from './TocMenu.vue';
 import { db } from "./utils/db";
 import { dark, light, tan } from './utils/themes.js'
+import { parshToc } from './utils/dbUtilis'
 import { ref, computed, onMounted } from "vue";
-
 
 const props = defineProps({
     book: {
-        default: '啼笑因缘'
+        default: '啼笑因缘.epub'
     }
 })
+const title = computed(() => props.book.replace('.epub', ''))
 const url = computed(() => {
-    // if (id) {
-    //     //indexDB导入
-    // } else if (name) {
-    //     //url导入
-    //     return `/books/${name}`
-    // } else {
-    //     return `/files/${defaultBook}.epub`
-    // }
     return `/books/${props.book}`
 })
-const image2Base64 = (url) => new Promise((resolve, reject) => {
-    if (!url) return resolve('');
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
-    img.src = url;
-    img.onload = () => {
-        const canvas = document.createElement('canvas');
-        canvas.width = img.width;
-        canvas.height = img.height;
-        const ctx = canvas.getContext('2d');
-        ctx?.drawImage(img, 0, 0);
-        const data = canvas.toDataURL();
-        resolve(data);
-    };
-    img.onerror = () => {
-        reject('');
-    };
-})
-
 let rendition = null, flattenedToc = null, processToc = []
+const treeToc = ref([])
 const getRendition = (val) => {
     rendition = val
     const book = rendition.book
     const displayed = rendition.display();
     book.ready.then(() => {
-        // processToc = parshToc(book)
-        // flattenedToc = (function flatten(items) {
-        //     return [].concat(...items.map(item => [item].concat(...flatten(item.children))));
-        // })(processToc);
-        // flattenedToc.sort((a, b) => {
-        //     return a.percentage - b.percentage;
-        // })
+        flattenedToc = (function flatten(items) {
+            return [].concat(...items.map(item => [item].concat(...flatten(item.children))));
+        })(treeToc.value);
+        flattenedToc.sort((a, b) => {
+            return a.percentage - b.percentage;
+        })
         return book.locations.generate(1600);
     }).then(locations => {
+        treeToc.value = parshToc(book)
         displayed.then(() => {
             var currentLocation = rendition.currentLocation();
             const currentPage = book.locations.percentageFromCfi(currentLocation.start.cfi);
@@ -127,51 +114,6 @@ const tocChanged = (_toc) => {
 
 //阅读进度
 const sliderValue = ref(0)
-const parshToc = (book) => {
-    const { toc } = book.navigation;
-    const { spine } = book;
-    const validateHref = href => {
-        if (href.startsWith('..')) {
-            href = href.substring(2);
-        }
-        if (href.startsWith('/')) {
-            href = href.substring(1);
-        }
-        return href;
-    };
-    const getSpineComponent = href => {
-        return href.split('#')[0];
-    };
-    const getPositonComponent = href => {
-        return href.split('#')[1];
-    };
-    const tocTree = [];
-    const createTree = (toc, parrent) => {
-        for (let i = 0; i < toc.length; i += 1) {
-            const href = validateHref(toc[i].href);
-            const spineComponent = getSpineComponent(href);
-            const positonComponent = getPositonComponent(href);
-            const spineItem = spine.get(spineComponent);
-            spineItem.load(book.load.bind(book)).then(() => {
-                const el = spineItem.document.getElementById(positonComponent);
-                const cfi = spineItem.cfiFromElement(el);
-                const percentage = book.locations.percentageFromCfi(cfi);
-                parrent[i] = {
-                    label: toc[i].label.trim(),
-                    children: [],
-                    href,
-                    cfi,
-                    percentage,
-                };
-                if (toc[i].subitems) {
-                    createTree(toc[i].subitems, parrent[i].children);
-                }
-            });
-        }
-    };
-    createTree(toc, tocTree);
-    return tocTree;
-}
 const lableFromPercentage = (percent) => {
     // let toc = tocFromPercentage(percent)
     // if (toc) return toc.label;
@@ -209,9 +151,39 @@ const trackAllDownloads = (onProgress) => {
 trackAllDownloads((_progress) => {
     loadProcess.value = Math.round(_progress * 100)
 });
+//header
+const theme = ref('default')
+const onBackBtn = () => {
+
+}
+const emit = defineEmits(['update:showReader'])
+const onLibraryBtn = () => {
+    emit('update:showReader', false)
+}
+
+const onNodeClick = (item) => {
+    rendition.display(item.cfi || item.href);
+}
 
 </script>
   
-<style scoped>
+<style scoped lang="scss">
+::-webkit-scrollbar {
+    display: none;
+}
+
+.el-container {
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    right: 0px;
+    left: 0px;
+
+    .el-main {
+        width: 100%;
+        height: 100%;
+        padding: 0px;
+    }
+}
 </style>
   
