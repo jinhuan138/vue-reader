@@ -11,6 +11,7 @@ declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     Demo: typeof import('./../src/components/Demo.vue')['default']
     ElButton: typeof import('element-plus/es')['ElButton']
+    ElButtonGroup: typeof import('element-plus/es')['ElButtonGroup']
     ElCard: typeof import('element-plus/es')['ElCard']
     ElContainer: typeof import('element-plus/es')['ElContainer']
     ElFooter: typeof import('element-plus/es')['ElFooter']
@@ -25,13 +26,15 @@ declare module '@vue/runtime-core' {
     ElRadioGroup: typeof import('element-plus/es')['ElRadioGroup']
     ElSelect: typeof import('element-plus/es')['ElSelect']
     ElSlider: typeof import('element-plus/es')['ElSlider']
+    ElTree: typeof import('element-plus/es')['ElTree']
     ElUpload: typeof import('element-plus/es')['ElUpload']
-    Header: typeof import('./../src/components/reader/Header.vue')['default']
     Home: typeof import('./../src/components/reader/Home.vue')['default']
     Reader: typeof import('./../src/components/reader/index.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Test: typeof import('./../src/components/Test.vue')['default']
     ThemeMenu: typeof import('./../src/components/reader/ThemeMenu.vue')['default']
+    Titlebar: typeof import('./../src/components/reader/Titlebar.vue')['default']
+    TocMenu: typeof import('./../src/components/reader/TocMenu.vue')['default']
   }
 }
