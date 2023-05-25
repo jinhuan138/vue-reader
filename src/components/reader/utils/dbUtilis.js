@@ -1,3 +1,5 @@
+import { Book } from 'epubjs';
+
 /**
  * Parsh the toc provided by epubjs to required form by element-ui tree component
  * and store inforamtion related to toc item such as lable, href, cfi and percent.
@@ -114,4 +116,42 @@ const image2Base64 = (url) => new Promise((resolve, reject) => {
     };
 })
 
-export { parshToc, image2Base64 }
+const getInfo = (url, callback) => {
+    // parameter validation
+    if (!url || typeof url !== 'string') {
+        return;
+    }
+    // create a key from path
+    // const key = generateKey(filePath);
+
+    // file load on file protocol
+    // const uri = fileUrl(filePath);
+    const book = new Book(url);
+
+    book.ready
+        .then(() => {
+            return book.locations.generate();
+        })
+        .then(locations => {
+            const meta = book.package.metadata;
+
+            const info = {
+                // id: key,
+                title: meta.title,
+                author: meta.creator,
+                publisher: meta.publisher,
+                path: url,
+                bookmarks: [],
+                highlights: [],
+                bgColorFromCover: '',
+                toc: parshToc(book),
+                locations,
+            };
+
+            if (callback) {
+                callback(info, book);
+            }
+        });
+}
+
+export { parshToc, image2Base64, getInfo }
