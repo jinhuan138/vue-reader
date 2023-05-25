@@ -57,6 +57,7 @@
 import { Plus } from '@element-plus/icons-vue'
 import { saveAs } from 'file-saver';
 import { db } from "./utils/db"
+import { getInfo } from './utils/dbUtilis'
 import { getFileMD5 } from "./utils/md5"
 import books from "../../../public/books/books.json";
 import { ref, reactive, toRefs, onBeforeMount, onMounted, onBeforeUnmount } from "vue"
@@ -189,7 +190,7 @@ const setup = () => {
 const resize = () => {
     setTimeout(positionItems(), 200);
 }
-//book info
+//books info
 const formatSize = (size) => {
     return size / 1024 / 1024 > 1 ? parseFloat(size / 1024 / 1024 + "").toFixed(2) + "Mb"
         : parseInt(size / 1024 + "") + "Kb"
@@ -198,8 +199,12 @@ const download = (url) => {
     saveAs("/books/" + url, url);
 }
 const emit = defineEmits(['update:currentBook'])
+//reader
 const reader = (url) => {
-    emit('update:currentBook', url)
+    getInfo(`/books/${url}`, info => {
+        emit('update:currentBook', url, info)
+    })
+
 }
 //导入
 const selectFile = async (item) => {
@@ -238,6 +243,7 @@ const onchange = (e) => {
     }
     reader.readAsArrayBuffer(file)
 }
+
 </script>
   
 <style scoped lang="scss">

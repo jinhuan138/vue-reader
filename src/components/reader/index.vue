@@ -1,11 +1,11 @@
 <template>
     <!-- Home -->
     <transition name="el-fade-in-linear">
-        <Home @update:currentBook="updateBook" v-model:showReader="showReader" v-show="!showReader" />
+        <Home @update:currentBook="updateBook" v-model:showReader="showReader" v-if="!showReader" />
     </transition>
     <!-- Reader -->
     <transition name="el-fade-in-linear">
-        <Reader :book="currentBook" v-show="showReader" @update:showReader="val => showReader = val" />
+        <Reader :book="currentBook" v-if="showReader" @update:showReader="val => showReader = val" :info="bookInfo" />
     </transition>
 </template>
 <script setup>
@@ -17,10 +17,12 @@ import ThemeMenuVue from './ThemeMenu.vue'
 const showReader = ref(false)
 const currentBook = ref('')
 const bookName = ref('')
+const bookInfo = ref({})
 
-const updateBook = (url) => {
+const updateBook = (url, info) => {
     currentBook.value = url
     bookName.value = url.replace('.epub', '')
+    bookInfo.value = info
     showReader.value = true
 }
 

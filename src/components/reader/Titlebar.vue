@@ -1,65 +1,60 @@
 <template>
-	<el-header height="40px" :class="{backdrop:backdrop}">
-		<span id="left">
-			<slot></slot>
-		</span>
-		<span id="center">{{ title }}</span>
+  <el-header height="40px" :class="{ backdrop: props.backdrop }">
+    <span id="left">
+      <slot></slot>
+    </span>
+    <span id="center">{{ props.title }}</span>
 
-		<span id="right">
-			<el-button size="small" icon="minus" circle @click="minimizeWindow" />
-			<el-button size="small" icon="full-screen" circle @click="maximizeWindow" />
-			<el-button size="small" icon="close" circle @click="closeWindow" />
-		</span>
-	</el-header>
+    <span id="right">
+      <el-button size="small" icon="minus" circle @click="minimizeWindow" />
+      <el-button size="small" icon="full-screen" circle @click="maximizeWindow" />
+      <el-button size="small" icon="close" circle @click="closeWindow" />
+    </span>
+  </el-header>
 </template>
 
-<script>
-export default {
-  name: 'Titlebar',
-  props: {
-    backdrop: {
-      default: false,
-      type: Boolean,
-    },
-    title: {
-      default: 'vue-reader',
-      type: String,
-    },
+<script setup>
+import { toRefs } from 'vue'
+
+const props = defineProps({
+  backdrop: {
+    default: false,
+    type: Boolean,
   },
-  methods: {
-    closeWindow() {
-      // this.$remote.getCurrentWindow().close();
-    },
-    minimizeWindow() {
-      // this.$remote.getCurrentWindow().minimize();
-    },
-    maximizeWindow() {
-      this.$el.requestFullscreen()
-      // const win = this.$remote.getCurrentWindow();
-      // if (win.isMaximized()) {
-      //   win.unmaximize();
-      // } else {
-      //   win.maximize();
-      // }
-    },
+  title: {
+    default: 'vue-reader',
+    type: String,
   },
-};
+})
+
+
+const closeWindow = () => {
+}
+const minimizeWindow = () => {
+}
+const maximizeWindow = () => {
+  // this.$el.requestFullscreen()
+}
 </script>
 
 <style lang="scss" scoped>
 $border-radius: 4px;
 $margin: 4px;
 $padding: 4px;
+
 .el-header {
   text-align: center;
   vertical-align: middle;
   padding: $padding;
   -webkit-app-region: drag !important;
   -webkit-user-select: none;
+  color: #000;
 }
+
 .backdrop {
   backdrop-filter: blur(40px);
 }
+
 .el-button {
   margin-left: $margin;
 }

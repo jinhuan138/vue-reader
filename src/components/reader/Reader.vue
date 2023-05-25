@@ -24,17 +24,19 @@
 <script setup>
 //https://github.com/code-farmer-i/vue-markdown-editor.git
 import { Back, Grid } from '@element-plus/icons-vue'
-import {  EpubView } from '@/modules/index'
+import { EpubView } from '@/modules/index'
 import titlebar from './Titlebar.vue'
 import TocMenu from './TocMenu.vue';
 import { db } from "./utils/db";
 import { dark, light, tan } from './utils/themes.js'
-import { parshToc } from './utils/dbUtilis'
 import { ref, computed, onMounted } from "vue";
 
 const props = defineProps({
     book: {
         default: '啼笑因缘.epub'
+    },
+    info: {
+        type: Object
     }
 })
 const title = computed(() => props.book.replace('.epub', ''))
@@ -42,21 +44,14 @@ const url = computed(() => {
     return `/books/${props.book}`
 })
 let rendition = null, flattenedToc = null, processToc = []
-const treeToc = ref([])
+
 const getRendition = (val) => {
     rendition = val
     const book = rendition.book
     const displayed = rendition.display();
     book.ready.then(() => {
-        flattenedToc = (function flatten(items) {
-            return [].concat(...items.map(item => [item].concat(...flatten(item.children))));
-        })(treeToc.value);
-        flattenedToc.sort((a, b) => {
-            return a.percentage - b.percentage;
-        })
         return book.locations.generate(1600);
     }).then(locations => {
-        treeToc.value = parshToc(book)
         displayed.then(() => {
             var currentLocation = rendition.currentLocation();
             const currentPage = book.locations.percentageFromCfi(currentLocation.start.cfi);
@@ -153,10 +148,12 @@ trackAllDownloads((_progress) => {
 });
 //header
 const theme = ref('default')
+
 const onBackBtn = () => {
 
 }
 const emit = defineEmits(['update:showReader'])
+
 const onLibraryBtn = () => {
     emit('update:showReader', false)
 }
@@ -164,6 +161,8 @@ const onLibraryBtn = () => {
 const onNodeClick = (item) => {
     rendition.display(item.cfi || item.href);
 }
+//tree
+const treeToc = ref(props.info.toc)
 
 </script>
   
