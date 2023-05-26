@@ -11,7 +11,7 @@ const booksJson = []
 const parseBook = (name) => {
     return new Promise((resolve, reject) => {
         const filePath = join(libraryPath, name)
-        const { size } = fs.statSync('path/to/file');
+        const { size } = fs.statSync(filePath);
         const book = new EPub(filePath);
         book.on("end", async () => {
             // epub is now usable
@@ -21,11 +21,11 @@ const parseBook = (name) => {
                 //img buffer
                 if (error) return console.log(error)
                 if (mimeType.includes('image')) {
-                    const coverPath = join(libraryPath, 'cover', `./${name.replace(".epub", "")}.jpg`)
-                    fs.writeFileSync(coverPath, img)
+                    const coverBase64 = img.toString('base64').replace(/\s/g,'')
+                    fs.writeFileSync(join(libraryPath,`/cover/${title}.jpg`),img)
                     // 获取图书封面主题颜色,node-vibrant不支持webp直接使用buffer
                     const palette = await Vibrant.from(img).getPalette()
-                    booksJson.push({ ...book.metadata, url: name, bgColorFromCover: palette.DarkVibrant.hex, size, })
+                    booksJson.push({ ...book.metadata, coverBase64,coverPath:`/cover/${name}.jpg`, url: name, bgColorFromCover: palette.DarkVibrant.hex, size, from: 'url' })
                 }
             });
             console.log(name + ' 解析完成')

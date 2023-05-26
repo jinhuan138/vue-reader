@@ -11,12 +11,13 @@
         <!-- 书籍列表 -->
         <el-main class='main' ref="main">
             <div class="grid" ref="grid">
-                <div v-for="({ url, bgColorFromCover, title, creator, publisher, description, date, publishDate, language, size }, index) in bookList"
+                <div v-for="({ url, bgColorFromCover, title, creator, publisher, description, date, publishDate, language, size, coverPath }, index) in bookList"
                     :key="index">
                     <!-- 主体 -->
+                    <!--  -->
                     <el-card @click="reader(url)" ref="card" shadow="hover" class='box-card'
                         :body-style="{ padding: '0px' }">
-                        <el-image :src="coverPath(url)" fit='fill' class='el-image'>
+                        <el-image :src="coverPath" fit='fill' class='el-image'>
                             <div slot="error" class="image-slot">
                                 <el-image src="/books/cover/default-cover.png" fit='fill'>
                                 </el-image>
@@ -96,9 +97,6 @@ onMounted(() => {
 onBeforeUnmount(() => {
     window.removeEventListener("resize", resize);
 })
-const coverPath = (name) => {
-    return "/books/cover/" + name.replace(".epub", ".jpg")
-}
 const trunc = (str, n) => {
     return str.length > n ? `${str.substr(0, n - 3)}...` : str
 }
