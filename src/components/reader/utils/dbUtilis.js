@@ -154,4 +154,29 @@ const getInfo = (url, callback) => {
         });
 }
 
-export { parshToc, image2Base64, getInfo }
+const addToDB = (file, db, cb) => {
+    getInfo(file, (info, book) => {
+        let key = info.id;
+        info.lastOpen = new Date().getTime();
+        // return if book is allready registered
+        if (db.has(key)) {
+            if (cb) {
+                cb(info, db);
+            }
+            return;
+        }
+
+        if (process.platform === 'win32') {
+            key = key.split('\\').pop();
+        }
+
+        const coverPath = path.join(
+            remote.app.getPath('appData'),
+            'eplee',
+            'cover',
+            key
+        );
+    });
+}
+
+export { parshToc, image2Base64, getInfo, addToDB }
