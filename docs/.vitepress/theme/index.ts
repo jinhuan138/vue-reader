@@ -7,8 +7,7 @@ import { VueReader } from "@/modules/index"
 // import { VueReader } from "vue-reader"
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
-import Library from 'comps/Library.vue'
-import Reader from 'comps/Reader.vue'
+import reader from 'comps/reader/index'
 // import router from "../../router/index"
 
 export default {
@@ -21,7 +20,6 @@ export default {
     app.component('DemoBlock', DemoBlock)
     app.use(ElementPlus)
     // app.use(router)
-    app.component('Library', Library)
-    app.component('Reader', Reader)
+    app.component('Reader', reader)
   }
 }
