@@ -8,6 +8,22 @@ import Vibrant from 'node-vibrant'
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const libraryPath = join(__dirname, '../public/books')
 const booksJson = []
+const delDir = (path) => {
+    let files = [];
+    if (fs.existsSync(path)) {
+        files = fs.readdirSync(path);
+        files.forEach((file, index) => {
+            let curPath = path + "/" + file;
+            if (fs.statSync(curPath).isDirectory()) {
+                delDir(curPath); //递归删除文件夹
+            } else {
+                fs.unlinkSync(curPath); //删除文件
+            }
+        });
+        fs.rmdirSync(path);
+    }
+}
+
 const parseBook = (name) => {
     return new Promise((resolve, reject) => {
         const filePath = join(libraryPath, name)
@@ -21,11 +37,11 @@ const parseBook = (name) => {
                 //img buffer
                 if (error) return console.log(error)
                 if (mimeType.includes('image')) {
-                    const coverBase64 = img.toString('base64').replace(/\s/g,'')
-                    fs.writeFileSync(join(libraryPath,`/cover/${title}.jpg`),img)
+                    const coverBase64 = img.toString('base64').replace(/\s/g, '')
+                    fs.writeFileSync(join(libraryPath, `/cover/${name.replace('.epub', '')}.jpg`), img)
                     // 获取图书封面主题颜色,node-vibrant不支持webp直接使用buffer
                     const palette = await Vibrant.from(img).getPalette()
-                    booksJson.push({ ...book.metadata, coverBase64,coverPath:`/cover/${name}.jpg`, url: name, bgColorFromCover: palette.DarkVibrant.hex, size, from: 'url' })
+                    booksJson.push({ ...book.metadata, coverPath: `/books/cover/${name.replace('.epub', '')}.jpg`, url: name, bgColorFromCover: palette.DarkVibrant.hex, size, from: 'url', coverBase64 })
                 }
             });
             console.log(name + ' 解析完成')
@@ -41,6 +57,7 @@ const saveBookInfo = async () => {
         if (err)
             fs.mkdirSync(join(libraryPath, 'cover'))
     })
+    delDir(join(libraryPath, 'cover'))
     const books = fs.readdirSync(libraryPath)
     const promise = books.map(name => {
         if (name.endsWith('epub'))

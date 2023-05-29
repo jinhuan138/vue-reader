@@ -1,4 +1,3 @@
-import { Book } from 'epubjs';
 
 /**
  * Parsh the toc provided by epubjs to required form by element-ui tree component
@@ -6,7 +5,7 @@ import { Book } from 'epubjs';
  * @param {Object} Book - EPUBJS Book needed to be ready
  * @returns {Array} returns array of toc tree that easily adopted by el-tree
  */
-const parshToc = (book) => {
+const parshToc = async (book) => {
     const { toc } = book.navigation;
     const { spine } = book;
 
@@ -56,7 +55,7 @@ const parshToc = (book) => {
      * @param {toc} toc
      * @param {parrent} parrent
      */
-    const createTree = (toc, parrent) => {
+    const createTree = async (toc, parrent) => {
         for (let i = 0; i < toc.length; i += 1) {
             // get clean href
             const href = validateHref(toc[i].href);
@@ -69,31 +68,30 @@ const parshToc = (book) => {
             const spineItem = spine.get(spineComponent);
 
             // load spin item
-            spineItem.load(book.load.bind(book)).then(() => {
-                // get element by positionComponent which is basically elementId
-                const el = spineItem.document.getElementById(positonComponent);
-                // get cfi from element
-                const cfi = spineItem.cfiFromElement(el);
-                // get percent from cfi
-                const percentage = book.locations.percentageFromCfi(cfi);
-                // toc item which has
-                parrent[i] = {
-                    label: toc[i].label.trim(),
-                    children: [],
-                    href,
-                    cfi,
-                    percentage,
-                };
+            await spineItem.load(book.load.bind(book))
+            // get element by positionComponent which is basically elementId
+            const el = spineItem.document.getElementById(positonComponent);
+            // get cfi from element
+            const cfi = spineItem.cfiFromElement(el);
+            // get percent from cfi
+            const percentage = book.locations.percentageFromCfi(cfi);
+            // toc item which has
+            parrent[i] = {
+                label: toc[i].label.trim(),
+                children: [],
+                href,
+                cfi,
+                percentage,
+            };
 
-                // if toc has subitems recursively parsh it
-                if (toc[i].subitems) {
-                    createTree(toc[i].subitems, parrent[i].children);
-                }
-            });
+            // if toc has subitems recursively parsh it
+            if (toc[i].subitems) {
+                await createTree(toc[i].subitems, parrent[i].children);
+            }
         }
     };
 
-    createTree(toc, tocTree);
+    await createTree(toc, tocTree);
     return tocTree;
 }
 
@@ -116,7 +114,7 @@ const image2Base64 = (url) => new Promise((resolve, reject) => {
     };
 })
 
-const getInfo = (url, callback) => {
+const getInfo = async (url, book, callback) => {
     // parameter validation
     if (!url || typeof url !== 'string') {
         return;
@@ -126,13 +124,12 @@ const getInfo = (url, callback) => {
 
     // file load on file protocol
     // const uri = fileUrl(filePath);
-    const book = new Book(url);
 
     book.ready
         .then(() => {
             return book.locations.generate();
         })
-        .then(locations => {
+        .then(async locations => {
             const meta = book.package.metadata;
 
             const info = {
@@ -144,7 +141,7 @@ const getInfo = (url, callback) => {
                 bookmarks: [],
                 highlights: [],
                 bgColorFromCover: '',
-                toc: parshToc(book),
+                toc: await parshToc(book),
                 locations,
             };
 

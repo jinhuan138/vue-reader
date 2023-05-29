@@ -11,7 +11,6 @@
 </template>
 
 <script setup>
-import { watch } from 'vue'
 
 const props = defineProps({
 	toc: {
@@ -27,10 +26,6 @@ const emit = defineEmits(['node-click'])
 const onNodeClick = (data) => {
 	emit('node-click', data);
 }
-console.log(props.toc)
-watch(props.toc, (val) => {
-	console.log('watch',val)
-})
 </script>
 
 <style lang="scss" scoped></style>

@@ -1,11 +1,16 @@
 <template>
     <el-container direction="vertical">
         <titlebar :title="title">
+
             <el-button-group>
                 <el-button size="small" :icon="Back" circle @click="onBackBtn" />
                 <el-button size="small" :icon="Grid" circle @click="onLibraryBtn" />
             </el-button-group>
-            <toc-menu :toc="treeToc" :theme="theme" @node-click="onNodeClick"></toc-menu>
+
+            <toc-menu :toc="bookInfo.toc" :theme="theme" @node-click="onNodeClick"></toc-menu>
+
+            <theme-menu @theme-change="applytheme" @flow-change="applyflow" @style-change="updateStyle" />
+
         </titlebar>
         <el-main class="container">
             <EpubView :url="url" @update:location="locationChange" :getRendition="getRendition" :tocChanged="tocChanged"
@@ -23,26 +28,26 @@
 </template>
 <script setup>
 //https://github.com/code-farmer-i/vue-markdown-editor.git
+//https://github.com/hepengwei/visualization-collection
 import { Back, Grid } from '@element-plus/icons-vue'
 import { EpubView } from '@/modules/index'
 import titlebar from './Titlebar.vue'
-import TocMenu from './TocMenu.vue';
-import { db } from "./utils/db";
+import TocMenu from './menu/TocMenu.vue';
+import ThemeMenu from './menu/ThemeMenu.vue'
+import { getInfo } from "./utils/dbUtilis";
 import { dark, light, tan } from './utils/themes.js'
 import { ref, computed, onMounted } from "vue";
 
 const props = defineProps({
     book: {
         default: '啼笑因缘.epub'
-    },
-    info: {
-        type: Object
     }
 })
 const title = computed(() => props.book.replace('.epub', ''))
 const url = computed(() => {
     return `/books/${props.book}`
 })
+const bookInfo = ref({})
 let rendition = null, flattenedToc = null, processToc = []
 
 const getRendition = (val) => {
@@ -51,7 +56,18 @@ const getRendition = (val) => {
     const displayed = rendition.display();
     book.ready.then(() => {
         return book.locations.generate(1600);
-    }).then(locations => {
+    }).then(async locations => {
+        rendition.ready = true;
+        await getInfo(props.book, book, (info) => {
+            bookInfo.value = info
+            console.log('info', info)
+            flattenedToc = (function flatten(items) {
+                return [].concat(...items.map(item => [item].concat(...flatten(item.children))));
+            })(info.toc);
+            flattenedToc.sort((a, b) => {
+                return a.percentage - b.percentage;
+            })
+        })
         displayed.then(() => {
             var currentLocation = rendition.currentLocation();
             const currentPage = book.locations.percentageFromCfi(currentLocation.start.cfi);
@@ -110,8 +126,8 @@ const tocChanged = (_toc) => {
 //阅读进度
 const sliderValue = ref(0)
 const lableFromPercentage = (percent) => {
-    // let toc = tocFromPercentage(percent)
-    // if (toc) return toc.label;
+    let toc = tocFromPercentage(percent)
+    if (toc) return toc.label;
     return '';
 }
 
@@ -161,9 +177,26 @@ const onLibraryBtn = () => {
 const onNodeClick = (item) => {
     rendition.display(item.cfi || item.href);
 }
-//tree
-const treeToc = ref(props.info.toc)
-
+//theme
+const  styleRules =ref({})
+const applytheme = (theme) => {
+    rendition.themes.select(theme);
+}
+const applyflow = (flow) => {
+    if (!rendition.ready) return;
+    rendition.flow(flow);
+}
+const updateStyle = () => {
+    //    styleRules = rules;
+    applyStyle();
+    refreshRendition();
+}
+const applyStyle = () => {
+    if (!rendition.ready) return;
+    rendition.getContents().forEach((content) => {
+        content.addStylesheetRules(styleRules.value);
+    });
+}
 </script>
   
 <style scoped lang="scss">

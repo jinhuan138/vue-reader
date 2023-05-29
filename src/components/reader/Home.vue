@@ -14,7 +14,6 @@
                 <div v-for="({ url, bgColorFromCover, title, creator, publisher, description, date, publishDate, language, size, coverPath }, index) in bookList"
                     :key="index">
                     <!-- 主体 -->
-                    <!--  -->
                     <el-card @click="reader(url)" ref="card" shadow="hover" class='box-card'
                         :body-style="{ padding: '0px' }">
                         <el-image :src="coverPath" fit='fill' class='el-image'>
@@ -199,10 +198,7 @@ const download = (url) => {
 const emit = defineEmits(['update:currentBook'])
 //reader
 const reader = (url) => {
-    getInfo(`/books/${url}`, info => {
-        emit('update:currentBook', url, info)
-    })
-
+    emit('update:currentBook', url)
 }
 //导入
 const selectFile = async (item) => {

@@ -33,8 +33,8 @@ declare module '@vue/runtime-core' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Test: typeof import('./../src/components/Test.vue')['default']
-    ThemeMenu: typeof import('./../src/components/reader/ThemeMenu.vue')['default']
+    ThemeMenu: typeof import('./../src/components/reader/menu/ThemeMenu.vue')['default']
     Titlebar: typeof import('./../src/components/reader/Titlebar.vue')['default']
-    TocMenu: typeof import('./../src/components/reader/TocMenu.vue')['default']
+    TocMenu: typeof import('./../src/components/reader/menu/TocMenu.vue')['default']
   }
 }

@@ -5,24 +5,22 @@
     </transition>
     <!-- Reader -->
     <transition name="el-fade-in-linear">
-        <Reader :book="currentBook" v-if="showReader" @update:showReader="val => showReader = val" :info="bookInfo" />
+        <Reader :book="currentBook" v-if="showReader" @update:showReader="val => showReader = val" />
     </transition>
 </template>
 <script setup>
 import Home from './Home.vue'
 import Reader from './Reader.vue'
 import { ref, computed } from "vue"
-import ThemeMenuVue from './ThemeMenu.vue'
+import ThemeMenuVue from './menu/ThemeMenu.vue'
 
 const showReader = ref(false)
 const currentBook = ref('')
 const bookName = ref('')
-const bookInfo = ref({})
 
-const updateBook = (url, info) => {
+const updateBook = (url) => {
     currentBook.value = url
     bookName.value = url.replace('.epub', '')
-    bookInfo.value = info
     showReader.value = true
 }
 

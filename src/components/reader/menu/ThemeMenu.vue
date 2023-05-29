@@ -1,6 +1,8 @@
 <template>
 	<el-popover :popper-class="theme" trigger="hover">
-		<el-button slot="reference" size="small" icon="el-icon-s-operation" circle />
+		<template #reference>
+			<el-button size="small" icon="el-icon-s-operation" circle />
+		</template>
 		<table>
 			<tr>
 				<td> Flow </td>   
@@ -36,21 +38,21 @@
 			<tr>
 				<td> Line Spacing </td>   
 				<td>   
-					<el-input-number v-model="lineSpacing" :precision="2" :step="0.1" :min="1.3" :max="2.0" size="mini"></el-input-number>
+					<el-input-number v-model="lineSpacing" :precision="2" :step="0.1" :min="1.3" :max="2.0" size="small"></el-input-number>
 				</td>   
 			</tr>
 			
 			<tr>
 				<td> Font Size </td>   
 				<td>   
-					<el-input-number v-model="fontSize" :step="2" :min="10" :max="300" size="mini"></el-input-number>
+					<el-input-number v-model="fontSize" :step="2" :min="10" :max="300" size="small"></el-input-number>
 				</td>   
 			</tr>
 			
 			<tr>
 				<td>Font</td>   
 				<td>   
-					<el-select v-model="font" class="font-select" width="50" size="mini">
+					<el-select v-model="font" class="font-select" width="50" size="small">
 						<el-option label="Default" value=""></el-option>
 						<el-option label="Arial" value="Arial"></el-option>
 						<el-option label="Times New Roman" value="Times New Roman"></el-option>
