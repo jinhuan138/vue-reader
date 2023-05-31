@@ -63,19 +63,7 @@ export default defineComponent({
         })
         const { toc, expandedToc } = toRefs(book)
 
-        const bookName = computed(() => {
-            if (title?.value) {
-                return title.value
-            } else {
-                let title = ''
-                if (typeof (url.value) === 'string' && url.value.endsWith('.epub')) {
-                    const num = url.value.lastIndexOf('/') + 1
-                    const name = url.value.substring(num)
-                    title = name.replace(".epub", '')
-                }
-                return title
-            }
-        })
+        const bookName = ref('')
 
         const toggleToc = () => {
             expandedToc.value = !expandedToc.value
@@ -90,6 +78,11 @@ export default defineComponent({
             getRendition && getRendition(rendition)
             rendition.on("relocated", (location) => {
                 currentLocation.value = location
+            })
+            const book = rendition.book
+            book.ready.then(() => {
+              const meta = book.package.metadata;
+              bookName.value = meta.title
             })
         }
 
@@ -148,7 +141,7 @@ export default defineComponent({
                     h('span', { class: 'tocButtonBar', style: 'top: 66%' }),
                 ]),
                 // 书名
-                h('div', { class: 'titleArea' }, slots.title?.() || bookName.value),
+                h('div', { class: 'titleArea' }, slots.title ? slots.title?.() : title || bookName),
                 // 阅读
                 h(EpubView, {
                     ref: parseFloat(version) < 2.7 ? 'epubRef' : epubRef,
