@@ -6,14 +6,15 @@
     <span id="center">{{ props.title }}</span>
 
     <span id="right">
-      <el-button size="small" icon="minus" circle @click="minimizeWindow" />
-      <el-button size="small" icon="full-screen" circle @click="maximizeWindow" />
-      <el-button size="small" icon="close" circle @click="closeWindow" />
+      <el-button size="small" :icon="Minus" circle @click="minimizeWindow" />
+      <el-button size="small" :icon="FullScreen" circle @click="maximizeWindow" />
+      <el-button size="small" :icon="Close" circle @click="closeWindow" />
     </span>
   </el-header>
 </template>
 
 <script setup>
+import { Minus, FullScreen, Close } from '@element-plus/icons-vue'
 import { toRefs } from 'vue'
 
 const props = defineProps({

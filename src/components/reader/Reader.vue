@@ -9,6 +9,8 @@
 
             <toc-menu :toc="bookInfo.toc" :theme="theme" @node-click="onNodeClick"></toc-menu>
 
+            <search-menu :search-result="searchResult" :theme="theme" @node-click="onNodeClick" @search="search" />
+
             <theme-menu @theme-change="applytheme" @flow-change="applyflow" @style-change="updateStyle" />
 
         </titlebar>
@@ -33,6 +35,7 @@ import { Back, Grid } from '@element-plus/icons-vue'
 import { EpubView } from '@/modules/index'
 import titlebar from './Titlebar.vue'
 import TocMenu from './menu/TocMenu.vue';
+import SearchMenu from './menu/SearchMenu.vue'
 import ThemeMenu from './menu/ThemeMenu.vue'
 import { getInfo } from "./utils/dbUtilis";
 import { dark, light, tan } from './utils/themes.js'
@@ -188,8 +191,8 @@ const applyflow = (flow) => {
     if (!rendition.ready) return;
     rendition.flow(flow);
 }
-const updateStyle = () => {
-    //    styleRules = rules;
+const updateStyle = (rules) => {
+    styleRules.value = rules;
     applyStyle();
     refreshRendition();
 }
@@ -204,6 +207,28 @@ const applyStyle = () => {
     rendition.getContents().forEach((content) => {
         content.addStylesheetRules(styleRules.value);
     });
+}
+//search
+const searchResult = ref([])
+const search = (text) => {
+    const book = rendition.book
+    return Promise.all(
+        book.spine.spineItems.map(item =>
+            item
+                .load(book.load.bind(book))
+                .then(item.find.bind(item, text))
+                .finally(item.unload.bind(item))
+        )
+    )
+        .then(results => results.flat())
+        .then(results => {
+            searchResult.value = results.map(result => {
+                result.label = result.excerpt;
+                return result;
+            });
+        }).then(() => {
+            // this.$remote.getCurrentWebContents().findInPage(text);
+        })
 }
 </script>
   

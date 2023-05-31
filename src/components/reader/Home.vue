@@ -35,7 +35,7 @@
                             </template>
                             <!-- 书籍信息 -->
                             <div>
-                                <el-button type="primary" round icon="Download" @click="download(url)">下载</el-button>
+                                <el-button type="primary" round :icon="Download" @click="download(url)">下载</el-button>
                                 <p v-if="creator">作者: {{ creator }}</p>
                                 <p v-if="description">
                                     描述: <span :title="description"> {{ trunc(description, 30) }}</span>
@@ -54,7 +54,7 @@
 </template>
   
 <script setup>
-import { Plus } from '@element-plus/icons-vue'
+import { Plus ,Download} from '@element-plus/icons-vue'
 import { saveAs } from 'file-saver';
 import { db } from "./utils/db"
 import { getInfo } from './utils/dbUtilis'
@@ -85,7 +85,9 @@ const props = defineProps({
 const { useMin, maxCols } = props
 
 onBeforeMount(() => {
-    bookList.value = books
+    bookList.value = books.sort((a, b) => {
+        return b.lastOpen - a.lastOpen;
+    })
 })
 onMounted(() => {
     if (!bookList.value.length) return
