@@ -43,7 +43,7 @@ const props = defineProps({
         default: '啼笑因缘.epub'
     }
 })
-const title = computed(() => props.book.replace('.epub', ''))
+const title = ref('')
 const url = computed(() => {
     return `/books/${props.book}`
 })
@@ -55,6 +55,8 @@ const getRendition = (val) => {
     const book = rendition.book
     const displayed = rendition.display();
     book.ready.then(() => {
+        const meta = book.package.metadata;
+        title.value = meta.title;
         return book.locations.generate(1600);
     }).then(async locations => {
         rendition.ready = true;
@@ -178,7 +180,7 @@ const onNodeClick = (item) => {
     rendition.display(item.cfi || item.href);
 }
 //theme
-const  styleRules =ref({})
+const styleRules = ref({})
 const applytheme = (theme) => {
     rendition.themes.select(theme);
 }
@@ -191,8 +193,14 @@ const updateStyle = () => {
     applyStyle();
     refreshRendition();
 }
+const refreshRendition = () => {
+    // re-render to apply theme properly
+    if (rendition && rendition.manager) {
+        rendition.start();
+    }
+}
 const applyStyle = () => {
-    if (!rendition.ready) return;
+    if (!rendition) return;
     rendition.getContents().forEach((content) => {
         content.addStylesheetRules(styleRules.value);
     });
