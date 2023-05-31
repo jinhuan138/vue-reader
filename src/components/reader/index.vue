@@ -1,12 +1,14 @@
 <template>
-    <!-- Home -->
-    <transition name="el-fade-in-linear">
-        <Home @update:currentBook="updateBook" v-model:showReader="showReader" v-if="!showReader" />
-    </transition>
-    <!-- Reader -->
-    <transition name="el-fade-in-linear">
-        <Reader :book="currentBook" v-if="showReader" @update:showReader="val => showReader = val" />
-    </transition>
+    <div id="app" ref="app" class="default">
+        <!-- Home -->
+        <transition name="el-fade-in-linear">
+            <Home @update:currentBook="updateBook" v-model:showReader="showReader" v-if="!showReader" />
+        </transition>
+        <!-- Reader -->
+        <transition name="el-fade-in-linear">
+            <Reader :book="currentBook" v-if="showReader" @update:showReader="val => showReader = val" />
+        </transition>
+    </div>
 </template>
 <script setup>
 import Home from './Home.vue'
@@ -25,46 +27,72 @@ const updateBook = (url) => {
 }
 
 </script>
-<style scoped>
-.el-header {
-    text-align: center;
-    vertical-align: middle;
-    padding: 4px;
-    -webkit-app-region: drag !important;
-    -webkit-user-select: none;
+<style lang="scss" scoped>
+$border-radius: 4px;
+$margin: 4px;
+$padding: 4px;
+
+#app {
+    width: 100%;
+    height: 100%;
+    border-radius: $border-radius;
+}
+</style>
+
+
+<style lang="scss">
+::-webkit-scrollbar {
+    display: none;
 }
 
-.backdrop {
-    backdrop-filter: blur(40px);
+html,
+body {
+    margin: 0px;
+    width: 100%;
+    height: 100%;
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+}
+
+.el-container {
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    right: 0px;
+    left: 0px;
+}
+
+.el-main {
+    width: 100%;
+    height: 100%;
+    padding: 0px;
 }
 
 .el-button {
-    margin-left: 4px;
+    border: none;
 }
 
-#left {
-    float: left;
-    -webkit-app-region: no-drag !important;
-    vertical-align: sub;
+.el-table,
+.el-table *,
+.el-radio-button__inner,
+.el-tree,
+.el-button {
+    background: inherit !important;
+    color: inherit !important;
 }
 
-#left .el-button:first-of-type {
-    margin-left: 0px;
+.default {
+    background: #fff;
+    color: #555;
 }
 
-#center {
-    left: 50%;
-    right: 50%;
-    vertical-align: sub;
-    font-size: 16px;
-    line-height: 2;
-    font-weight: 600;
-    color: #000;
+.dark {
+    background: #444;
+    color: #eee;
 }
 
-#right {
-    float: right;
-    -webkit-app-region: no-drag !important;
-    vertical-align: sub;
+.tan {
+    background: #fdf6e3;
+    color: #002b36;
 }
 </style>
