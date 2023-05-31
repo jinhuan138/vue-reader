@@ -1,7 +1,7 @@
 <template>
 	<el-popover :popper-class="theme" trigger="hover">
 		<template #reference>
-			<el-button size="small" icon="operation" circle />
+			<el-button size="small" :icon="Operation" circle />
 		</template>
 		<table>
 			<tr>
@@ -64,72 +64,56 @@
 	</el-popover>
 </template>
 
-<script>
-export default {
-	name: 'ThemeMenu',
+<script setup>
+import { Operation } from '@element-plus/icons-vue'
+import { ref, watch, onMounted } from 'vue'
 
-	data() {
-		return {
-			lineSpacing: 1.5,
-			theme: 'default',
-			flow: 'paginated',
-			font: '',
-			fontSize: 100,
-		};
-	},
+const lineSpacing = ref(1.5)
+const theme = ref('default')
+const flow = ref('paginated')
+const font = ref('')
+const fontSize = ref(100)
 
-	watch: {
-		lineSpacing() {
-			this.updateStyle();
+const emit = defineEmits(['style-change', 'theme-change', 'flow-change'])
+
+const updateStyle = () => {
+	const rules = {
+		'p': {
+			"font-family": font.value !== "" ? `${font.value} !important` : "!invalid-hack",
+			"font-size": fontSize.value !== "" ? `${fontSize.value} !important` : "!invalid-hack",
 		},
-		font() {
-			this.updateStyle();
+		'body': {
+			"font-family": font.value !== "" ? `${font.value} !important` : "!invalid-hack",
+			// "text-align": `${theme.ta} !important`,
 		},
-		fontSize() {
-			this.updateStyle();
-		},
-		theme(theme) {
-			this.$emit('theme-change', theme);
-		},
-		flow(value) {
-			this.$emit('flow-change', value);
+		'*': {
+			"line-height": `${lineSpacing.value} !important`,
+			"font-size": fontSize.value !== "" ? `${fontSize.value}% !important` : "!invalid-hack",
 		}
-	},
-
-	mounted() {
-		this.updateStyle();
-	},
-
-	methods: {
-		updateStyle() {
-			const rules = {
-				'p': {
-					"font-family": this.font !== "" ? `${this.font} !important` : "!invalid-hack",
-					"font-size": this.fontSize !== "" ? `${this.fontSize} !important` : "!invalid-hack",
-				},
-				'body': {
-					"font-family": this.font !== "" ? `${this.font} !important` : "!invalid-hack",
-					// "text-align": `${theme.ta} !important`,
-				},
-				'*': {
-					"line-height": `${this.lineSpacing} !important`,
-					"font-size": this.fontSize !== "" ? `${this.fontSize}% !important` : "!invalid-hack",
-				}
-			};
-
-			this.$emit('style-change', rules)
-		}
-	}
+	};
+	emit('style-change', rules)
 }
+
+onMounted(()=>{
+	updateStyle()
+})
+
+watch(() => [lineSpacing, font, fontSize], () => {
+	updateStyle();
+})
+watch(theme, (theme) => {
+	emit('theme-change', theme)
+})
+watch(flow, (value) => {
+	emit('flow-change', value)
+})
 </script>
 
 <style lang="scss" scoped>
 tr td:last-child {
 	text-align: end;
 }
-</style>
 
-<style>
 .font-select .el-input--suffix .el-input__inner {
 	padding-right: 0px;
 }
