@@ -9,11 +9,15 @@
 
             <toc-menu :toc="bookInfo.toc" :theme="theme" @node-click="onNodeClick"></toc-menu>
 
+            <bookmark-menu :bookmarks="info.bookmarks" :theme="theme" @node-click="onNodeClick" @add-bookmark="addBookmark"
+                @remove-bookmark="removeBookmark" />
+
             <search-menu :search-result="searchResult" :theme="theme" @node-click="onNodeClick" @search="search" />
 
             <theme-menu @theme-change="applytheme" @flow-change="applyflow" @style-change="updateStyle" />
 
         </titlebar>
+
         <el-main class="container">
             <EpubView :url="url" @update:location="locationChange" :getRendition="getRendition" :tocChanged="tocChanged"
                 :title="page">
@@ -22,10 +26,13 @@
                 </template>
             </EpubView>
         </el-main>
+
         <el-footer height="45">
             <el-slider v-model="sliderValue" :step="0.01" :format-tooltip="lableFromPercentage"
                 @change="onSliderValueChange"></el-slider>
         </el-footer>
+
+        <buble-menu ref="bubleMenu" @highlight-btn-click="highlightSelection" />
     </el-container>
 </template>
 <script setup>
@@ -35,27 +42,32 @@ import { Back, Grid } from '@element-plus/icons-vue'
 import { EpubView } from '@/modules/index'
 import titlebar from './Titlebar.vue'
 import TocMenu from './menu/TocMenu.vue';
+import BookmarkMenu from './menu/BookmarkMenu.vue';
 import SearchMenu from './menu/SearchMenu.vue'
 import ThemeMenu from './menu/ThemeMenu.vue'
+import BubleMenu from './menu/BubleMenu.vue';
+import selectListener from '../../modules/utils/listener/select.ts'
 import { getInfo } from "./utils/dbUtilis";
 import { dark, light, tan } from './utils/themes.js'
 import { ref, computed, onMounted } from "vue";
 
 const props = defineProps({
-    book: {
-        default: '啼笑因缘.epub'
+    bookInfo: {
+        // default: '啼笑因缘.epub'
     }
 })
+const { bookInfo } = props
+const info = ref(bookInfo)
 const title = ref('')
 const url = computed(() => {
-    return `/books/${props.book}`
+    return `/books/${props.bookInfo.url}`
 })
-const bookInfo = ref({})
 let rendition = null, flattenedToc = null, processToc = []
 
 const getRendition = (val) => {
     rendition = val
     const book = rendition.book
+    rendition.hooks.content.register(applyStyle);
     const displayed = rendition.display();
     book.ready.then(() => {
         const meta = book.package.metadata;
@@ -78,10 +90,12 @@ const getRendition = (val) => {
             const currentPage = book.locations.percentageFromCfi(currentLocation.start.cfi);
             sliderValue.value = currentPage
         });
+        rendition.on('rendered', (e, iframe) => {
+            selectListener(iframe.document, rendition, toggleBuble);
+        });
         rendition.on('relocated', (location) => {
-            const percent = book.locations.percentageFromCfi(location.start.cfi);
-            const percentage = Math.floor(percent * 100);
-            sliderValue.value = percentage
+            progress.value = book.locations.percentageFromCfi(location.start.cfi);
+            sliderValue.value = Math.floor(progress.value * 10000) / 100;
         });
         rendition.themes.registerRules('dark', dark);
         rendition.themes.registerRules('tan', tan);
@@ -130,6 +144,7 @@ const tocChanged = (_toc) => {
 
 //阅读进度
 const sliderValue = ref(0)
+const progress = ref(0)
 const lableFromPercentage = (percent) => {
     let toc = tocFromPercentage(percent)
     if (toc) return toc.label;
@@ -229,6 +244,61 @@ const search = (text) => {
         }).then(() => {
             // this.$remote.getCurrentWebContents().findInPage(text);
         })
+}
+//highlight
+const bubleMenu = ref(null)
+const toggleBuble = (event, react, text, cfiRange) => {
+    if (event === 'cleared') {
+        // hide buble
+        // this.buble.hide();
+        bubleMenu.value.hide()
+        return;
+    }
+    console.log(bubleMenu.value)
+    bubleMenu.value.setProps(react, text, cfiRange);
+    bubleMenu.value.isBubleVisible = true;
+    // this.buble.setProps(react, text, cfiRange);
+    // this.isBubleVisible = true;
+}
+const highlightSelection = (cfiRange) => {
+    rendition.annotations.highlight(cfiRange);
+    // this.info.highlights.push(cfiRange);
+    // this.$db.set(this.info.id, this.info);
+}
+//bookmark
+const addBookmark = () => {
+    /**
+     * prefred structure of bookmark object
+     *  let bookmark = {
+     *  title:'',// title of page of topic where bookmark is placed
+     *  cfi:'', // cfi of location
+     *  href:'' // href of location
+     * }
+     */
+
+    const { location } = this.rendition;
+    const { href, cfi, percentage } = location.start;
+
+    // TODO : find more minigful name for bookmark
+    const title = `${this.lableFromPercentage(percentage * 100)} : At ${Math.floor(
+        progress.value * 1000
+    ) / 10}%`;
+
+    const bookmark = {
+        label: title,
+        cfi,
+        href,
+    };
+
+    // this.info.bookmarks.push(bookmark);
+    // this.$db.set(this.info.id, this.info);
+}
+const removeBookmark = (bookmark) => {
+    const index = this.info.bookmarks.findIndex(
+        item => item.cfi === bookmark.cfi
+    );
+    this.info.bookmarks.splice(index, 1);
+    // this.$db.insert(this.info.id, this.info);
 }
 </script>
   
