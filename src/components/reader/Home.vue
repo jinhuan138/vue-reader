@@ -11,12 +11,11 @@
         <!-- 书籍列表 -->
         <el-main class='main' ref="main">
             <div class="grid" ref="grid">
-                <div v-for="({ url, bgColorFromCover, title, creator, publisher, description, date, publishDate, language, size, coverPath }, index) in bookList"
-                    :key="index">
+                <div v-for="(info, index) in bookList" :key="index">
                     <!-- 主体 -->
-                    <el-card @click="reader(url)" ref="card" shadow="hover" class='box-card'
+                    <el-card @click="reader(info)" ref="card" shadow="hover" class='box-card'
                         :body-style="{ padding: '0px' }">
-                        <el-image :src="coverPath" fit='fill' class='el-image'>
+                        <el-image :src="info.coverPath" fit='fill' class='el-image'>
                             <div slot="error" class="image-slot">
                                 <el-image src="/books/cover/default-cover.png" fit='fill'>
                                 </el-image>
@@ -26,24 +25,24 @@
                         <el-popover trigger="hover" placement='right'>
                             <template #reference>
                                 <div class='title' :style="{
-                                    background: bgColorFromCover
-                                        ? bgColorFromCover
+                                    background: info.bgColorFromCover
+                                        ? info.bgColorFromCover
                                         : '#6d6d6d',
                                 }">
-                                    {{ trunc(title, 30) }}
+                                    {{ trunc(info.title, 30) }}
                                 </div>
                             </template>
                             <!-- 书籍信息 -->
                             <div>
-                                <el-button type="primary" round :icon="Download" @click="download(url)">下载</el-button>
-                                <p v-if="creator">作者: {{ creator }}</p>
-                                <p v-if="description">
-                                    描述: <span :title="description"> {{ trunc(description, 30) }}</span>
+                                <el-button type="primary" round :icon="Download" @click="download(info.url)">下载</el-button>
+                                <p v-if="info.creator">作者: {{ info.creator }}</p>
+                                <p v-if="info.description">
+                                    描述: <span :title="info.description"> {{ trunc(info.description, 30) }}</span>
                                 </p>
-                                <p v-if="publisher">出版社: {{ publisher }}</p>
-                                <p v-if="date">出版日期: {{ date || publishDate }}</p>
-                                <p v-if="language">语言: {{ language }}</p>
-                                <p v-if="size">文件大小: {{ formatSize(size) }}</p>
+                                <p v-if="info.publisher">出版社: {{ info.publisher }}</p>
+                                <p v-if="info.date">出版日期: {{ info.date || info.publishDate }}</p>
+                                <p v-if="info.language">语言: {{ info.language }}</p>
+                                <p v-if="info.size">文件大小: {{ formatSize(info.size) }}</p>
                             </div>
                         </el-popover>
                     </el-card>
@@ -54,7 +53,7 @@
 </template>
   
 <script setup>
-import { Plus ,Download} from '@element-plus/icons-vue'
+import { Plus, Download } from '@element-plus/icons-vue'
 import { saveAs } from 'file-saver';
 import { db } from "./utils/db"
 import { getInfo } from './utils/dbUtilis'

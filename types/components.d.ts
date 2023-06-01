@@ -9,6 +9,8 @@ export {}
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
+    BookmarkMenu: typeof import('./../src/components/reader/menu/BookmarkMenu.vue')['default']
+    BubleMenu: typeof import('./../src/components/reader/menu/BubleMenu.vue')['default']
     Demo: typeof import('./../src/components/Demo.vue')['default']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElButtonGroup: typeof import('element-plus/es')['ElButtonGroup']
@@ -40,5 +42,8 @@ declare module '@vue/runtime-core' {
     ThemeMenu: typeof import('./../src/components/reader/menu/ThemeMenu.vue')['default']
     Titlebar: typeof import('./../src/components/reader/Titlebar.vue')['default']
     TocMenu: typeof import('./../src/components/reader/menu/TocMenu.vue')['default']
+  }
+  export interface ComponentCustomProperties {
+    vPopover: typeof import('element-plus/es')['ElPopoverDirective']
   }
 }
