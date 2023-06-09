@@ -15,11 +15,13 @@
                     <!-- 主体 -->
                     <el-card @click="reader(info)" ref="card" shadow="hover" class='box-card'
                         :body-style="{ padding: '0px' }">
-                        <el-image :src="info.coverPath" fit='fill' class='el-image'>
-                            <div slot="error" class="image-slot">
-                                <el-image src="/books/cover/default-cover.png" fit='fill'>
-                                </el-image>
-                            </div>
+                        <el-image :lazy="true" :src="'data:image/png;base64,' + info.coverBase64" fit='fill'
+                            class='el-image'>
+                            <template #error>
+                                <div class="image-slot">
+                                    <el-icon><icon-picture /></el-icon>
+                                </div>
+                            </template>
                         </el-image>
                         <!-- 提示 -->
                         <el-popover trigger="hover" placement='right'>
@@ -53,24 +55,23 @@
 </template>
   
 <script setup>
-import { Plus, Download } from '@element-plus/icons-vue'
-import { saveAs } from 'file-saver';
+import { Plus, Download, Picture as IconPicture } from '@element-plus/icons-vue'
+import titlebar from './Titlebar.vue'
+import fileSaver from 'file-saver';
 import { db } from "./utils/db"
-import { getInfo } from './utils/dbUtilis'
 import { getFileMD5 } from "./utils/md5"
-import books from "../../../public/books/books.json";
-import { ref, reactive, toRefs, onBeforeMount, onMounted, onBeforeUnmount } from "vue"
+import { ref, reactive, toRefs, onMounted, onBeforeUnmount } from "vue"
 
+const { saveAs } = fileSaver;
 const grid = ref(null)
 const main = ref(null)
 const data = reactive({
-    bookList: [],
     maxColWidth: 280,
     gap: 32,
 })
 let items = []
 
-const { bookList, maxColWidth, gap } = toRefs(data)
+const { maxColWidth, gap } = toRefs(data)
 const props = defineProps({
     useMin: {
         type: Boolean,
@@ -79,17 +80,16 @@ const props = defineProps({
     maxCols: {
         type: Number, // Maximum number of colums. Default: Infinite
         default: Infinity,
+    },
+    bookList: {
+        type: Array,
+        default: []
     }
 })
-const { useMin, maxCols } = props
+const { useMin, maxCols, bookList } = props
 
-onBeforeMount(() => {
-    bookList.value = books.sort((a, b) => {
-        return b.lastOpen - a.lastOpen;
-    })
-})
 onMounted(() => {
-    if (!bookList.value.length) return
+    if (!bookList.length) return
     initStyle()
     positionItems()
     window.addEventListener("resize", resize);
@@ -256,6 +256,17 @@ const onchange = (e) => {
             .el-image {
                 height: 200px;
                 width: 100%;
+
+                .image-slot {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    width: 100%;
+                    height: 100%;
+                    background: var(--el-fill-color-light);
+                    color: var(--el-text-color-secondary);
+                    font-size: 30px;
+                }
             }
 
             .title {

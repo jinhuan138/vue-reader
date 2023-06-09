@@ -3,7 +3,7 @@
     <span id="left">
       <slot></slot>
     </span>
-    <span id="center">{{ props.title }}</span>
+    <span id="center" :title="props.title">{{ trunc(props.title, 15) }}</span>
 
     <span id="right">
       <el-button size="small" :icon="Minus" circle @click="minimizeWindow" />
@@ -28,6 +28,9 @@ const props = defineProps({
   },
 })
 
+const trunc = (str, n) => {
+  return str.length > n ? `${str.substr(0, n - 3)}...` : str
+}
 
 const closeWindow = () => {
 }

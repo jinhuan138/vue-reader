@@ -3,7 +3,7 @@
 		<template #reference>
 			<el-button size="small" :icon="Operation" circle />
 		</template>
-		<table>
+		<table class="table">
 			<tr>
 				<td> Flow </td>
 				<td>
@@ -67,9 +67,14 @@
 <script setup>
 import { Operation } from '@element-plus/icons-vue'
 import { ref, watch, onMounted } from 'vue'
-
+const props = defineProps({
+	defaultTheme: {
+		default: 'default',
+		type: String,
+	},
+})
 const lineSpacing = ref(1.5)
-const theme = ref('default')
+const theme = ref(props.defaultTheme)
 const flow = ref('paginated')
 const font = ref('')
 const fontSize = ref(100)
@@ -94,12 +99,14 @@ const updateStyle = () => {
 	emit('style-change', rules)
 }
 
-onMounted(()=>{
+onMounted(() => {
 	updateStyle()
 })
 
 watch(() => [lineSpacing, font, fontSize], () => {
 	updateStyle();
+}, {
+	deep: true
 })
 watch(theme, (theme) => {
 	emit('theme-change', theme)
@@ -110,10 +117,20 @@ watch(flow, (value) => {
 </script>
 
 <style lang="scss" scoped>
-tr td:last-child {
-	text-align: end;
-}
+.table {
+	width: 240px;
 
+	tr td:last-child {
+		text-align: end;
+	}
+
+	td {
+		width: 79px;
+	}
+}
+</style>
+
+<style>
 .font-select .el-input--suffix .el-input__inner {
 	padding-right: 0px;
 }

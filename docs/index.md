@@ -9,9 +9,7 @@ npm install vue-reader --save
 ```
 
 And in your vue-component...
-<details>
-<summary>Vue 3</summary>
-
+::: details Vue 3
 :::demo basic usage
 
 ```vue
@@ -22,11 +20,8 @@ And in your vue-component...
 </template>
 ```
 :::
-</details>
 
-<details>
-<summary>Vue 2</summary>
-
+::: details Vue 2
 ```vue
 <template>
   <div style='height: 100vh'>
@@ -41,8 +36,8 @@ export default {
 }
 </script>
 ```
+:::
 
-</details>
 
 ## VueReader Attributes
 
@@ -546,7 +541,8 @@ const voice = (text, rate = 1) => {
             :epubOptions='{
             allowPopups: true,
             allowScriptedContent: true,
-            script: "https://cdn.jsdelivr.net/npm/medium-zoom@1.0.8/dist/medium-zoom.min.js"}' 					        url='/docs/files/alice.epub' 
+            script: "https://cdn.jsdelivr.net/npm/medium-zoom@1.0.8/dist/medium-zoom.min.js"}' 					        
+            url='/docs/files/alice.epub' 
             :getRendition='getRendition'>
         </VueReader>
     </div>

@@ -1,8 +1,9 @@
 <template>
-    <div id="app" ref="app" class="default">
+    <div id="index" ref="app" class="default">
         <!-- Home -->
         <transition name="el-fade-in-linear">
-            <Home @update:currentBook="updateBook" v-model:showReader="showReader" v-if="!showReader" />
+            <Home :bookList="bookList" @update:currentBook="updateBook" v-model:showReader="showReader"
+                v-if="!showReader" />
         </transition>
         <!-- Reader -->
         <transition name="el-fade-in-linear">
@@ -11,10 +12,10 @@
     </div>
 </template>
 <script setup>
+import books from "../../../public/books/books.json";
 import Home from './Home.vue'
 import Reader from './Reader.vue'
-import { ref, computed } from "vue"
-import ThemeMenuVue from './menu/ThemeMenu.vue'
+import { ref, reactive, onBeforeMount } from "vue"
 
 const showReader = ref(false)
 const currentBook = ref({})
@@ -24,15 +25,19 @@ const updateBook = (info) => {
     showReader.value = true
 }
 
+const bookList = ref([])
+bookList.value = books.sort((a, b) => {
+    return b.lastOpen - a.lastOpen;
+})
 </script>
 <style lang="scss" scoped>
 $border-radius: 4px;
 $margin: 4px;
 $padding: 4px;
 
-#app {
+#index {
     width: 100%;
-    height: 100%;
+    height: 100vh;
     border-radius: $border-radius;
 }
 </style>
@@ -80,17 +85,23 @@ body {
 }
 
 .default {
-    background: #fff;
-    color: #555;
+    width: 260px !important;
+    ;
+    background: #fff !important;
+    color: #555 !important;
 }
 
 .dark {
-    background: #444;
-    color: #eee;
+    width: 260px !important;
+    ;
+    background: #444 !important;
+    color: #eee !important;
 }
 
 .tan {
-    background: #fdf6e3;
-    color: #002b36;
+    width: 260px !important;
+    ;
+    background: #fdf6e3 !important;
+    color: #002b36 !important;
 }
 </style>

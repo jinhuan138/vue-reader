@@ -8,15 +8,25 @@ export default defineConfig({
     title: 'vue-reader',
     description: 'vue-reader document',
     base: '/docs/',
-    cleanUrls:true,
+    cleanUrls: true,
     markdown: {
         config: (md) => {
             md.use(demoBlockPlugin)
         }
     },
+    locales: {
+        root: {
+            label: 'English',
+            lang: 'en'
+        },
+        zh: {
+            label: '中文',
+            lang: 'zh'
+        }
+    },
     themeConfig: {
         nav: [
-            { text: "library", link: "/library" },
+            { text: "Reader", link: "/reader" },
         ],
         socialLinks: [
             { icon: 'github', link: 'https://github.com/jinhuan138/docs' }
