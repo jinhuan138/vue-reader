@@ -6,8 +6,8 @@
     <span id="center" :title="props.title">{{ trunc(props.title, 15) }}</span>
 
     <span id="right">
-      <el-button size="small" :icon="Minus" circle @click="minimizeWindow" />
-      <el-button size="small" :icon="FullScreen" circle @click="maximizeWindow" />
+      <!-- <el-button size="small" :icon="Minus" circle @click="minimizeWindow" />
+      <el-button size="small" :icon="FullScreen" circle @click="maximizeWindow" /> -->
       <el-button size="small" :icon="Close" circle @click="closeWindow" />
     </span>
   </el-header>
@@ -15,7 +15,6 @@
 
 <script setup>
 import { Minus, FullScreen, Close } from '@element-plus/icons-vue'
-import { toRefs } from 'vue'
 
 const props = defineProps({
   backdrop: {

@@ -72,41 +72,48 @@ let rendition = null, flattenedToc = null
 const getRendition = (val) => {
     rendition = val
     const book = rendition.book
+    // const displayed = rendition.display();
+    rendition.on('rendered', (e, iframe) => {
+        selectListener(iframe.document, rendition, toggleBuble);
+    });
+    rendition.on('relocated', (location) => {
+        history.value.push(location.start.cfi);
+        progress.value = book.locations.percentageFromCfi(location.start.cfi);
+        sliderValue.value = Math.floor(progress.value * 10000) / 100;
+    });
     rendition.hooks.content.register(applyStyle)
-    const displayed = rendition.display();
-    book.ready.then(() => {
-        const meta = book.package.metadata;
-        console.log(book.package.metadata)
-        title.value = meta.title;
-        return book.locations.generate(1600);
-    }).then(async locations => {
-        rendition.ready = true;
-        await getInfo(url.value, book, (info) => {
-            currentBook.value = info
-            flattenedToc = (function flatten(items) {
-                return [].concat(...items.map(item => [item].concat(...flatten(item.children))));
-            })(info.toc);
-            flattenedToc.sort((a, b) => {
-                return a.percentage - b.percentage;
+
+    book.ready
+        .then(() => {
+            const meta = book.package.metadata;
+            console.log(book.package.metadata)
+            title.value = meta.title;
+            return book.locations.generate(1600);
+        })
+        .then(async locations => {
+            // rendition.display(this.info.lastCfi || 1);
+            rendition.themes.registerRules('dark', dark);
+            rendition.themes.registerRules('tan', tan);
+            theme.value = reader.theme;
+            applytheme(theme.value)
+            await getInfo(url.value, book, (info) => {
+                currentBook.value = info
+                flattenedToc = (function flatten(items) {
+                    return [].concat(...items.map(item => [item].concat(...flatten(item.children))));
+                })(info.toc);
+                flattenedToc.sort((a, b) => {
+                    return a.percentage - b.percentage;
+                })
             })
         })
-        // displayed.then(() => {
-        //     var currentLocation = rendition.currentLocation();
-        //     const currentPage = book.locations.percentageFromCfi(currentLocation.start.cfi);
-        //     sliderValue.value = currentPage
-        // });
-        rendition.on('rendered', (e, iframe) => {
-            selectListener(iframe.document, rendition, toggleBuble);
+        .then(() => {
+            // this.info.highlights.forEach(cfiRange => {
+            //     rendition.annotations.highlight(cfiRange);
+            // });
+        })
+        .then(() => {
+            // this.isReady = true;
         });
-        rendition.on('relocated', (location) => {
-            progress.value = book.locations.percentageFromCfi(location.start.cfi);
-            sliderValue.value = Math.floor(progress.value * 10000) / 100;
-        });
-        rendition.themes.registerRules('dark', dark);
-        rendition.themes.registerRules('tan', tan);
-        theme.value = reader.theme;
-        applytheme(theme.value)
-    })
 }
 // const location = ref(2)
 const toc = ref([])
@@ -187,8 +194,17 @@ trackAllDownloads((_progress) => {
     loadProcess.value = Math.round(_progress * 100)
 });
 //header
+const history = ref([])
 const onBackBtn = () => {
-
+    // remove current location
+    history.value.pop();
+    let lastLocation = history.value.pop();
+    if (lastLocation) {
+        rendition.display(lastLocation);
+    } else {
+        // go to homepage
+        emit('update:showReader', false)
+    }
 }
 const emit = defineEmits(['update:showReader'])
 
@@ -197,6 +213,7 @@ const onLibraryBtn = () => {
 }
 
 const onNodeClick = (item) => {
+    console.log('onNodeClick',item)
     rendition.display(item.cfi || item.href);
 }
 //theme
