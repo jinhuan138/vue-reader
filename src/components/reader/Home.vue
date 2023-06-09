@@ -42,7 +42,7 @@
                                     描述: <span :title="info.description"> {{ trunc(info.description, 30) }}</span>
                                 </p>
                                 <p v-if="info.publisher">出版社: {{ info.publisher }}</p>
-                                <p v-if="info.date">出版日期: {{ info.date || info.publishDate }}</p>
+                                <p v-if="info.date">出版日期: {{ publishDate(info.date) || publishDate(info.publishDate) }}</p>
                                 <p v-if="info.language">语言: {{ info.language }}</p>
                                 <p v-if="info.size">文件大小: {{ formatSize(info.size) }}</p>
                             </div>
@@ -105,7 +105,7 @@ const publishDate = (val) => {
     const year = date.getFullYear();
     const month = date.getMonth() + 1;
     const day = date.getDay();
-    return `${year}--${month}--${day}`;
+    return `${year}-${month}-${day}`;
 }
 //style
 const initStyle = () => {

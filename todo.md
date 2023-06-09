@@ -1,6 +1,7 @@
 # 翻译
 # update:loaction
 # 进度条
+# 放大
 
 ## Document
 [document](https://jinhuan138.github.io/docs/)
