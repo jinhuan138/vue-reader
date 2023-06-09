@@ -1,7 +1,7 @@
 <template>
 	<el-popover :popper-class="`popper ${theme}`" width="350" trigger="hover" @show="startSearch" @hide="stopSearch">
 		<template #reference>
-			<el-button size="small" icon="search" circle />
+			<el-button size="small" :icon="Search" circle />
 		</template>
 		<div class="el-popover__title">
 			<el-input v-model="searchText" size="small" width="300" placeholder="search" />
@@ -12,57 +12,45 @@
 	</el-popover>
 </template>
 
-<script>
-export default {
-	name: 'SearchMenu',
-
-	props: {
-		theme: {
-			default: 'default',
-			type: String,
-		},
-		searchResult: {
-			default: () => { },
-			type: Array,
-		},
+<script setup>
+import { Search } from '@element-plus/icons-vue'
+import { ref, watch, toRefs } from 'vue'
+const props = defineProps({
+	theme: {
+		default: 'default',
+		type: String,
 	},
-
-	data() {
-		return {
-			searchText: ''
-		}
+	searchResult: {
+		default: () => [],
+		type: Array,
 	},
+})
+const { theme, searchResult } = toRefs(props)
+const emit = defineEmits(['search', 'node-click'])
+const searchText = ref('')
 
-	watch: {
-		searchText() {
-			if (this.searchText.length === 0) {
-				return;
-			}
-
-			clearTimeout(this._searcTimer);
-			this._searcTimer = setTimeout(() => {
-				this.$emit('search', this.searchText);
-			}, 1000);
-		},
-
-		searchResult() {
-			this.startSearch();
-		}
-	},
-
-	methods: {
-		stopSearch() {
-			// this.$remote.getCurrentWebContents().stopFindInPage('clearSelection');
-		},
-		startSearch() {
-			if (this.searchText === '') return;
-			// this.$remote.getCurrentWebContents().findInPage(this.searchText);
-		},
-		onNodeClick(data) {
-			this.$emit('node-click', data)
-		}
-	}
+const stopSearch = () => {
+	// this.$remote.getCurrentWebContents().stopFindInPage('clearSelection');
 }
-</script>
+const startSearch = () => {
+	if (searchText.value === '') return;
+	// this.$remote.getCurrentWebContents().findInPage(this.searchText);
+}
+const onNodeClick = (data) => {
+	emit('node-click', data)
+}
+let _searcTimer = null
+watch(searchText, (text) => {
+	if (text.length === 0) {
+		return;
+	}
+	clearTimeout(_searcTimer);
+	_searcTimer = setTimeout(() => {
+		emit('search', text);
+	}, 1000);
+})
+watch(searchResult, () => {
+	startSearch();
+})
 
-<style lang="scss" scoped></style>
+</script>

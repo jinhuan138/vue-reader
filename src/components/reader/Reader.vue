@@ -7,20 +7,23 @@
                 <el-button size="small" :icon="Grid" circle @click="onLibraryBtn" />
             </el-button-group>
 
-            <toc-menu :toc="bookInfo.toc" :theme="theme" @node-click="onNodeClick"></toc-menu>
+            <toc-menu :toc="currentBook.toc" :theme="theme" @node-click="onNodeClick"></toc-menu>
 
-            <bookmark-menu :bookmarks="info.bookmarks" :theme="theme" @node-click="onNodeClick" @add-bookmark="addBookmark"
-                @remove-bookmark="removeBookmark" />
+            <bookmark-menu :bookmarks="currentBook.bookmarks" :theme="theme" @node-click="onNodeClick"
+                @add-bookmark="addBookmark" @remove-bookmark="removeBookmark" />
 
             <search-menu :search-result="searchResult" :theme="theme" @node-click="onNodeClick" @search="search" />
 
-            <theme-menu @theme-change="applytheme" @flow-change="applyflow" @style-change="updateStyle" />
+            <theme-menu :defaultTheme="theme" @theme-change="applytheme" @flow-change="applyflow"
+                @style-change="updateStyle" />
 
         </titlebar>
 
         <el-main class="container">
-            <EpubView :url="url" @update:location="locationChange" :getRendition="getRendition" :tocChanged="tocChanged"
-                :title="page">
+            <EpubView :url="url" :getRendition="getRendition" :title="page" :epubOptions="{
+                allowPopups: true,
+                allowScriptedContent: true,
+            }" @update:location="locationChange">
                 <template #loadingView>
                     <el-progress :percentage="loadProcess" />
                 </template>
@@ -46,38 +49,40 @@ import BookmarkMenu from './menu/BookmarkMenu.vue';
 import SearchMenu from './menu/SearchMenu.vue'
 import ThemeMenu from './menu/ThemeMenu.vue'
 import BubleMenu from './menu/BubleMenu.vue';
-import selectListener from '../../modules/utils/listener/select.ts'
+import selectListener from '../../modules/utils/listener/select'
 import { getInfo } from "./utils/dbUtilis";
-import { dark, light, tan } from './utils/themes.js'
-import { ref, computed, onMounted } from "vue";
+import { dark, tan } from './utils/themes'
+import { useReaderStore } from './utils/stores'
+import { ref, computed } from "vue";
+
+const reader = useReaderStore()
 
 const props = defineProps({
     bookInfo: {
-        // default: '啼笑因缘.epub'
+        type: Object
     }
 })
-const { bookInfo } = props
-const info = ref(bookInfo)
+const currentBook = ref({})
 const title = ref('')
 const url = computed(() => {
     return `/books/${props.bookInfo.url}`
 })
-let rendition = null, flattenedToc = null, processToc = []
+let rendition = null, flattenedToc = null
 
 const getRendition = (val) => {
     rendition = val
     const book = rendition.book
-    rendition.hooks.content.register(applyStyle);
+    rendition.hooks.content.register(applyStyle)
     const displayed = rendition.display();
     book.ready.then(() => {
         const meta = book.package.metadata;
+        console.log(book.package.metadata)
         title.value = meta.title;
         return book.locations.generate(1600);
     }).then(async locations => {
         rendition.ready = true;
-        await getInfo(props.book, book, (info) => {
-            bookInfo.value = info
-            console.log('info', info)
+        await getInfo(url.value, book, (info) => {
+            currentBook.value = info
             flattenedToc = (function flatten(items) {
                 return [].concat(...items.map(item => [item].concat(...flatten(item.children))));
             })(info.toc);
@@ -85,11 +90,11 @@ const getRendition = (val) => {
                 return a.percentage - b.percentage;
             })
         })
-        displayed.then(() => {
-            var currentLocation = rendition.currentLocation();
-            const currentPage = book.locations.percentageFromCfi(currentLocation.start.cfi);
-            sliderValue.value = currentPage
-        });
+        // displayed.then(() => {
+        //     var currentLocation = rendition.currentLocation();
+        //     const currentPage = book.locations.percentageFromCfi(currentLocation.start.cfi);
+        //     sliderValue.value = currentPage
+        // });
         rendition.on('rendered', (e, iframe) => {
             selectListener(iframe.document, rendition, toggleBuble);
         });
@@ -99,6 +104,8 @@ const getRendition = (val) => {
         });
         rendition.themes.registerRules('dark', dark);
         rendition.themes.registerRules('tan', tan);
+        theme.value = reader.theme;
+        applytheme(theme.value)
     })
 }
 // const location = ref(2)
@@ -137,9 +144,6 @@ const locationChange = (epubcifi) => {
     //     return firstRenderDone.value = true
     // }
     // localStorage.setItem(book, epubcifi)
-}
-const tocChanged = (_toc) => {
-    toc.value = _toc
 }
 
 //阅读进度
@@ -183,8 +187,6 @@ trackAllDownloads((_progress) => {
     loadProcess.value = Math.round(_progress * 100)
 });
 //header
-const theme = ref('default')
-
 const onBackBtn = () => {
 
 }
@@ -198,9 +200,13 @@ const onNodeClick = (item) => {
     rendition.display(item.cfi || item.href);
 }
 //theme
+const theme = ref('default')
 const styleRules = ref({})
-const applytheme = (theme) => {
-    rendition.themes.select(theme);
+const applytheme = (val) => {
+    theme.value = val;
+    rendition.themes.select(val);
+    reader.theme = val
+    refreshRendition()
 }
 const applyflow = (flow) => {
     if (!rendition.ready) return;

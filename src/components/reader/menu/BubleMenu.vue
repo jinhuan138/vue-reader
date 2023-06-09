@@ -14,13 +14,15 @@
 					</template>
 				</el-input>
 			</div>
-			{{ translatedText }}
+			<template #reference>
+				{{ translatedText }}
+			</template>
 		</el-popover>
 
 		<template #reference>
 			<span ref="popRef" style="position:absolute;visibility: hidden;"></span>
 		</template>
-		
+
 	</el-popover>
 </template>
 
@@ -29,8 +31,6 @@
 
 export default {
 	name: 'BubleMenu',
-
-	props: {},
 
 	data() {
 		return {
