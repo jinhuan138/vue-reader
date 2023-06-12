@@ -51,7 +51,6 @@ $padding: 4px;
   padding: $padding;
   -webkit-app-region: drag !important;
   -webkit-user-select: none;
-  color: #000;
 }
 
 .backdrop {

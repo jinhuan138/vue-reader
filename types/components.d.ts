@@ -16,6 +16,7 @@ declare module '@vue/runtime-core' {
     ElButtonGroup: typeof import('element-plus/es')['ElButtonGroup']
     ElCard: typeof import('element-plus/es')['ElCard']
     ElContainer: typeof import('element-plus/es')['ElContainer']
+    ElDivider: typeof import('element-plus/es')['ElDivider']
     ElFooter: typeof import('element-plus/es')['ElFooter']
     ElHeader: typeof import('element-plus/es')['ElHeader']
     ElIcon: typeof import('element-plus/es')['ElIcon']
@@ -45,6 +46,7 @@ declare module '@vue/runtime-core' {
     TocMenu: typeof import('./../src/components/reader/menu/TocMenu.vue')['default']
   }
   export interface ComponentCustomProperties {
+    vLoading: typeof import('element-plus/es')['ElLoadingDirective']
     vPopover: typeof import('element-plus/es')['ElPopoverDirective']
   }
 }

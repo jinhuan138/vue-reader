@@ -14,13 +14,13 @@
 
             <search-menu :search-result="searchResult" :theme="theme" @node-click="onNodeClick" @search="search" />
 
-            <theme-menu :defaultTheme="theme" @theme-change="applytheme" @flow-change="applyflow"
+            <theme-menu @theme-change="applytheme" @flow-change="applyflow"
                 @style-change="updateStyle" />
 
         </titlebar>
 
         <el-main class="container">
-            <EpubView :url="url" :getRendition="getRendition" :title="page" :epubOptions="{
+            <EpubView :url="url" :getRendition="getRendition" :title="page" v-loading="!isReady" :epubOptions="{
                 allowPopups: true,
                 allowScriptedContent: true,
             }" @update:location="locationChange">
@@ -62,6 +62,7 @@ const props = defineProps({
         type: Object
     }
 })
+const isReady = ref(false)
 const currentBook = ref({})
 const title = ref('')
 const url = computed(() => {
@@ -95,6 +96,7 @@ const getRendition = (val) => {
             rendition.themes.registerRules('dark', dark);
             rendition.themes.registerRules('tan', tan);
             theme.value = reader.theme;
+            rendition.ready = true;
             applytheme(theme.value)
             await getInfo(url.value, book, (info) => {
                 currentBook.value = info
@@ -112,7 +114,7 @@ const getRendition = (val) => {
             // });
         })
         .then(() => {
-            // this.isReady = true;
+            isReady.value = true;
         });
 }
 // const location = ref(2)
@@ -206,14 +208,14 @@ const onBackBtn = () => {
         emit('update:showReader', false)
     }
 }
-const emit = defineEmits(['update:showReader'])
+const emit = defineEmits(['update:showReader','theme-change'])
 
 const onLibraryBtn = () => {
     emit('update:showReader', false)
 }
 
 const onNodeClick = (item) => {
-    console.log('onNodeClick',item)
+    console.log('onNodeClick', item)
     rendition.display(item.cfi || item.href);
 }
 //theme
@@ -222,8 +224,10 @@ const styleRules = ref({})
 const applytheme = (val) => {
     theme.value = val;
     rendition.themes.select(val);
+    console.log(val)
     reader.theme = val
     refreshRendition()
+    emit('theme-change', val);
 }
 const applyflow = (flow) => {
     if (!rendition.ready) return;

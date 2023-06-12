@@ -1,9 +1,8 @@
 <template>
-    <div id="index" ref="app" class="default">
+    <div id="index" ref="app" :class="reader.theme">
         <!-- Home -->
         <transition name="el-fade-in-linear">
-            <Home :bookList="bookList" @update:currentBook="updateBook" v-model:showReader="showReader"
-                v-if="!showReader" />
+            <Home @update:currentBook="updateBook" v-model:showReader="showReader" v-if="!showReader" />
         </transition>
         <!-- Reader -->
         <transition name="el-fade-in-linear">
@@ -12,23 +11,20 @@
     </div>
 </template>
 <script setup>
-import books from "../../../public/books/books.json";
 import Home from './Home.vue'
 import Reader from './Reader.vue'
-import { ref, reactive, onBeforeMount } from "vue"
+import { useReaderStore } from './utils/stores'
+import { ref } from "vue"
 
 const showReader = ref(false)
 const currentBook = ref({})
+const reader = useReaderStore()
 
 const updateBook = (info) => {
     currentBook.value = info
     showReader.value = true
 }
 
-const bookList = ref([])
-bookList.value = books.sort((a, b) => {
-    return b.lastOpen - a.lastOpen;
-})
 </script>
 <style lang="scss" scoped>
 $border-radius: 4px;
@@ -36,8 +32,8 @@ $margin: 4px;
 $padding: 4px;
 
 #index {
-    width: 100%;
-    height: 100vh;
+    width: 100% !important;
+    height: 100%;
     border-radius: $border-radius;
 }
 </style>
