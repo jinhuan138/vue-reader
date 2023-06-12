@@ -39,3 +39,7 @@ export const getFileMD5 = (file) => {
         }
     });
 };
+
+export const getNodeFileMD5 = (file) => {
+
+}

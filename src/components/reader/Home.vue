@@ -13,7 +13,7 @@
             <div class="grid" ref="grid">
                 <div v-for="(info, index) in bookList" :key="index">
                     <!-- 主体 -->
-                    <el-card @click="reader(info)" ref="card" shadow="hover" class='box-card'
+                    <el-card @click="readerBook(info)" ref="card" shadow="hover" class='box-card'
                         :body-style="{ padding: '0px' }">
                         <el-image :lazy="true" :src="'data:image/png;base64,' + info.coverBase64" fit='fill'
                             class='el-image'>
@@ -36,7 +36,12 @@
                             </template>
                             <!-- 书籍信息 -->
                             <div>
-                                <el-button type="primary" round :icon="Download" @click="download(info.url)">下载</el-button>
+                                <p> <el-button type="primary" round :icon="Download"
+                                        @click="download(info.url)">下载</el-button></p>
+                                <p>
+                                    <el-button type="primary" round :icon="Delete" @click="del(info.UUID)">删除</el-button>
+                                </p>
+                                <el-divider />
                                 <p v-if="info.creator">作者: {{ info.creator }}</p>
                                 <p v-if="info.description">
                                     描述: <span :title="info.description"> {{ trunc(info.description, 30) }}</span>
@@ -55,12 +60,19 @@
 </template>
   
 <script setup>
-import { Plus, Download, Picture as IconPicture } from '@element-plus/icons-vue'
+import { Plus, Download, Delete, Picture as IconPicture } from '@element-plus/icons-vue'
 import titlebar from './Titlebar.vue'
 import fileSaver from 'file-saver';
 import { db } from "./utils/db"
 import { getFileMD5 } from "./utils/md5"
+import { useReaderStore } from './utils/stores'
 import { ref, reactive, toRefs, onMounted, onBeforeUnmount } from "vue"
+
+const reader = useReaderStore()
+
+const bookList = reader.bookList.sort((a, b) => {
+    return b.lastOpen - a.lastOpen;
+})
 
 const { saveAs } = fileSaver;
 const grid = ref(null)
@@ -80,13 +92,9 @@ const props = defineProps({
     maxCols: {
         type: Number, // Maximum number of colums. Default: Infinite
         default: Infinity,
-    },
-    bookList: {
-        type: Array,
-        default: []
     }
 })
-const { useMin, maxCols, bookList } = props
+const { useMin, maxCols } = props
 
 onMounted(() => {
     if (!bookList.length) return
@@ -196,9 +204,15 @@ const formatSize = (size) => {
 const download = (url) => {
     saveAs("/books/" + url, url);
 }
+const del = (uuid) => {
+    const index = reader.bookList.findIndex(item => uuid === item.UUID)
+    if (index > -1) {
+        reader.bookList.slice(index, 1)
+    }
+}
 const emit = defineEmits(['update:currentBook'])
 //reader
-const reader = (url) => {
+const readerBook = (url) => {
     emit('update:currentBook', url)
 }
 //导入

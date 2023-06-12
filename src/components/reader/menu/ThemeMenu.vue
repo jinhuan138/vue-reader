@@ -67,14 +67,8 @@
 <script setup>
 import { Operation } from '@element-plus/icons-vue'
 import { ref, watch, onMounted } from 'vue'
-const props = defineProps({
-	defaultTheme: {
-		default: 'default',
-		type: String,
-	},
-})
 const lineSpacing = ref(1.5)
-const theme = ref(props.defaultTheme)
+const theme = ref('default')
 const flow = ref('paginated')
 const font = ref('')
 const fontSize = ref(100)

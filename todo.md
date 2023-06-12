@@ -1,6 +1,6 @@
 # 翻译
 # update:loaction
-# 进度条
+# 进度条 0%
 # 放大
 
 ## Document

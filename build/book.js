@@ -4,6 +4,7 @@ import { join, dirname } from 'node:path'
 import fs from 'fs'
 import { fileURLToPath } from 'node:url'
 import Vibrant from 'node-vibrant'
+// import { getFileMD5 } from "../src/components/reader/utils/md5.js"
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const libraryPath = join(__dirname, '../public/books')
@@ -33,6 +34,9 @@ const parseBook = (name) => {
             // epub is now usable
             const { title, cover } = book.metadata
             console.log(book.metadata)
+            // const fileBuffer = fs.readFileSync(filePath)
+            // console.log(fileBuffer)
+            // const md5 = await getFileMD5(fileBuffer)
             await book.getImage(cover, async (error, img, mimeType) => {
                 //img buffer
                 if (error) return console.log(error)
@@ -41,7 +45,7 @@ const parseBook = (name) => {
                     fs.writeFileSync(join(libraryPath, `/cover/${name.replace('.epub', '')}.jpg`), img)
                     // 获取图书封面主题颜色,node-vibrant不支持webp直接使用buffer
                     const palette = await Vibrant.from(img).getPalette()
-                    booksJson.push({ ...book.metadata, coverPath: `/books/cover/${name.replace('.epub', '')}.jpg`, url: name, bgColorFromCover: palette.DarkVibrant.hex, size, from: 'url', coverBase64 })
+                    booksJson.push({ ...book.metadata, id: md5, coverPath: `/books/cover/${name.replace('.epub', '')}.jpg`, url: name, bgColorFromCover: palette.DarkVibrant.hex, size, from: 'url', coverBase64 })
                 }
             });
             console.log(name + ' 解析完成')
