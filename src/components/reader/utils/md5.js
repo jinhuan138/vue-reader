@@ -1,4 +1,5 @@
 import SparkMD5 from "spark-md5";
+import * as fs from 'fs'
 
 export const getFileMD5 = (file) => {
     return new Promise((resolve, reject) => {
@@ -40,6 +41,10 @@ export const getFileMD5 = (file) => {
     });
 };
 
-export const getNodeFileMD5 = (file) => {
-
+export const getNodeFileMD5 = (path) => {
+    const file = fs.readFileSync(path);
+    const spark = new SparkMD5.ArrayBuffer();
+    spark.append(file);
+    const hash = spark.end();
+    return hash
 }

@@ -13,12 +13,10 @@
 <script setup>
 import Home from './Home.vue'
 import Reader from './Reader.vue'
-import { useReaderStore } from './utils/stores'
 import { ref } from "vue"
 
 const showReader = ref(false)
 const currentBook = ref({})
-const reader = useReaderStore()
 
 const updateBook = (info) => {
     currentBook.value = info

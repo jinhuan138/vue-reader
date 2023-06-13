@@ -204,12 +204,7 @@ const formatSize = (size) => {
 const download = (url) => {
     saveAs("/books/" + url, url);
 }
-const del = (uuid) => {
-    const index = reader.bookList.findIndex(item => uuid === item.UUID)
-    if (index > -1) {
-        reader.bookList.slice(index, 1)
-    }
-}
+const del = (id) => reader.delBook(id)
 const emit = defineEmits(['update:currentBook'])
 //reader
 const readerBook = (url) => {

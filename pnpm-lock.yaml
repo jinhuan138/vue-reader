@@ -66,9 +66,6 @@ devDependencies:
   medium-zoom:
     specifier: ^1.0.8
     version: 1.0.8
-  mitt:
-    specifier: ^3.0.0
-    version: 3.0.0
   node-vibrant:
     specifier: 3.2.1-alpha.1
     version: 3.2.1-alpha.1
@@ -3188,10 +3185,6 @@ packages:
       minipass: 2.9.0
     dev: true
     optional: true
-
-  /mitt@3.0.0:
-    resolution: {integrity: sha512-7dX2/10ITVyqh4aOSVI9gdape+t9l2/8QxHrFmUXu4EEUpdlxl6RudZUPZoc+zuY2hk1j7XxVroIVIan/pD/SQ==}
-    dev: true
 
   /mkdirp@0.5.6:
     resolution: {integrity: sha512-FP+p8RB8OWpF3YZBCrP5gtADmtXApB5AMLn+vdyA+PyxCjrCs00mjyUozssO33cwDeT3wNGdLxJ5M//YqtHAJw==}
