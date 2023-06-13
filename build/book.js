@@ -4,7 +4,7 @@ import { join, dirname } from 'node:path'
 import fs from 'fs'
 import { fileURLToPath } from 'node:url'
 import Vibrant from 'node-vibrant'
-// import { getFileMD5 } from "../src/components/reader/utils/md5.js"
+import { getNodeFileMD5 } from "../src/components/reader/utils/md5.js"
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const libraryPath = join(__dirname, '../public/books')
@@ -34,9 +34,7 @@ const parseBook = (name) => {
             // epub is now usable
             const { title, cover } = book.metadata
             console.log(book.metadata)
-            // const fileBuffer = fs.readFileSync(filePath)
-            // console.log(fileBuffer)
-            // const md5 = await getFileMD5(fileBuffer)
+            const md5 = getNodeFileMD5(filePath)
             await book.getImage(cover, async (error, img, mimeType) => {
                 //img buffer
                 if (error) return console.log(error)

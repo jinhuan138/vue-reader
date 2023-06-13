@@ -12,10 +12,19 @@ export const useReaderStore = defineStore('reader', {
         setTheme(theme) {
             this.theme = theme;
         },
-        setInfo(id, info) {
+        setBook(id, info) {
             const index = this.bookList.findIndex(book => book.id === id)
             if (index > -1) {
                 this.bookList[index] = info
+            }
+        },
+        addBook() {
+
+        },
+        delBook(id) {
+            const index = this.bookList.findIndex(item => id === item.id)
+            if (index > -1) {
+                reader.bookList.slice(index, 1)
             }
         }
     },
