@@ -13,8 +13,10 @@
 <script setup>
 import Home from './Home.vue'
 import Reader from './Reader.vue'
+import { useReaderStore } from './utils/stores'
 import { ref } from "vue"
 
+const reader = useReaderStore()
 const showReader = ref(false)
 const currentBook = ref({})
 
@@ -80,21 +82,18 @@ body {
 
 .default {
     width: 260px !important;
-    ;
     background: #fff !important;
     color: #555 !important;
 }
 
 .dark {
     width: 260px !important;
-    ;
     background: #444 !important;
     color: #eee !important;
 }
 
 .tan {
     width: 260px !important;
-    ;
     background: #fdf6e3 !important;
     color: #002b36 !important;
 }

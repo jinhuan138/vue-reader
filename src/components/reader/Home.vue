@@ -39,7 +39,7 @@
                                 <p> <el-button type="primary" round :icon="Download"
                                         @click="download(info.url)">下载</el-button></p>
                                 <p>
-                                    <el-button type="primary" round :icon="Delete" @click="del(info.UUID)">删除</el-button>
+                                    <el-button type="primary" round :icon="Delete" @click="reader.delBook(info.id)">删除</el-button>
                                 </p>
                                 <el-divider />
                                 <p v-if="info.creator">作者: {{ info.creator }}</p>
@@ -204,7 +204,6 @@ const formatSize = (size) => {
 const download = (url) => {
     saveAs("/books/" + url, url);
 }
-const del = (id) => reader.delBook(id)
 const emit = defineEmits(['update:currentBook'])
 //reader
 const readerBook = (url) => {

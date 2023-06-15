@@ -53,12 +53,16 @@
 			<tr>
 				<td>Font</td>
 				<td>
-					<el-select v-model="font" class="font-select" width="50" size="small">
+					<el-select :teleported="false" v-model="font" class="font-select" width="50" size="small">
 						<el-option label="Default" value=""></el-option>
 						<el-option label="Arial" value="Arial"></el-option>
 						<el-option label="Times New Roman" value="Times New Roman"></el-option>
 					</el-select>
 				</td>
+			</tr>
+			<tr>
+				<td>reset</td>
+				<td><el-button @click="reader.reset">reset all</el-button></td>
 			</tr>
 		</table>
 	</el-popover>
@@ -66,12 +70,12 @@
 
 <script setup>
 import { Operation } from '@element-plus/icons-vue'
-import { ref, watch, onMounted } from 'vue'
-const lineSpacing = ref(1.5)
-const theme = ref('default')
-const flow = ref('paginated')
-const font = ref('')
-const fontSize = ref(100)
+import { useReaderStore } from '../utils/stores'
+import { storeToRefs } from 'pinia'
+import { watch, onMounted } from 'vue'
+
+const reader = useReaderStore()
+const { lineSpacing, theme, flow, font, fontSize } = storeToRefs(reader)
 
 const emit = defineEmits(['style-change', 'theme-change', 'flow-change'])
 

@@ -5,12 +5,23 @@ export const useReaderStore = defineStore('reader', {
     state: () => {
         return {
             theme: 'default',
+            flow: 'paginated',
+            font: '',
+            lineSpacing: 1.5,
+            fontSize: 100,
             bookList: books
         }
     },
     actions: {
         setTheme(theme) {
             this.theme = theme;
+        },
+        reset() {
+            this.theme = 'default'
+            this.flow = 'paginated'
+            this.font = ''
+            this.lineSpacing = 1.5
+            this.fontSize = 100
         },
         setBook(id, info) {
             const index = this.bookList.findIndex(book => book.id === id)
@@ -24,14 +35,14 @@ export const useReaderStore = defineStore('reader', {
         delBook(id) {
             const index = this.bookList.findIndex(item => id === item.id)
             if (index > -1) {
-                reader.bookList.slice(index, 1)
+                this.bookList.slice(index, 1)
             }
         }
     },
     persist: {
         enabled: true,
         strategies: [
-            { storage: localStorage, paths: ['theme', 'bookList'] },
+            { storage: localStorage, paths: ['theme', 'flow', 'font', 'lineSpacing', 'fontSize', 'bookList'] },
         ],
     }
 })
