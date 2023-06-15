@@ -1,5 +1,5 @@
 <template>
-	<el-popover :popper-class="`popper ${theme}`" width="350" trigger="hover" @show="startSearch" @hide="stopSearch">
+	<el-popover :popper-class="`popper ${reader.theme}`" width="350" trigger="hover" @show="startSearch" @hide="stopSearch">
 		<template #reference>
 			<el-button size="small" :icon="Search" circle />
 		</template>
@@ -13,19 +13,18 @@
 </template>
 
 <script setup>
+import { useReaderStore } from '../utils/stores'
 import { Search } from '@element-plus/icons-vue'
 import { ref, watch, toRefs } from 'vue'
+
+const reader = useReaderStore()
 const props = defineProps({
-	theme: {
-		default: 'default',
-		type: String,
-	},
 	searchResult: {
 		default: () => [],
 		type: Array,
 	},
 })
-const { theme, searchResult } = toRefs(props)
+const { searchResult } = toRefs(props)
 const emit = defineEmits(['search', 'node-click'])
 const searchText = ref('')
 

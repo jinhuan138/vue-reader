@@ -7,15 +7,14 @@
                 <el-button size="small" :icon="Grid" circle @click="onLibraryBtn" />
             </el-button-group>
 
-            <toc-menu :toc="currentBook.toc" :theme="theme" @node-click="onNodeClick"></toc-menu>
+            <toc-menu :toc="currentBook.toc" @node-click="onNodeClick"></toc-menu>
 
-            <bookmark-menu :bookmarks="currentBook.bookmarks" :theme="theme" @node-click="onNodeClick"
-                @add-bookmark="addBookmark" @remove-bookmark="removeBookmark" />
+            <bookmark-menu :bookmarks="currentBook.bookmarks" @node-click="onNodeClick" @add-bookmark="addBookmark"
+                @remove-bookmark="removeBookmark" />
 
-            <search-menu :search-result="searchResult" :theme="theme" @node-click="onNodeClick" @search="search" />
+            <search-menu :search-result="searchResult" @node-click="onNodeClick" @search="search" />
 
-            <theme-menu @theme-change="applytheme" @flow-change="applyflow"
-                @style-change="updateStyle" />
+            <theme-menu @theme-change="applytheme" @flow-change="applyflow" @style-change="updateStyle" />
 
         </titlebar>
 
@@ -95,9 +94,11 @@ const getRendition = (val) => {
             // rendition.display(this.info.lastCfi || 1);
             rendition.themes.registerRules('dark', dark);
             rendition.themes.registerRules('tan', tan);
-            theme.value = reader.theme;
             rendition.ready = true;
-            applytheme(theme.value)
+            //applytheme
+            const { theme, flow, } = reader
+            applytheme(theme)
+            applyflow(flow)
             await getInfo(url.value, book, (info) => {
                 currentBook.value = info
                 flattenedToc = (function flatten(items) {
@@ -117,10 +118,8 @@ const getRendition = (val) => {
             isReady.value = true;
         });
 }
-// const location = ref(2)
 const toc = ref([])
 const page = ref('')
-const firstRenderDone = ref(false)
 const getLabel = (toc, href) => {
     let label = 'n/a';
     toc.some(item => {
@@ -208,7 +207,7 @@ const onBackBtn = () => {
         emit('update:showReader', false)
     }
 }
-const emit = defineEmits(['update:showReader','theme-change'])
+const emit = defineEmits(['update:showReader', 'theme-change'])
 
 const onLibraryBtn = () => {
     emit('update:showReader', false)
@@ -219,12 +218,10 @@ const onNodeClick = (item) => {
     rendition.display(item.cfi || item.href);
 }
 //theme
-const theme = ref('default')
 const styleRules = ref({})
 const applytheme = (val) => {
-    theme.value = val;
+    // theme.value = val;
     rendition.themes.select(val);
-    console.log(val)
     reader.theme = val
     refreshRendition()
     emit('theme-change', val);

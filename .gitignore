@@ -30,3 +30,4 @@ docs/.vitepress/cache
 
 #books
 public/books/cover/
+stats.html

@@ -1,5 +1,5 @@
 <template>
-	<el-popover :popper-class="`popper ${props.theme}`" placement="bottom" width="350" trigger="hover">
+	<el-popover :popper-class="`popper ${reader.theme}`" placement="bottom" width="350" trigger="hover">
 		<div class="el-popover__title">
 			Table of Content
 		</div>
@@ -11,15 +11,14 @@
 </template>
 
 <script setup>
+import { useReaderStore } from '../utils/stores'
+
+const reader = useReaderStore()
 const props = defineProps({
 	toc: {
 		default: () => [],
 		type: Array,
-	},
-	theme: {
-		default: 'default',
-		type: String,
-	},
+	}
 })
 const emit = defineEmits(['node-click'])
 const onNodeClick = (data) => {
