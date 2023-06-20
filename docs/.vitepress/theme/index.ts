@@ -4,11 +4,15 @@ import 'vitepress-theme-demoblock/dist/theme/styles/index.css'
 import Demo from 'vitepress-theme-demoblock/dist/client/components/Demo.vue'
 import DemoBlock from 'vitepress-theme-demoblock/dist/client/components/DemoBlock.vue'
 import { VueReader } from "@/modules/index"
+import { createPinia } from 'pinia'
+import piniaPersist from 'pinia-plugin-persist'
 // import { VueReader } from "vue-reader"
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import reader from 'comps/reader/index.vue'
-// import router from "../../router/index"
+
+const pinia = createPinia()
+pinia.use(piniaPersist)
 
 export default {
   ...DefaultTheme,
@@ -19,7 +23,7 @@ export default {
     app.component('Demo', Demo)
     app.component('DemoBlock', DemoBlock)
     app.use(ElementPlus)
-    // app.use(router)
+    app.use(pinia)
     app.component('Reader', reader)
   }
 }
