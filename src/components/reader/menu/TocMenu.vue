@@ -4,13 +4,14 @@
 			Table of Content
 		</div>
 		<template #reference>
-			<el-button size="small" icon="reading" circle />
+			<el-button size="small" :icon="Reading" circle />
 		</template>
 		<el-tree :data="props.toc" @node-click="onNodeClick" />
 	</el-popover>
 </template>
 
 <script setup>
+import { Reading } from '@element-plus/icons-vue'
 import { useReaderStore } from '../utils/stores'
 
 const reader = useReaderStore()

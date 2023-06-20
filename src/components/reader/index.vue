@@ -33,7 +33,7 @@ $padding: 4px;
 
 #index {
     width: 100% !important;
-    height: 100%;
+    height: 100vh;
     border-radius: $border-radius;
 }
 </style>
@@ -48,9 +48,10 @@ html,
 body {
     margin: 0px;
     width: 100%;
-    height: 100%;
+    min-height: 100vh;
+    // height: 100%;
     -webkit-font-smoothing: antialiased;
-    overflow: hidden;
+    // overflow: hidden;
 }
 
 .el-container {
