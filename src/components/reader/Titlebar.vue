@@ -15,9 +15,7 @@
 
 <script setup>
 import { Minus, FullScreen, Close } from '@element-plus/icons-vue'
-import { useRouter } from 'vitepress'
-
-const router = useRouter()
+// import { useRouter } from 'vitepress'
 
 const props = defineProps({
   backdrop: {
@@ -35,7 +33,10 @@ const trunc = (str, n) => {
 }
 
 const closeWindow = () => {
-  router.go('/')
+  // useRouter().go('/')
+  import('vitepress').then(({ useRouter }) => {
+    useRouter().go('/')
+  })
 }
 const minimizeWindow = () => {
 }

@@ -77,6 +77,7 @@ const getRendition = (val) => {
         selectListener(iframe.document, rendition, toggleBuble);
     });
     rendition.on('relocated', (location) => {
+        // info.lastCfi = location.start.cfi;
         history.value.push(location.start.cfi);
         progress.value = book.locations.percentageFromCfi(location.start.cfi);
         sliderValue.value = Math.floor(progress.value * 10000) / 100;
@@ -175,6 +176,7 @@ const tocFromPercentage = (percent) => {
 }
 const onSliderValueChange = (val) => {
     let cfi = rendition.book.locations.cfiFromPercentage(val / 100);
+    console.log('onSliderValueChange',cfi)
     rendition.display(cfi);
 }
 //加载进度
@@ -214,7 +216,8 @@ const onLibraryBtn = () => {
 }
 
 const onNodeClick = (item) => {
-    console.log('onNodeClick', item)
+    //onNodeClick epubcfi(/6/6!/4/2/4[sigil_toc_id_1]) OEBPS/Text/Section0001_split_000.xhtml#sigil_toc_id_1
+    console.log('onNodeClick', item.cfi, item.href)
     rendition.display(item.cfi || item.href);
 }
 //theme
@@ -337,6 +340,7 @@ const removeBookmark = (bookmark) => {
     bottom: 0px;
     right: 0px;
     left: 0px;
+    overflow: hidden;
 
     .el-main {
         width: 100%;

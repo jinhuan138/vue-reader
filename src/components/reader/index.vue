@@ -41,7 +41,7 @@ $padding: 4px;
 
 <style lang="scss">
 ::-webkit-scrollbar {
-    display: none;
+    // display: none;
 }
 
 html,
