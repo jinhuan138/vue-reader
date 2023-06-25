@@ -39,7 +39,7 @@
                                 <p> <el-button type="primary" round :icon="Download"
                                         @click="download(info.url)">下载</el-button></p>
                                 <p>
-                                    <el-button type="primary" round :icon="Delete" @click="reader.delBook(info.id)">删除</el-button>
+                                    <el-button type="primary" round :icon="Delete" @click="delFile(info.id)">删除</el-button>
                                 </p>
                                 <el-divider />
                                 <p v-if="info.creator">作者: {{ info.creator }}</p>
@@ -229,6 +229,9 @@ const saveFile = async (file) => {
     //保存文件
     const id = await db.books.add(file);
     // router.push({ name: 'reader', params: { id } })
+}
+const delFile =(id)=>{
+    reader.delBook(id)
 }
 const input = ref(null)
 const addFiles = () => {
