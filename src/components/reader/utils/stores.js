@@ -35,7 +35,7 @@ export const useReaderStore = defineStore('reader', {
         delBook(id) {
             const index = this.bookList.findIndex(item => id === item.id)
             if (index > -1) {
-                this.bookList.slice(index, 1)
+                this.bookList.splice(index, 1)
             }
         }
     },
