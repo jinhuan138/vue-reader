@@ -15,7 +15,7 @@
   "homepage": "https://jinhuan138.github.io/docs/",
   "repository": {
     "type": "git",
-    "url": "git@github.com:jinhuan138/docs.git"
+    "url": "git@github.com:jinhuan138/vue-reader.git"
   },
   "type": "module",
   "scripts": {
@@ -33,7 +33,7 @@
   },
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/jinhuan138/docs/issues"
+    "url": "https://github.com/jinhuan138/vue-reader/issues"
   },
   "workspaces": [
     "test/vue2",

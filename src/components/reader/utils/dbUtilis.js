@@ -76,6 +76,7 @@ const parshToc = async (book) => {
             // get percent from cfi
             const percentage = book.locations.percentageFromCfi(cfi);
             // toc item which has
+            console.log('cfi',cfi)
             parrent[i] = {
                 label: toc[i].label.trim(),
                 children: [],

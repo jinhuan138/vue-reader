@@ -1,13 +1,8 @@
 <template>
     <div style='height: 100vh'>
         <VueReader :epubOptions='{
-            allowPopups: true,
-            allowScriptedContent: true,
-            view: InlineView,
             width: "100%"
-        }' 
-        url='/files/alice.epub' 
-        :getRendition="getRendition">
+        }' url='/files/alice.epub' :getRendition="getRendition">
         </VueReader>
     </div>
 </template>
@@ -24,8 +19,20 @@ const closeZoom = () => {
 
 const getRendition = (rendition) => {
     rendition.hooks.content.register((contents, view) => {
-        //     const contentsDom = contents.document
-        //     const images = [...contentsDom.querySelectorAll('img'), ...contentsDom.querySelectorAll('image')]
+        const contentsDom = contents.document
+        const images = [...contentsDom.querySelectorAll('img'), ...contentsDom.querySelectorAll('image')]
+        images.forEach((img, index) => {
+            const boxImg = img.cloneNode(true);
+            const box = document.createElement('a')
+            box.href='#'
+            box.id='image' + index
+            box.appendChild(boxImg)
+            contentsDom.body.appendChild(box)
+            const link = document.createElement('a')
+            link.href = '#image' + index
+            img.parentNode.insertBefore(link, img);
+            link.appendChild(img);
+        })
         //     zoom = mediumZoom(images, {
         //         background: 'rgba(247, 249, 250, 0.97)'
         //     })
@@ -39,10 +46,10 @@ const getRendition = (rendition) => {
         //         }
         //     })
         //     document.addEventListener('click', closeZoom)
-        const images = [...document.querySelectorAll('img'), ...document.querySelectorAll('image')]
-        mediumZoom(images, {
-            background: 'rgba(247, 249, 250, 0.97)'
-        })
+        // const images = [...document.querySelectorAll('img'), ...document.querySelectorAll('image')]
+        // mediumZoom(images, {
+        //     background: 'rgba(247, 249, 250, 0.97)'
+        // })
     })
 }
 onBeforeUnmount(() => {
