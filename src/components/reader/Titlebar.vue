@@ -6,8 +6,8 @@
     <span id="center" :title="props.title">{{ trunc(props.title, 15) }}</span>
 
     <span id="right">
-      <!-- <el-button size="small" :icon="Minus" circle @click="minimizeWindow" />
-      <el-button size="small" :icon="FullScreen" circle @click="maximizeWindow" /> -->
+      <el-button size="small" :icon="Minus" circle @click="minimizeWindow" />
+      <el-button size="small" :icon="FullScreen" circle @click="maximizeWindow" />
       <el-button size="small" :icon="Close" circle @click="closeWindow" />
     </span>
   </el-header>
@@ -15,7 +15,6 @@
 
 <script setup>
 import { Minus, FullScreen, Close } from '@element-plus/icons-vue'
-// import { useRouter } from 'vitepress'
 
 const props = defineProps({
   backdrop: {
@@ -33,15 +32,37 @@ const trunc = (str, n) => {
 }
 
 const closeWindow = () => {
-  // useRouter().go('/')
   import('vitepress').then(({ useRouter }) => {
     useRouter().go('/')
   })
 }
 const minimizeWindow = () => {
+  if (document.exitFullscreen) {
+    document.exitFullscreen()
+  }
+  else if (document.mozCancelFullScreen) {
+    document.mozCancelFullScreen()
+  }
+  else if (document.webkitCancelFullScreen) {
+    document.webkitCancelFullScreen()
+  }
+  else if (document.msExitFullscreen) {
+    document.msExitFullscreen()
+  }
+  if (typeof cfs != "undefined" && cfs) {
+    cfs.call(el)
+  }
 }
 const maximizeWindow = () => {
-  // this.$el.requestFullscreen()
+  const el = document.documentElement
+  const rfs =
+    el.requestFullScreen ||
+    el.webkitRequestFullScreen ||
+    el.mozRequestFullScreen ||
+    el.msRequestFullscreen
+  if (typeof rfs != "undefined" && rfs) {
+    rfs.call(el)
+  }
 }
 </script>
 

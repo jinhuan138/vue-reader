@@ -19,7 +19,7 @@
         </titlebar>
 
         <el-main class="container">
-            <EpubView :url="url" :getRendition="getRendition" :title="page" v-loading="!isReady" :epubOptions="{
+            <EpubView id="reader" :url="url" :getRendition="getRendition" :title="page" v-loading="!isReady" :epubOptions="{
                 allowPopups: true,
                 allowScriptedContent: true,
             }" @update:location="locationChange">
@@ -81,6 +81,8 @@ const getRendition = (val) => {
         history.value.push(location.start.cfi);
         progress.value = book.locations.percentageFromCfi(location.start.cfi);
         sliderValue.value = Math.floor(progress.value * 10000) / 100;
+        console.log(progress.value)
+        console.log(sliderValue.value)
     });
     rendition.hooks.content.register(applyStyle)
 
@@ -105,6 +107,7 @@ const getRendition = (val) => {
                 flattenedToc = (function flatten(items) {
                     return [].concat(...items.map(item => [item].concat(...flatten(item.children))));
                 })(info.toc);
+                console.log('toc',info.toc);
                 flattenedToc.sort((a, b) => {
                     return a.percentage - b.percentage;
                 })
@@ -176,7 +179,7 @@ const tocFromPercentage = (percent) => {
 }
 const onSliderValueChange = (val) => {
     let cfi = rendition.book.locations.cfiFromPercentage(val / 100);
-    console.log('onSliderValueChange',cfi)
+    console.log('onSliderValueChange', cfi)
     rendition.display(cfi);
 }
 //加载进度
@@ -216,8 +219,6 @@ const onLibraryBtn = () => {
 }
 
 const onNodeClick = (item) => {
-    //onNodeClick epubcfi(/6/6!/4/2/4[sigil_toc_id_1]) OEBPS/Text/Section0001_split_000.xhtml#sigil_toc_id_1
-    console.log('onNodeClick', item.cfi, item.href)
     rendition.display(item.cfi || item.href);
 }
 //theme
@@ -346,6 +347,11 @@ const removeBookmark = (bookmark) => {
         width: 100%;
         height: 100%;
         padding: 0px;
+
+        #reader {
+            user-select: none;
+            height: 100%;
+        }
     }
 }
 </style>
