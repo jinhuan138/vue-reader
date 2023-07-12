@@ -103,16 +103,6 @@
     margin-top: -12px;
 }
 
-.subitem-enter-active,
-.subitem-leave-active {
-    transition: opacity 0 ease;
-}
-
-.subitem-enter-from,
-.subitem-leave-to {
-    opacity: 0;
-}
-
 .tocArea .tocAreaButton .expansion::after {
     border-style: solid;
     border-width: 0 2px 2px 0;
@@ -179,13 +169,6 @@
     color: #E2E2E2;
 }
 
-.prev {
-    left: 1px;
-}
-
-.next {
-    right: 1px
-}
 
 /* loading */
 .loadingView {
