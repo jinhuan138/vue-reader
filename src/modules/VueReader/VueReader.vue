@@ -59,7 +59,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, reactive, toRefs, computed } from "vue";
+import { ref, reactive, toRefs } from "vue";
 import { Rendition, Book } from 'epubjs';
 import EpubView from "../EpubView/EpubView.vue";
 
@@ -244,16 +244,6 @@ const pre = () => {
   margin-top: -12px;
 }
 
-.subitem-enter-active,
-.subitem-leave-active {
-  transition: opacity 0 ease;
-}
-
-.subitem-enter-from,
-.subitem-leave-to {
-  opacity: 0;
-}
-
 .tocArea .tocAreaButton .expansion::after {
   border-style: solid;
   border-width: 0 2px 2px 0;
@@ -318,14 +308,6 @@ const pre = () => {
 .arrow:disabled {
   cursor: not-allowed;
   color: #E2E2E2;
-}
-
-.prev {
-  left: 1px;
-}
-
-.next {
-  right: 1px
 }
 
 /* loading */
