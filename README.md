@@ -192,7 +192,6 @@ import { VueReader } from 'vue-reader'
 
 let rendition = null, toc = []
 const page = ref('')
-const firstRenderDone = ref(false)
 
 const getRendition = val => rendition = val
 const tocChanged = val => toc = val
@@ -216,7 +215,6 @@ const getLabel = (toc, href) => {
 const locationChange = (epubcifi) => {
     if (epubcifi) {
         const { displayed, href } = rendition.location.start
-        const { cfi } = rendition.location.end
         if (href !== 'titlepage.xhtml') {
             const label = getLabel(toc, href)
             page.value = `${displayed.page}/${displayed.total} ${label}`
@@ -419,7 +417,7 @@ Pass options for this into epubJS in the prop `epubOptions`
 
 ```vue
 <template>
-    <div style='height: 50vh'>
+    <div style='height: 100vh'>
         <VueReader 
             url='/files/啼笑因缘.epub' 
             :epubOptions='{
