@@ -2,7 +2,7 @@
 //https://github.com/KaygNas/rollup-plugin-vue-demi
 //https://github.com/Shimada666/vue-demi-sfc-component-template.git
 import "./style.css";
-import { ref, h as _h, onMounted, onUnmounted, toRefs, watch, defineComponent, getCurrentInstance, type PropType, onBeforeUnmount, unref } from "vue-demi";
+import { ref, h as _h, onMounted, onUnmounted, toRefs, watch, defineComponent, getCurrentInstance, type PropType, onBeforeUnmount } from "vue-demi";
 import ePub, { Book, Rendition, Contents } from 'epubjs';
 import { clickListener, swipListener, wheelListener, keyListener } from '../utils/listener/listener';
 

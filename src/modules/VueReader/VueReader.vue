@@ -310,6 +310,14 @@ const pre = () => {
   color: #E2E2E2;
 }
 
+.pre {
+    left: 1px;
+}
+
+.next {
+    right: 1px
+}
+
 /* loading */
 .loadingView {
   position: absolute;

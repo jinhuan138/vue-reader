@@ -626,7 +626,7 @@ const getRendition = (rendition) => {
 <template>
     <div style='position: relative' :style='{ height: url ? "100vh" : "50px" }'>
         <div style='height: 100vh' v-if="url">
-            <VueReader :url='url' :title='title' />
+            <VueReader :url='url'/>
         </div>
         <input type="file" :multiple="false" accept=".epub" @change="onchange" class="input">
     </div>
@@ -634,11 +634,9 @@ const getRendition = (rendition) => {
 <script setup>
 import { ref } from 'vue'
 
-const url = ref(null), title = ref('')
+const url = ref(null)
 const onchange = (e) => {
     const file = e.target.files[0];
-    const { name } = file
-    title.value = name.replace('.epub', '')
     if (window.FileReader) {
         var reader = new FileReader();
         reader.onloadend = e => url.value = reader.result
@@ -666,7 +664,7 @@ const onchange = (e) => {
 ```vue
 <template>
     <div style='position: relative'>
-        <div style='height: 100vh' v-show="true">
+        <div style='height: 100vh'>
             <VueReader :getRendition="getRendition" url="/docs/files/啼笑因缘.epub">
             </VueReader>
         </div>

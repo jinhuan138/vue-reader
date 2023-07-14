@@ -1,5 +1,5 @@
 import "./style.css";
-import { ref, h as _h, toRefs, reactive, computed, defineComponent, getCurrentInstance, type PropType, onBeforeUnmount, version } from "vue-demi";
+import { ref, h as _h, toRefs, reactive, defineComponent, getCurrentInstance, type PropType, onBeforeUnmount, version } from "vue-demi";
 import { Rendition, Book } from 'epubjs';
 import EpubView from "../EpubView/EpubView";
 
