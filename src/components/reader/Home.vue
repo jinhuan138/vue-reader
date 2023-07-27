@@ -1,12 +1,10 @@
 <template>
     <el-container direction="vertical">
         <titlebar backdrop shadow>
-            <el-upload :auto-upload="false" v-show="false" ref="input" accept=".epub" :on-change="selectFile"
-                :multiple="false">
-                <!-- <input type="file" name="select" :multiple="false" :visible="false" accept=".epub" v-show="false" ref="input"
-            :onchange="onchange" /> -->
+            <el-upload :auto-upload="false" accept=".epub" :on-change="selectFile" :multiple="false"
+                :show-file-list="false">
+                <el-button size="small" :icon="Plus" circle title="导入图书"></el-button>
             </el-upload>
-            <el-button size="small" :icon="Plus" circle @click="addFiles" title="导入图书"></el-button>
         </titlebar>
         <!-- 书籍列表 -->
         <el-main class='main' ref="main">
@@ -71,8 +69,15 @@ import { ref, reactive, toRefs, onMounted, onBeforeUnmount } from "vue"
 const reader = useReaderStore()
 
 const bookList = reader.bookList.sort((a, b) => {
-    return b.lastOpen - a.lastOpen;
+    if (a.lastOpen && b.lastOpen) {
+        return b.lastOpen - a.lastOpen;
+    }
+    else {
+        return 1
+    }
+
 })
+console.log(bookList)
 
 const { saveAs } = fileSaver;
 const grid = ref(null)
@@ -96,7 +101,7 @@ const props = defineProps({
 })
 const { useMin, maxCols } = props
 
-onMounted(() => {
+onMounted(async () => {
     if (!bookList.length) return
     initStyle()
     positionItems()
@@ -206,48 +211,42 @@ const download = (url) => {
 }
 const emit = defineEmits(['update:currentBook'])
 //reader
-const readerBook = (url) => {
-    emit('update:currentBook', url)
+const readerBook = (info) => {
+    emit('update:currentBook', info)
 }
 //导入
 const selectFile = async (item) => {
     const { raw, name, size } = item
-    const md5 = await getFileMD5(raw)
-    const res = await db.books.get({ md5 })
-    if (res) return ElMessage.error('图书重复')
+    // const md5 = await getFileMD5(raw)
+    // const res = await db.books.get({ md5 })
+    // if (res) return ElMessage.error('图书重复')
+    // const reader = new FileReader()
+    // reader.onerror = (error) => {
+    //     console.log(error)
+    // }
+    // reader.onloadend = (e) => {
+    //     const file = { buffer: reader.result, size, name, md5 }
+    //     saveFile(file)
+    // }
+    // reader.readAsArrayBuffer(raw)
+    //不存储
     const reader = new FileReader()
     reader.onerror = (error) => {
         console.log(error)
     }
     reader.onloadend = (e) => {
-        const file = { buffer: reader.result, size, name, md5 }
-        saveFile(file)
+        console.log(reader)
+        emit('update:currentBook', reader.result)
     }
     reader.readAsArrayBuffer(raw)
 }
 const saveFile = async (file) => {
     //保存文件
     const id = await db.books.add(file);
-    // router.push({ name: 'reader', params: { id } })
+    emit('update:currentBook', id)
 }
-const delFile =(id)=>{
+const delFile = (id) => {
     reader.delBook(id)
-}
-const input = ref(null)
-const addFiles = () => {
-    input.value.$refs.uploadRef.$el.click()
-}
-const onchange = (e) => {
-    //原生input获取文件
-    const file = e.target.files[0]
-    const { name, size } = file
-    console.log(file)
-    const reader = new FileReader()
-    reader.onerror = (error) => reject(error);
-    reader.onloadend = (e) => {
-        console.log(reader.result)
-    }
-    reader.readAsArrayBuffer(file)
 }
 
 </script>
@@ -263,6 +262,7 @@ const onchange = (e) => {
             width: 170px;
             height: 250px;
             user-select: none;
+            cursor: pointer;
 
             .el-image {
                 height: 200px;

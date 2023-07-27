@@ -82,7 +82,7 @@ body {
 }
 
 .default {
-    width: 260px !important;
+    width: 260px;
     background: #fff !important;
     color: #555 !important;
 }
