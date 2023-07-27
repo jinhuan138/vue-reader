@@ -1,5 +1,6 @@
 <template>
-	<el-popover :popper-class="`popper ${reader.theme}`" placement="bottom" width="350" trigger="hover">
+	<el-popover :popper-class="`popper ${reader.theme}`" placement="bottom" :width="380" trigger="hover"
+		:popper-style="{ height: '85%' }">
 		<div class="el-popover__title">
 			Table of Content
 		</div>
@@ -27,4 +28,18 @@ const onNodeClick = (data) => {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+::-webkit-scrollbar {
+	display: none;
+}
+
+.popper {
+
+	.el-tree {
+		max-height: 95%;
+		max-width: 100%;
+		overflow: auto;
+		word-wrap: wrap;
+	}
+}
+</style>

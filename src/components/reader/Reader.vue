@@ -40,6 +40,7 @@
 <script setup>
 //https://github.com/code-farmer-i/vue-markdown-editor.git
 //https://github.com/hepengwei/visualization-collection
+import { db } from "./utils/db"
 import { Back, Grid } from '@element-plus/icons-vue'
 import { EpubView } from '@/modules/index'
 import titlebar from './Titlebar.vue'
@@ -52,20 +53,29 @@ import selectListener from '../../modules/utils/listener/select'
 import { getInfo } from "./utils/dbUtilis";
 import { dark, tan } from './utils/themes'
 import { useReaderStore } from './utils/stores'
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 
 const reader = useReaderStore()
 
 const props = defineProps({
     bookInfo: {
-        type: Object
+        type: [Object, Number]
     }
 })
 const isReady = ref(false)
 const currentBook = ref({})
 const title = ref('')
-const url = computed(() => {
-    return `/books/${props.bookInfo.url}`
+const url = computed(async () => {
+    // console.log()
+    // if (typeof (bookInfo) === 'number') {
+    //     const info = await db.books.get(props.bookInfo);
+    //     console.log(info)
+    //     return info.buffer
+    // } else {
+    //     return `/books/${props.bookInfo.url}`
+
+    // }
+    return props.bookInfo
 })
 let rendition = null, flattenedToc = null
 
@@ -81,8 +91,6 @@ const getRendition = (val) => {
         history.value.push(location.start.cfi);
         progress.value = book.locations.percentageFromCfi(location.start.cfi);
         sliderValue.value = Math.floor(progress.value * 10000) / 100;
-        console.log(progress.value)
-        console.log(sliderValue.value)
     });
     rendition.hooks.content.register(applyStyle)
 
@@ -107,7 +115,6 @@ const getRendition = (val) => {
                 flattenedToc = (function flatten(items) {
                     return [].concat(...items.map(item => [item].concat(...flatten(item.children))));
                 })(info.toc);
-                console.log('toc',info.toc);
                 flattenedToc.sort((a, b) => {
                     return a.percentage - b.percentage;
                 })
@@ -157,6 +164,13 @@ const locationChange = (epubcifi) => {
     // }
     // localStorage.setItem(book, epubcifi)
 }
+//info
+
+// const info = ref(props.bookInfo)
+// onMounted(() => {
+//     info.value.lastOpen = new Date().getTime();
+//     reader.setBook(info.id, info)
+// })
 
 //阅读进度
 const sliderValue = ref(0)
@@ -179,7 +193,6 @@ const tocFromPercentage = (percent) => {
 }
 const onSliderValueChange = (val) => {
     let cfi = rendition.book.locations.cfiFromPercentage(val / 100);
-    console.log('onSliderValueChange', cfi)
     rendition.display(cfi);
 }
 //加载进度
@@ -219,6 +232,7 @@ const onLibraryBtn = () => {
 }
 
 const onNodeClick = (item) => {
+    console.log(item.cfi, item.href)
     rendition.display(item.cfi || item.href);
 }
 //theme
@@ -317,9 +331,9 @@ const addBookmark = () => {
         cfi,
         href,
     };
-
     // this.info.bookmarks.push(bookmark);
     // this.$db.set(this.info.id, this.info);
+
 }
 const removeBookmark = (bookmark) => {
     const index = this.info.bookmarks.findIndex(

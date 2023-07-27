@@ -1,5 +1,5 @@
 <template>
-	<el-popover :popper-class="theme" trigger="hover">
+	<el-popover :popper-class="theme" trigger="hover" :width="270">
 		<template #reference>
 			<el-button size="small" :icon="Operation" circle />
 		</template>
@@ -7,7 +7,7 @@
 			<tr>
 				<td> Flow </td>
 				<td>
-					<el-radio-group v-model="flow" size="small">
+					<el-radio-group v-model="flow" size="small" style="flex-wrap: nowrap;">
 						<el-radio-button label="paginated" border>
 							Paged
 						</el-radio-button>
@@ -116,7 +116,7 @@ watch(flow, (value) => {
 
 <style lang="scss" scoped>
 .table {
-	width: 240px;
+	width: 240px !important;
 
 	tr td:last-child {
 		text-align: end;
