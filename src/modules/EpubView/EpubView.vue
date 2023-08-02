@@ -44,13 +44,15 @@ let book: null | Book = null, rendition: null | Rendition = null;
 
 const initBook = async () => {
     if (book) book.destroy()
-    if (url.value) book = ePub(unref(url.value), epubInitOptions);
-    book!.loaded.navigation.then(({ toc: _toc }) => {
-        isLoaded.value = true
-        toc.value = _toc
-        tocChanged && tocChanged(_toc)
-        initReader()
-    });
+    if (url.value) {
+        book = ePub(unref(url.value), epubInitOptions);
+        book!.loaded.navigation.then(({ toc: _toc }) => {
+            isLoaded.value = true
+            toc.value = _toc
+            tocChanged && tocChanged(_toc)
+            initReader()
+        });
+    }
 };
 
 const initReader = () => {

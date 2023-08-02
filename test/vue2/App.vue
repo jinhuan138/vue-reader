@@ -14,7 +14,7 @@ export default {
   data() {
     return {
       location: null,
-      url: null,
+      url: '/files/alice.epub',
       firstRenderDone: false,
       title:""
     }
