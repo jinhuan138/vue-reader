@@ -252,6 +252,9 @@ const delFile = (id) => {
 </script>
   
 <style scoped lang="scss">
+::-webkit-scrollbar {
+    display: none;
+}
 .main {
 
     /* margin-top: 40px; */

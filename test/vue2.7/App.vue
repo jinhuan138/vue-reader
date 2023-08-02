@@ -7,7 +7,7 @@ export default {
 
 <template>
   <div style='height: 100vh'>
-    <VueReader url='/files/啼笑因缘.epub' @update:location='locationChange' :epubOptions='{
+    <VueReader url='/files/啼笑因缘.epub' :epubOptions='{
       flow: "scrolled",
       manager: "continuous"
     }'> </VueReader>

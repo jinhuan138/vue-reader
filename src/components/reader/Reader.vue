@@ -99,7 +99,7 @@ const getRendition = (val) => {
             const meta = book.package.metadata;
             console.log(book.package.metadata)
             title.value = meta.title;
-            return book.locations.generate(1600);
+            return book.locations.generate();
         })
         .then(async locations => {
             // rendition.display(this.info.lastCfi || 1);

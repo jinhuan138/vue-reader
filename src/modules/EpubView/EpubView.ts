@@ -2,7 +2,7 @@
 //https://github.com/KaygNas/rollup-plugin-vue-demi
 //https://github.com/Shimada666/vue-demi-sfc-component-template.git
 import "./style.css";
-import { ref, h as _h, onMounted, onUnmounted, toRefs, watch, defineComponent, getCurrentInstance, type PropType, onBeforeUnmount } from "vue-demi";
+import { ref, h as _h, onMounted, onUnmounted, toRefs, watch, defineComponent, getCurrentInstance, type PropType, onBeforeUnmount, version } from "vue-demi";
 import ePub, { Book, Rendition, Contents } from 'epubjs';
 import { clickListener, swipListener, wheelListener, keyListener } from '../utils/listener/listener';
 
@@ -69,24 +69,27 @@ export default defineComponent({
         const { url, location } = toRefs(props)
         const { tocChanged, getRendition, handleKeyPress, handleTextSelected, epubInitOptions, epubOptions } = props
 
-        const viewer = ref<HTMLDivElement | 'viewer'>('viewer')
+        const viewer = ref<HTMLDivElement | 'null'>(null)
         const toc = ref<Book['navigation']['toc']>([])
         const isLoaded = ref(false)
         let book: null | Book = null, rendition: null | Rendition = null;
 
         const initBook = async () => {
             if (book) book.destroy()
-            if (url.value) book = ePub(url.value as 'string | ArrayBuffer', epubInitOptions);
-            book!.loaded.navigation.then(({ toc: _toc }) => {
-                isLoaded.value = true
-                toc.value = _toc
-                tocChanged && tocChanged(_toc)
-                initReader()
-            });
+            if (url.value) {
+                book = ePub(url.value as 'string | ArrayBuffer', epubInitOptions);
+                book!.loaded.navigation.then(({ toc: _toc }) => {
+                    isLoaded.value = true
+                    toc.value = _toc
+                    tocChanged && tocChanged(_toc)
+                    initReader()
+                });
+            }
         };
-
         const initReader = () => {
-            const dom = viewer.value as HTMLDivElement || vm?.refs['viewer'] as HTMLDivElement
+            console.log(vm)
+            const dom = viewer.value as HTMLDivElement || vm?.refs?.['viewer'] as HTMLDivElement || vm.proxy.$refs['viewer'] as HTMLDivElement
+            console.log(dom)
             rendition = book!.renderTo(dom, {
                 width: '100%',
                 height: '100%',
@@ -221,7 +224,7 @@ export default defineComponent({
         return () => h('div', { class: 'reader' }, [
             h('div', { class: 'viewHolder' }, [
                 h('div', {
-                    ref: viewer,
+                    ref: Number(version) > 2 ? viewer : 'viewer',
                     class: 'view',
                     id: 'viewer',
                     attrs: { id: 'viewer' },
