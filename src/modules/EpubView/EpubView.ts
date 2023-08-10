@@ -69,7 +69,7 @@ export default defineComponent({
         const { url, location } = toRefs(props)
         const { tocChanged, getRendition, handleKeyPress, handleTextSelected, epubInitOptions, epubOptions } = props
 
-        const viewer = ref<HTMLDivElement | 'null'>(null)
+        const viewer = ref<HTMLDivElement | null>(null)
         const toc = ref<Book['navigation']['toc']>([])
         const isLoaded = ref(false)
         let book: null | Book = null, rendition: null | Rendition = null;
@@ -87,9 +87,7 @@ export default defineComponent({
             }
         };
         const initReader = () => {
-            console.log(vm)
-            const dom = viewer.value as HTMLDivElement || vm?.refs?.['viewer'] as HTMLDivElement || vm.proxy.$refs['viewer'] as HTMLDivElement
-            console.log(dom)
+            const dom = viewer.value as HTMLDivElement || vm?.refs?.['viewer'] as HTMLDivElement
             rendition = book!.renderTo(dom, {
                 width: '100%',
                 height: '100%',
@@ -224,7 +222,7 @@ export default defineComponent({
         return () => h('div', { class: 'reader' }, [
             h('div', { class: 'viewHolder' }, [
                 h('div', {
-                    ref: Number(version) > 2 ? viewer : 'viewer',
+                    ref: parseFloat(version) >= 2.7 ? viewer : 'viewer',
                     class: 'view',
                     id: 'viewer',
                     attrs: { id: 'viewer' },
