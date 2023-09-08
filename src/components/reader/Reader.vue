@@ -9,8 +9,8 @@
 
             <toc-menu :toc="currentBook.toc" @node-click="onNodeClick"></toc-menu>
 
-            <bookmark-menu :bookmarks="currentBook.bookmarks" @node-click="onNodeClick" @add-bookmark="addBookmark"
-                @remove-bookmark="removeBookmark" />
+            <!-- <bookmark-menu :bookmarks="currentBook.bookmarks" @node-click="onNodeClick" @add-bookmark="addBookmark"
+                @remove-bookmark="removeBookmark" /> -->
 
             <search-menu :search-result="searchResult" @node-click="onNodeClick" @search="search" />
 
@@ -59,23 +59,19 @@ const reader = useReaderStore()
 
 const props = defineProps({
     bookInfo: {
-        type: [Object, Number]
+        type: [Object, Number,ArrayBuffer]
     }
 })
 const isReady = ref(false)
 const currentBook = ref({})
 const title = ref('')
-const url = computed(async () => {
-    // console.log()
-    // if (typeof (bookInfo) === 'number') {
-    //     const info = await db.books.get(props.bookInfo);
-    //     console.log(info)
-    //     return info.buffer
-    // } else {
-    //     return `/books/${props.bookInfo.url}`
-
-    // }
-    return props.bookInfo
+const url = computed(() => {
+    if (!props.bookInfo.url) {
+        // const info = await db.books.get(props.bookInfo);
+        return props.bookInfo
+    } else {
+        return `${import.meta.env.BASE_URL}books/${props.bookInfo.url}`
+    }
 })
 let rendition = null, flattenedToc = null
 
@@ -90,7 +86,7 @@ const getRendition = (val) => {
         // info.lastCfi = location.start.cfi;
         history.value.push(location.start.cfi);
         progress.value = book.locations.percentageFromCfi(location.start.cfi);
-        sliderValue.value = Math.floor(progress.value * 10000) / 100;
+        // sliderValue.value = Math.floor(progress.value * 10000) / 100;
     });
     rendition.hooks.content.register(applyStyle)
 
@@ -121,6 +117,7 @@ const getRendition = (val) => {
             })
         })
         .then(() => {
+            isReady.value = true;
             // this.info.highlights.forEach(cfiRange => {
             //     rendition.annotations.highlight(cfiRange);
             // });
@@ -167,10 +164,10 @@ const locationChange = (epubcifi) => {
 //info
 
 // const info = ref(props.bookInfo)
-// onMounted(() => {
-//     info.value.lastOpen = new Date().getTime();
-//     reader.setBook(info.id, info)
-// })
+onMounted(() => {
+    // info.value.lastOpen = new Date().getTime();
+    // reader.setBook(info.id, info)
+})
 
 //阅读进度
 const sliderValue = ref(0)
@@ -345,28 +342,21 @@ const removeBookmark = (bookmark) => {
 </script>
   
 <style scoped lang="scss">
-::-webkit-scrollbar {
-    display: none;
+.custom-tree-node {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  padding-right: 8px;
+  margin: 5px;
 }
-
-.el-container {
-    position: absolute;
-    top: 0px;
-    bottom: 0px;
-    right: 0px;
-    left: 0px;
-    overflow: hidden;
-
-    .el-main {
-        width: 100%;
-        height: 100%;
-        padding: 0px;
-
-        #reader {
-            user-select: none;
-            height: 100%;
-        }
-    }
+ #reader {
+    user-select: none;
+    height: 100%;
+    width: 100%;
+    position: relative;
+    inset:0;
 }
 </style>
   

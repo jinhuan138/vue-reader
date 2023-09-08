@@ -10,22 +10,22 @@ npm install vue-reader --save
 
 And in your vue-component...
 ::: details Vue 3
-:::demo basic usage
-
+:::demo
 ```vue
 <template>
    <div style='height: 100vh'>
-      <VueReader url='/docs/files/啼笑因缘.epub'/>
+      <vue-reader url='/vue-reader/files/啼笑因缘.epub'/>
    </div>
 </template>
 ```
+
 :::
 
 ::: details Vue 2
 ```vue
 <template>
   <div style='height: 100vh'>
-    <VueReader url='/docs/files/啼笑因缘.epub'/>
+    <VueReader url='/vue-reader/files/啼笑因缘.epub'/>
   </div>
 </template>
 <script>
@@ -36,6 +36,7 @@ export default {
 }
 </script>
 ```
+
 :::
 
 
@@ -94,12 +95,11 @@ export default {
 
 Saving the current page on storage is pretty simple, but we need to keep in mind that `locationChanged` also gets called on the very first render of our app.
 
-:::demo save progress 
-
+:::demo 
 ```vue
 <template>
     <div style='height: 100vh'>
-        <VueReader :location='location' url='/docs/files/啼笑因缘.epub' @update:location='locationChange'/>
+        <VueReader :location='location' url='/vue-reader/files/啼笑因缘.epub' @update:location='locationChange'/>
     </div>
 </template>
 <script setup>
@@ -167,13 +167,12 @@ export default {
 
 We store the epubjs rendition in a ref, and get the page numbers in the callback when location is changed. Note that in this example we also find them name of the current chapter from the toc. Also see limitation for pagination for the whole book.
 
-:::demo display page number
-
+:::demo
 ```vue
 <template>
     <div style='height: 100vh'>
         <VueReader 
-            url='/docs/files/啼笑因缘.epub' 
+            url='/vue-reader/files/啼笑因缘.epub' 
             :getRendition='getRendition' 
             :tocChanged='tocChanged'
             @update:location='locationChange'>
@@ -235,13 +234,13 @@ const locationChange = (epubcifi) => {
 
 Hooking into epubJS rendition object is the key for this also.
 
-:::demo change font-size
+:::demo
 
 ```vue
 <template>
     <div style='position: relative'>
         <div style='height: 100vh'>
-            <VueReader url='/docs/files/啼笑因缘.epub' :getRendition='getRendition'>
+            <VueReader url='/vue-reader/files/啼笑因缘.epub' :getRendition='getRendition'>
             </VueReader>
         </div>
         <div class='size'>
@@ -285,13 +284,13 @@ const getRendition = (val) => {
 EpubJS render the epub-file inside a iframe so you will need to create a custom theme and apply it.  
 This is useful for when you want to set custom font families, custom background and text colors, and everything CSS related.
 
-:::demo custom css
+:::demo
 
 ```vue
 <template>
     <div style='height:100vh'>
         <VueReader 
-            url='/docs/files/啼笑因缘.epub' 
+            url='/vue-reader/files/啼笑因缘.epub' 
             :getRendition='getRendition'>
         </VueReader>
     </div>
@@ -325,13 +324,13 @@ const getRendition = (rendition) => {
 
 This shows how to hook into epubJS annotations object and let the user highlight selection and store this in a list where user can go to a selection or delete it.
 
-:::demo hightlight 
+:::demo 
 
 ```vue
 <template>
     <div style='position: relative'>
         <div style='height: 100vh'>
-            <VueReader url='/docs/files/啼笑因缘.epub' :getRendition='getRendition'>
+            <VueReader url='/vue-reader/files/啼笑因缘.epub' :getRendition='getRendition'>
             </VueReader>
         </div>
         <div class='selection'>
@@ -422,13 +421,13 @@ EpubJS will try to parse the epub-file you pass to it, but if the server send wr
 
 Pass options for this into epubJS in the prop `epubOptions`
 
-:::demo scrolle
+:::demo
 
 ```vue
 <template>
     <div style='height: 100vh'>
         <VueReader 
-            url='/docs/files/啼笑因缘.epub' 
+            url='/vue-reader/files/啼笑因缘.epub' 
             :epubOptions='{
             flow: "scrolled",
             manager: "continuous"}'>
@@ -455,13 +454,13 @@ Epubjs is rendering the epub-content inside and iframe which defaults to `sandbo
 
 ## Speak the text
 
-:::demo speak the text
+:::demo
 
 ```vue
 <template>
     <div style='position: relative'>
         <div style='height: 100vh'>
-            <VueReader url='/docs/files/啼笑因缘.epub' :getRendition='getRendition' @update:location='locationChange' />
+            <VueReader url='/vue-reader/files/啼笑因缘.epub' :getRendition='getRendition' @update:location='locationChange' />
         </div>
         <div class='speak'>
             <button class='reader-button' @click='speak("click")'>
@@ -530,64 +529,14 @@ const voice = (text, rate = 1) => {
 
 :::
 
-## Zoom the image
-
-::: demo use medium-zoom
-
-```vue
-<template>
-    <div style='height: 100vh'>
-        <VueReader 
-            :epubOptions='{
-            allowPopups: true,
-            allowScriptedContent: true,
-            script: "https://cdn.jsdelivr.net/npm/medium-zoom@1.0.8/dist/medium-zoom.min.js"}' 					        
-            url='/docs/files/alice.epub' 
-            :getRendition='getRendition'>
-        </VueReader>
-    </div>
-</template>
-<script setup>
-import { onBeforeUnmount } from 'vue'
-
-let zoom = null
-const closeZoom = () => {
-    if (zoom && zoom.getZoomedImage()) zoom.close()
-}
-const getRendition = (rendition) => {
-    rendition.hooks.content.register((contents, view) => {
-        const contentsDom = contents.document
-        const images = [...contentsDom.querySelectorAll('img'), ...contentsDom.querySelectorAll('image')]
-        zoom = mediumZoom(images, {
-            background: 'rgba(247, 249, 250, 0.97)'
-        })
-        contentsDom.addEventListener('click',async (e) => {
-            if (zoom.getImages().includes(e.target)) {
-                if (zoom.getZoomedImage()) await zoom.close()
-                e.target.style.zIndex = 5
-                zoom.open({ target: e.target })
-            } else {
-                zoom.close()
-            }
-        })
-        document.addEventListener('click', closeZoom)
-    })
-}
-onBeforeUnmount(() => {
-    document.removeEventListener('click', closeZoom)
-})
-</script>
-```
-
-:::
 
 ## Get book information
 
-::: demo get book information
+:::demo
 
 ```vue
 <template>
-    <VueReader v-show='false' url='/docs/files/啼笑因缘.epub' :getRendition='getRendition'>
+    <VueReader v-show='false' url='/vue-reader/files/啼笑因缘.epub' :getRendition='getRendition'>
     </VueReader>
     <div v-if='information' style='color: #000'>
         <img :src='information.cover' :alt='information.title' style="width: 100px">
@@ -620,7 +569,7 @@ const getRendition = (rendition) => {
 
 ## Import file
 
-::: demo input file
+:::demo
 
 ```vue
 <template>
@@ -659,13 +608,13 @@ const onchange = (e) => {
 
 ## Current progress
 
-::: demo current progress
+:::demo
 
 ```vue
 <template>
     <div style='position: relative'>
         <div style='height: 100vh'>
-            <VueReader :getRendition="getRendition" url="/docs/files/啼笑因缘.epub">
+            <VueReader :getRendition="getRendition" url="/vue-reader/files/啼笑因缘.epub">
             </VueReader>
         </div>
         <div class="progress">
@@ -737,13 +686,13 @@ const change = (e) => {
 
 ## Search in the book
 
-::: demo search in the book
+:::demo
 
 ```vue
 <template>
     <div style='position: relative'>
         <div style='height: 100vh'>
-            <VueReader url='/docs/files/啼笑因缘.epub' :getRendition='getRendition'>
+            <VueReader url='/vue-reader/files/啼笑因缘.epub' :getRendition='getRendition'>
             </VueReader>
         </div>
         <div class="search">
@@ -828,23 +777,18 @@ const go = (href, e) => {
 
 :::
 
-<script setup lang="ts">
-import mediumZoom from 'medium-zoom'
-</script>
+<style> 
+    .reader-button{ 
+      width: 48px; 
+      height: 24px; 
+      border:1px solid #dcdfe6;
+       border-radius:4px; text-align:  center; 
+       color:#606266; } 
 
-<style>
-    .reader-button{
-        width: 48px;
-        height: 24px;
-        border:1px solid #dcdfe6;
-        border-radius:4px;
-        text-align: center;
-        color:#606266;
-    }
-    .reader-button:hover,reader-button:focus{
-        color: #409eff;
-        border-color: #c6e2ff;
-        background-color: ecf5ff;
-        outline: none;
-    }
+    .reader-button:hover,reader-button:focus{ 
+      color: #409eff;
+      border-color: #c6e2ff;
+       background-color: #ecf5ff; 
+       outline: none;
+       } 
 </style>

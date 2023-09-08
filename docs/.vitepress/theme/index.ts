@@ -5,14 +5,17 @@ import Demo from 'vitepress-theme-demoblock/dist/client/components/Demo.vue'
 import DemoBlock from 'vitepress-theme-demoblock/dist/client/components/DemoBlock.vue'
 import { VueReader } from "@/modules/index"
 import { createPinia } from 'pinia'
-import piniaPersist from 'pinia-plugin-persist'
 // import { VueReader } from "vue-reader"
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import reader from 'comps/reader/index.vue'
-
 const pinia = createPinia()
-pinia.use(piniaPersist)
+
+if (!import.meta.env.SSR) {
+  import('pinia-plugin-persistedstate').then((piniaPluginPersistedstate) => {
+    pinia.use(piniaPluginPersistedstate.default)
+  })
+}
 
 export default {
   ...DefaultTheme,

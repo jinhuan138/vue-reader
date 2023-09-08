@@ -1,6 +1,6 @@
 {
   "name": "vue-reader",
-  "version": "1.2.4",
+  "version": "1.2.6",
   "main": "lib/index.min.js",
   "files": [
     "lib"
@@ -12,7 +12,7 @@
     "epubjs",
     "reader"
   ],
-  "homepage": "https://jinhuan138.github.io/docs/",
+  "homepage": "https://jinhuan138.github.io/vue-reader/",
   "repository": {
     "type": "git",
     "url": "git@github.com:jinhuan138/vue-reader.git"
@@ -29,7 +29,8 @@
     "book": "node build/book",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
-    "docs:preview": "vitepress preview docs --port 3333"
+    "docs:serve": "vitepress serve docs",
+    "docs:preview": "vitepress preview docs"
   },
   "license": "ISC",
   "bugs": {
@@ -64,7 +65,7 @@
     "medium-zoom": "^1.0.8",
     "node-vibrant": "3.2.1-alpha.1",
     "pinia": "^2.0.23",
-    "pinia-plugin-persist": "^1.0.0",
+    "pinia-plugin-persistedstate": "^3.2.0",
     "postcss": "^8.4.21",
     "postcss-preset-env": "^8.0.1",
     "prettier": "^2.8.7",

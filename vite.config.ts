@@ -9,7 +9,7 @@ import { visualizer } from 'rollup-plugin-visualizer';
 
 // https://cn.vitejs.dev/
 export default defineConfig({
-  base: "/vue-reader",
+  base: "/",
   plugins: [
     vue(),
     tsconfigPaths({
