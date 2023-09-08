@@ -39,10 +39,5 @@ export const useReaderStore = defineStore('reader', {
             }
         }
     },
-    persist: {
-        enabled: true,
-        strategies: [
-            { storage: localStorage, paths: ['theme', 'flow', 'font', 'lineSpacing', 'fontSize', 'bookList'] },
-        ],
-    }
+    persist: true,
 })

@@ -1,0 +1,24 @@
+{
+  "name": "docs",
+  "version": "1.0.0",
+  "description": "vue-reader document",
+  "main": "index.js",
+  "type": "module",
+  "dependencies": {
+    "vitepress": "^1.0.0-alpha.30",
+    "vitepress-theme-demoblock": "^2.0.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "dev": "vitepress dev vue-reader-docs",
+    "build": "vitepress build vue-reader-docs",
+    "serve": "vitepress serve vue-reader-docs",
+    "register:components": "vitepress-rc"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}

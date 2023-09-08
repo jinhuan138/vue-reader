@@ -7,9 +7,10 @@ import { resolve } from 'path'
 export default defineConfig({
     title: 'vue-reader',
     description: 'vue-reader document',
-    base: '/docs/',
+    base: '/vue-reader',
     cleanUrls: true,
     markdown: {
+        // theme: { light: 'github-light', dark: 'github-dark' },
         config: (md) => {
             md.use(demoBlockPlugin)
         }
@@ -32,7 +33,7 @@ export default defineConfig({
             { text: "Reader", link: "/reader" },
         ],
         socialLinks: [
-            { icon: 'github', link: 'https://github.com/jinhuan138/docs' }
+            { icon: 'github', link: 'https://github.com/jinhuan138/vue-reader' }
         ],
     },
     vue: {
@@ -43,7 +44,7 @@ export default defineConfig({
             port: 3030,
         },
         preview: {
-            port: 8080,
+            port: 3333,
         },
         resolve: {
             alias: [

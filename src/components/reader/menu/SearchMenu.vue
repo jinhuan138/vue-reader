@@ -1,5 +1,5 @@
 <template>
-	<el-popover :popper-class="`popper ${reader.theme}`" width="350" trigger="hover" @show="startSearch" @hide="stopSearch">
+	<el-popover :popper-class="`popper reader-${reader.theme}`" width="350" trigger="hover" @show="startSearch" @hide="stopSearch">
 		<template #reference>
 			<el-button size="small" :icon="Search" circle />
 		</template>

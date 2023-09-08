@@ -1,5 +1,5 @@
 <template>
-    <div id="index" ref="app" :class="reader.theme">
+    <div id="index" ref="app" :class="'reader-'+reader.theme">
         <!-- Home -->
         <transition name="el-fade-in-linear">
             <Home @update:currentBook="updateBook" v-model:showReader="showReader" v-if="!showReader" />
@@ -41,7 +41,6 @@ $padding: 4px;
 
 <style lang="scss">
 ::-webkit-scrollbar {
-    // display: none;
 }
 
 html,
@@ -49,9 +48,7 @@ body {
     margin: 0px;
     width: 100%;
     min-height: 100vh;
-    // height: 100%;
     -webkit-font-smoothing: antialiased;
-    // overflow: hidden;
 }
 
 .el-container {
@@ -81,19 +78,19 @@ body {
     color: inherit !important;
 }
 
-.default {
+.reader-default {
     width: 260px;
     background: #fff !important;
     color: #555 !important;
 }
 
-.dark {
+.reader-dark {
     width: 260px !important;
     background: #444 !important;
     color: #eee !important;
 }
 
-.tan {
+.reader-tan {
     width: 260px !important;
     background: #fdf6e3 !important;
     color: #002b36 !important;
