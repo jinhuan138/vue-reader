@@ -2,7 +2,7 @@
 An vue-reader for vue powered by EpubJS
 
 ## Document
-[document](https://jinhuan138.github.io/docs/)
+[document](https://jinhuan138.github.io/vue-reader/)
 
 ## Basic usage
 

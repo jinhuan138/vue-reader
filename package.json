@@ -1,6 +1,6 @@
 {
   "name": "vue-reader",
-  "version": "1.2.6",
+  "version": "1.2.7",
   "main": "lib/index.min.js",
   "files": [
     "lib"
@@ -64,6 +64,7 @@
     "i": "^0.3.7",
     "medium-zoom": "^1.0.8",
     "node-vibrant": "3.2.1-alpha.1",
+    "photoswipe": "^5.4.1",
     "pinia": "^2.0.23",
     "pinia-plugin-persistedstate": "^3.2.0",
     "postcss": "^8.4.21",

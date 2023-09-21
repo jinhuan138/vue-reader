@@ -7,12 +7,9 @@ dependencies:
   epubjs:
     specifier: ^0.3.93
     version: 0.3.93
-  pinia-plugin-persistedstate:
-    specifier: ^3.2.0
-    version: 3.2.0(pinia@2.0.23)
   vue-demi:
     specifier: latest
-    version: 0.14.5(vue@3.2.44)
+    version: 0.14.6(vue@3.2.44)
 
 devDependencies:
   '@babel/core':
@@ -72,9 +69,15 @@ devDependencies:
   node-vibrant:
     specifier: 3.2.1-alpha.1
     version: 3.2.1-alpha.1
+  photoswipe:
+    specifier: ^5.4.1
+    version: 5.4.1
   pinia:
     specifier: ^2.0.23
     version: 2.0.23(typescript@5.0.4)(vue@3.2.44)
+  pinia-plugin-persistedstate:
+    specifier: ^3.2.0
+    version: 3.2.0(pinia@2.0.23)
   postcss:
     specifier: ^8.4.21
     version: 8.4.22
@@ -1566,6 +1569,7 @@ packages:
 
   /@vue/devtools-api@6.5.0:
     resolution: {integrity: sha512-o9KfBeaBmCKl10usN4crU53fYtC1r7jJwdGKjPT24t348rHxgfpZ0xL3Xm/gLUYnc0oTp8LAmrxOeLyu6tbk2Q==}
+    dev: true
 
   /@vue/reactivity-transform@3.2.44:
     resolution: {integrity: sha512-WGbEiXaS2qAOTS9Z3kKk2Nk4bi8OUl73Sih+h0XV9RTUATnaJSEQedveHUDQnHyXiZwyBMKosrxJg8aThHO/rw==}
@@ -1612,7 +1616,7 @@ packages:
       '@types/web-bluetooth': 0.0.16
       '@vueuse/metadata': 9.13.0
       '@vueuse/shared': 9.13.0(vue@3.2.44)
-      vue-demi: 0.14.5(vue@3.2.44)
+      vue-demi: 0.14.6(vue@3.2.44)
     transitivePeerDependencies:
       - vue
     dev: true
@@ -1624,7 +1628,7 @@ packages:
   /@vueuse/shared@9.13.0(vue@3.2.44):
     resolution: {integrity: sha512-UrnhU+Cnufu4S6JLCPZnkWh0WwZGUp72ktOF2DFptMlOs3TOdVv8xJN53zhHGARmVOsz5KqOls09+J1NR6sBKw==}
     dependencies:
-      vue-demi: 0.14.5(vue@3.2.44)
+      vue-demi: 0.14.6(vue@3.2.44)
     transitivePeerDependencies:
       - vue
     dev: true
@@ -3538,6 +3542,11 @@ packages:
     resolution: {integrity: sha512-CzFr90qM24ju5f88quFC/6qohjC144rehe5n6DH900lgXmUe86+xCKc10ev56gRKC4/BkHUoG4uSiQgBiIXwDA==}
     dev: true
 
+  /photoswipe@5.4.1:
+    resolution: {integrity: sha512-iauO0fP4oMdZvjlXzeIe8um1fZatkGE0bqdoIwpb65jlo/KK1KhfD7Z51+0YhS2tC4FOoOtE1p0c4o/HbY1s2Q==}
+    engines: {node: '>= 0.12.0'}
+    dev: true
+
   /picocolors@1.0.0:
     resolution: {integrity: sha512-1fygroTLlHu66zi26VoTDv8yRgm0Fccecssto+MhsZ0D/DGW2sm8E8AjW7NU5VVTRt5GxbeZ5qBuJr+HyLYkjQ==}
 
@@ -3557,7 +3566,7 @@ packages:
       pinia: ^2.0.0
     dependencies:
       pinia: 2.0.23(typescript@5.0.4)(vue@3.2.44)
-    dev: false
+    dev: true
 
   /pinia@2.0.23(typescript@5.0.4)(vue@3.2.44):
     resolution: {integrity: sha512-N15hFf4o5STrxpNrib1IEb1GOArvPYf1zPvQVRGOO1G1d74Ak0J0lVyalX/SmrzdT4Q0nlEFjbURsmBmIGUR5Q==}
@@ -3574,7 +3583,8 @@ packages:
       '@vue/devtools-api': 6.5.0
       typescript: 5.0.4
       vue: 3.2.44
-      vue-demi: 0.14.5(vue@3.2.44)
+      vue-demi: 0.14.6(vue@3.2.44)
+    dev: true
 
   /pixelmatch@4.0.2:
     resolution: {integrity: sha512-J8B6xqiO37sU/gkcMglv6h5Jbd9xNER7aHzpfRdNmV4IbQBzBpe4l9XmbG+xPF/znacgu2jfEw+wHffaq/YkXA==}
@@ -4875,6 +4885,7 @@ packages:
     resolution: {integrity: sha512-cW9T5W9xY37cc+jfEnaUvX91foxtHkza3Nw3wkoF4sSlKn0MONdkdEndig/qPBWXNkmplh3NzayQzCiHM4/hqw==}
     engines: {node: '>=12.20'}
     hasBin: true
+    dev: true
 
   /uc.micro@1.0.6:
     resolution: {integrity: sha512-8Y75pvTYkLJW2hWQHXxoqRgV7qb9B+9vFEtidML+7koHUFapnVJAZ6cKs+Qjz5Aw3aZWHMC6u0wJE3At+nSGwA==}
@@ -5149,8 +5160,8 @@ packages:
     resolution: {integrity: sha512-gu73tuZfJgu+mvCSy4UZwd2JXykjK9zAZsfmDeut5dx/1a7FeTk0XwJsSuqQn+cuMCGVbIBfl+s53X4T19DnzQ==}
     dev: true
 
-  /vue-demi@0.14.5(vue@3.2.44):
-    resolution: {integrity: sha512-o9NUVpl/YlsGJ7t+xuqJKx8EBGf1quRhCiT6D/J0pfwmk9zUwYkC7yrF4SZCe6fETvSM3UNL2edcbYrSyc4QHA==}
+  /vue-demi@0.14.6(vue@3.2.44):
+    resolution: {integrity: sha512-8QA7wrYSHKaYgUxDA5ZC24w+eHm3sYCbp0EzcDwKqN3p6HqtTCGR/GVsPyZW92unff4UlcSh++lmqDWN3ZIq4w==}
     engines: {node: '>=12'}
     hasBin: true
     requiresBuild: true
@@ -5174,7 +5185,7 @@ packages:
     dependencies:
       epubjs: 0.3.93
       vue: 3.2.44
-      vue-demi: 0.14.5(vue@3.2.44)
+      vue-demi: 0.14.6(vue@3.2.44)
     dev: true
 
   /vue-router@4.1.6(vue@3.2.44):

@@ -2,7 +2,7 @@
     <div style='height: 100vh'>
         <VueReader ref="viewer" :epubOptions='{
             allowScriptedContent: true,
-            script: "/node_modules/medium-zoom/dist/medium-zoom.min.js"
+           // script: "/node_modules/medium-zoom/dist/medium-zoom.min.js"
         }' url='/files/alice.epub' :getRendition="getRendition">
         </VueReader>
     </div>
@@ -15,9 +15,11 @@
 //https://kingdido999.github.io/zooming/docs/#/
 import { onBeforeUnmount, ref, onMounted } from 'vue'
 import { VueReader } from "@/modules/index"
-import InlineView from 'epubjs/lib/managers/views/inline'
+// import InlineView from 'epubjs/lib/managers/views/inline'
 // import Zooming from 'zooming'
 // import mediumZoom from 'medium-zoom'
+import PhotoSwipeLightbox from 'photoswipe/lightbox';
+import 'photoswipe/style.css';
 
 let zoom = null
 const closeZoom = () => {
@@ -25,12 +27,12 @@ const closeZoom = () => {
 }
 const getRendition = (rendition) => {
     rendition.themes.default({
-        'img': {
-            'cursor': 'zoom-in'
-        },
-        'image': {
-            'cursor': 'zoom-in'
-        }
+        // 'img': {
+        //     'cursor': 'zoom-in'
+        // },
+        // 'image': {
+        //     'cursor': 'zoom-in'
+        // }
     });
     rendition.hooks.content.register((contents, view) => {
         const contentsDom = contents.document
