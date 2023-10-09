@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>vue-reader</title>
+    <script src="https://unpkg.com/jszip@3.10.1/dist/jszip.min.js"></script>
+    <script src="https://unpkg.com/epubjs@0.5.0-alpha.3/dist/epub.esm.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <div style='height: 100vh' ref="viewer">
+        </div>
+    </div>
+</body>
+<script type="importmap">
+    {
+        "imports": {
+            "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js",
+            "@vue/composition-api":"https://cdn.jsdelivr.net/npm/@vue/composition-api@1.7.1",
+            "vue-demi":"https://unpkg.com/vue-demi@0.14.6/lib/index.mjs",
+            "vue-reader":"https://unpkg.com/vue-reader@1.2.7/lib/index.min.js" 
+        }
+    }
+  </script>
+<script type="module">
+    import { createApp, ref, onMounted, onUnmounted } from 'vue'
+    // import  { vueReader } from 'vue-reader'
+    let book, rendition = null
+    const url = 'https://jinhuan138.github.io/vue-reader/books/啼笑因缘.epub'
+    createApp({
+        setup() {
+        }
+    }).mount('#app')
+</script>
+
+</html>

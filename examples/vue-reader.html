@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>vue-reader</title>
+    <script src="https://unpkg.com/jszip@3.10.1/dist/jszip.min.js"></script>
+    <script src="https://unpkg.com/epubjs@0.3.93/dist/epub.min.js"></script> 
+</head>
+
+<body>
+    <div id="app">
+        <div style='height: 100vh' ref="viewer">
+        </div>
+    </div>
+</body>
+<script type="importmap">
+    {
+        "imports": {
+            "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js"
+        }
+    }
+  </script>
+<script type="module">
+    import { createApp, ref, onMounted, onUnmounted } from 'vue'
+    let book, rendition = null
+    const url = 'https://jinhuan138.github.io/vue-reader/books/啼笑因缘.epub'
+    createApp({
+        setup() {
+            const viewer = ref(null)
+            const initBook = () => {
+                if (book) book.destroy()
+                book = ePub(url);
+                book.loaded.navigation.then(({ toc }) => {
+                    console.log(toc)
+                    rendition = book.renderTo(viewer.value, {
+                        width: '100%',
+                        height: '100%',
+                    });
+                    registerEvents()
+                    rendition.display()
+                });
+            }
+            onMounted(() => {
+                initBook()
+            })
+            onUnmounted(() => {
+                book?.destroy()
+            })
+            const nextPage = () => {
+                rendition?.next();
+            };
+            const prevPage = () => {
+                rendition?.prev();
+            }
+            const flipPage = (direction) => {
+                if (direction === 'next') nextPage();
+                else if (direction === 'prev') prevPage();
+            }
+            const registerEvents = () => {
+                if (rendition) {
+                    rendition.on('rendered', (e, iframe) => {
+                        iframe?.iframe?.contentWindow.focus()
+                        keyListener(iframe.document, flipPage);
+                    });
+                }
+            };
+            const keyListener = (el, fn) => {
+                el.addEventListener('keyup', (e) => {
+                    if (e.key === 'ArrowUp' || e.key === 'ArrowRight') {
+                        fn('next');
+                    }
+                    else if (e.key === 'ArrowDown' || e.key === 'ArrowLeft') {
+                        fn('prev')
+                    }
+                }, false);
+            }
+            return {
+                viewer
+            }
+        }
+    }).mount('#app')
+</script>
+
+</html>

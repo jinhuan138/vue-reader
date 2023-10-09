@@ -3,7 +3,7 @@
 //https://github.com/Shimada666/vue-demi-sfc-component-template.git
 import "./style.css";
 import { ref, h as _h, onMounted, onUnmounted, toRefs, watch, defineComponent, getCurrentInstance, type PropType, onBeforeUnmount, version } from "vue-demi";
-import ePub, { Book, Rendition, Contents } from 'epubjs';
+import ePub,{ Book, Rendition, Contents } from 'epubjs';
 import { clickListener, swipListener, wheelListener, keyListener } from '../utils/listener/listener';
 
 interface Props {
