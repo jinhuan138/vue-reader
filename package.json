@@ -1,7 +1,7 @@
 {
   "name": "vue-reader",
   "version": "1.2.7",
-  "main": "lib/index.min.js",
+  "main": "lib/vue-reader.esm.js",
   "files": [
     "lib"
   ],
@@ -64,8 +64,7 @@
     "i": "^0.3.7",
     "medium-zoom": "^1.0.8",
     "node-vibrant": "3.2.1-alpha.1",
-    "photoswipe": "^5.4.1",
-    "pinia": "^2.0.23",
+    "pinia": "^2.0.36",
     "pinia-plugin-persistedstate": "^3.2.0",
     "postcss": "^8.4.21",
     "postcss-preset-env": "^8.0.1",
@@ -80,7 +79,7 @@
     "sass": "^1.61.0",
     "spark-md5": "^3.0.2",
     "typescript": "^5.0.4",
-    "unplugin-auto-import": "^0.15.1",
+    "unplugin-auto-import": "^0.16.6",
     "unplugin-vue-components": "^0.24.1",
     "vite": "^4.2.1",
     "vite-tsconfig-paths": "^4.0.7",
@@ -88,7 +87,7 @@
     "vitepress-theme-demoblock": "^2.0.2",
     "vue": "3.2.44",
     "vue-reader": "^1.2.2",
-    "vue-router": "4",
+    "vue-router": "^4.2.5",
     "vue2": "npm:vue@2"
   },
   "peerDependencies": {
