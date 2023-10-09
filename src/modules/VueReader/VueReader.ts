@@ -141,7 +141,7 @@ export default defineComponent({
                     h('span', { class: 'tocButtonBar', style: 'top: 66%' }),
                 ]),
                 // 书名
-                h('div', { class: 'titleArea' }, slots.title ? slots.title?.() : title || bookName),
+                h('div', { class: 'titleArea' }, slots.title ? slots.title?.() : title.value || bookName.value),
                 // 阅读
                 h(EpubView, {
                     ref: parseFloat(version) < 2.7 ? 'epubRef' : epubRef,

@@ -18,7 +18,7 @@ And in your vue-component...
 ```vue
 <template>
    <div style='height: 100vh'>
-      <VueReader url='/files/啼笑因缘.epub'/>
+      <vue-reader url='/files/啼笑因缘.epub'/>
    </div>
 </template>
 <script setup>
@@ -34,7 +34,7 @@ import { VueReader } from 'vue-reader'
 ```vue
 <template>
   <div style='height: 100vh'>
-    <VueReader url='/files/啼笑因缘.epub'> </VueReader>
+    <vue-reader url='/files/啼笑因缘.epub'> </vue-reader>
   </div>
 </template>
 <script>
@@ -106,7 +106,7 @@ Saving the current page on storage is pretty simple, but we need to keep in mind
 ```vue
 <template>
     <div style='height: 100vh'>
-        <VueReader url='/files/啼笑因缘.epub' :location='location' @update:location='locationChange'/>
+        <vue-reader url='/files/啼笑因缘.epub' :location='location' @update:location='locationChange'/>
     </div>
 </template>
 <script setup>
@@ -139,7 +139,7 @@ const locationChange = (epubcifi) => {
 ```vue
 <template>
   <div style='height: 100vh'>
-    <VueReader url="/files/啼笑因缘.epub" :location='location' @update:location='locationChange'> </VueReader>
+    <vue-reader url="/files/啼笑因缘.epub" :location='location' @update:location='locationChange'> </vue-reader>
   </div>
 </template>
 <script>
@@ -175,12 +175,12 @@ We store the epubjs rendition in a ref, and get the page numbers in the callback
 ```vue
 <template>
     <div style='height: 100vh'>
-        <VueReader 
+        <vue-reader 
             url='/files/啼笑因缘.epub' 
             :getRendition='getRendition'
             :tocChanged="tocChanged" 
             @update:location='locationChange'>
-        </VueReader>
+        </vue-reader>
     </div>
     <div class='page'>
         {{ page }}
@@ -242,8 +242,8 @@ Hooking into epubJS rendition object is the key for this also.
 ```vue
 <template>
     <div style='height: 100vh'>
-        <VueReader url='/files/啼笑因缘.epub' :getRendition='getRendition'>
-        </VueReader>
+        <vue-reader url='/files/啼笑因缘.epub' :getRendition='getRendition'>
+        </vue-reader>
     </div>
     <div class='size'>
         <button @click='changeSize(Math.max(80, size - 10))'>-</button>
@@ -287,10 +287,10 @@ This is useful for when you want to set custom font families, custom background 
 ```vue
 <template>
     <div style='height: 100vh'>
-        <VueReader 
+        <vue-reader 
             url='/files/啼笑因缘.epub' 
             :getRendition='getRendition'>
-        </VueReader>
+        </vue-reader>
     </div>
 </template>
 <script setup>
@@ -324,8 +324,8 @@ This shows how to hook into epubJS annotations object and let the user highlight
 ```vue
 <template>
     <div style='height: 100vh'>
-        <VueReader url='/files/啼笑因缘.epub' :getRendition='getRendition'>
-        </VueReader>
+        <vue-reader url='/files/啼笑因缘.epub' :getRendition='getRendition'>
+        </vue-reader>
     </div>
     <div class='selection'>
         Selection:
@@ -400,10 +400,10 @@ EpubJS will try to parse the epub-file you pass to it, but if the server send wr
 ```vue
 <template>
     <div style='height: 100vh'>
-        <VueReader 
+        <vue-reader 
             url='/my-epub-service'
             :epubInitOptions='{openAs: "epub"}'>
-        </VueReader>
+        </vue-reader>
     </div>
 </template>
 <script setup>
@@ -418,12 +418,12 @@ Pass options for this into epubJS in the prop `epubOptions`
 ```vue
 <template>
     <div style='height: 100vh'>
-        <VueReader 
+        <vue-reader 
             url='/files/啼笑因缘.epub' 
             :epubOptions='{
             flow: "scrolled",
             manager: "continuous"}'>
-        </VueReader>
+        </vue-reader>
     </div>
 </template>
 <script setup>
@@ -436,7 +436,7 @@ import { VueReader } from 'vue-reader'
 Epubjs is rendering the epub-content inside and iframe which defaults to `sandbox="allow-same-origin"`, to enable opening links or running javascript in an epub, you will need to pass some extra params in the `epubOptions` prop.
 
 ```vue
-<VueReader
+<vue-reader
   url='/files/啼笑因缘.epub' 
   :epubOptions='{
     allowPopups: true, // Adds `allow-popups` to sandbox-attribute

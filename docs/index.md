@@ -25,7 +25,7 @@ And in your vue-component...
 ```vue
 <template>
   <div style='height: 100vh'>
-    <VueReader url='/vue-reader/files/啼笑因缘.epub'/>
+    <vue-reader url='/vue-reader/files/啼笑因缘.epub'/>
   </div>
 </template>
 <script>
@@ -99,7 +99,7 @@ Saving the current page on storage is pretty simple, but we need to keep in mind
 ```vue
 <template>
     <div style='height: 100vh'>
-        <VueReader :location='location' url='/vue-reader/files/啼笑因缘.epub' @update:location='locationChange'/>
+        <vue-reader :location='location' url='/vue-reader/files/啼笑因缘.epub' @update:location='locationChange'/>
     </div>
 </template>
 <script setup>
@@ -134,7 +134,7 @@ const locationChange = (epubcifi) => {
 ```vue
 <template>
   <div style='height: 100vh'>
-    <VueReader url="/files/啼笑因缘.epub" :location='location' @update:location='locationChange'> </VueReader>
+    <vue-reader url="/files/啼笑因缘.epub" :location='location' @update:location='locationChange'> </vue-reader>
   </div>
 </template>
 <script>
@@ -171,12 +171,12 @@ We store the epubjs rendition in a ref, and get the page numbers in the callback
 ```vue
 <template>
     <div style='height: 100vh'>
-        <VueReader 
+        <vue-reader 
             url='/vue-reader/files/啼笑因缘.epub' 
             :getRendition='getRendition' 
             :tocChanged='tocChanged'
             @update:location='locationChange'>
-        </VueReader>
+        </vue-reader>
     </div>
     <div class='page'>
         {{ page }}
@@ -240,8 +240,8 @@ Hooking into epubJS rendition object is the key for this also.
 <template>
     <div style='position: relative'>
         <div style='height: 100vh'>
-            <VueReader url='/vue-reader/files/啼笑因缘.epub' :getRendition='getRendition'>
-            </VueReader>
+            <vue-reader url='/vue-reader/files/啼笑因缘.epub' :getRendition='getRendition'>
+            </vue-reader>
         </div>
         <div class='size'>
             <button @click='changeSize(Math.max(80, size - 10))' class='reader-button'>-</button>
@@ -289,10 +289,10 @@ This is useful for when you want to set custom font families, custom background 
 ```vue
 <template>
     <div style='height:100vh'>
-        <VueReader 
+        <vue-reader 
             url='/vue-reader/files/啼笑因缘.epub' 
             :getRendition='getRendition'>
-        </VueReader>
+        </vue-reader>
     </div>
 </template>
 <script setup>
@@ -330,8 +330,8 @@ This shows how to hook into epubJS annotations object and let the user highlight
 <template>
     <div style='position: relative'>
         <div style='height: 100vh'>
-            <VueReader url='/vue-reader/files/啼笑因缘.epub' :getRendition='getRendition'>
-            </VueReader>
+            <vue-reader url='/vue-reader/files/啼笑因缘.epub' :getRendition='getRendition'>
+            </vue-reader>
         </div>
         <div class='selection'>
             Selection:
@@ -409,10 +409,10 @@ EpubJS will try to parse the epub-file you pass to it, but if the server send wr
 ```vue
 <template>
     <div style='height: 100vh'>
-        <VueReader 
+        <vue-reader 
             url='/my-epub-service' 
             :epubInitOptions="{ openAs: 'epub' }">
-        </VueReader>
+        </vue-reader>
     </div>
 </template>
 ```
@@ -426,12 +426,12 @@ Pass options for this into epubJS in the prop `epubOptions`
 ```vue
 <template>
     <div style='height: 100vh'>
-        <VueReader 
+        <vue-reader 
             url='/vue-reader/files/啼笑因缘.epub' 
             :epubOptions='{
             flow: "scrolled",
             manager: "continuous"}'>
-        </VueReader>
+        </vue-reader>
     </div>
 </template>
 ```
@@ -443,7 +443,7 @@ Pass options for this into epubJS in the prop `epubOptions`
 Epubjs is rendering the epub-content inside and iframe which defaults to `sandbox="allow-same-origin"`, to enable opening links or running javascript in an epub, you will need to pass some extra params in the `epubOptions` prop.
 
 ```vue
-<VueReader
+<vue-reader
   url='/files/啼笑因缘.epub' 
   :epubOptions='{
     allowPopups: true, // Adds `allow-popups` to sandbox-attribute
@@ -460,7 +460,7 @@ Epubjs is rendering the epub-content inside and iframe which defaults to `sandbo
 <template>
     <div style='position: relative'>
         <div style='height: 100vh'>
-            <VueReader url='/vue-reader/files/啼笑因缘.epub' :getRendition='getRendition' @update:location='locationChange' />
+            <vue-reader url='/vue-reader/files/啼笑因缘.epub' :getRendition='getRendition' @update:location='locationChange' />
         </div>
         <div class='speak'>
             <button class='reader-button' @click='speak("click")'>
@@ -536,8 +536,8 @@ const voice = (text, rate = 1) => {
 
 ```vue
 <template>
-    <VueReader v-show='false' url='/vue-reader/files/啼笑因缘.epub' :getRendition='getRendition'>
-    </VueReader>
+    <vue-reader v-show='false' url='/vue-reader/files/啼笑因缘.epub' :getRendition='getRendition'>
+    </vue-reader>
     <div v-if='information' style='color: #000'>
         <img :src='information.cover' :alt='information.title' style="width: 100px">
         <p>标题:{{ information.title }}</p>
@@ -575,7 +575,7 @@ const getRendition = (rendition) => {
 <template>
     <div style='position: relative' :style='{ height: url ? "100vh" : "50px" }'>
         <div style='height: 100vh' v-if="url">
-            <VueReader :url='url'/>
+            <vue-reader :url='url'/>
         </div>
         <input type="file" :multiple="false" accept=".epub" @change="onchange" class="input">
     </div>
@@ -614,8 +614,8 @@ const onchange = (e) => {
 <template>
     <div style='position: relative'>
         <div style='height: 100vh'>
-            <VueReader :getRendition="getRendition" url="/vue-reader/files/啼笑因缘.epub">
-            </VueReader>
+            <vue-reader :getRendition="getRendition" url="/vue-reader/files/啼笑因缘.epub">
+            </vue-reader>
         </div>
         <div class="progress">
             <input type="number" :value="current" :min="0" :max="100" @change="change">%
@@ -692,8 +692,8 @@ const change = (e) => {
 <template>
     <div style='position: relative'>
         <div style='height: 100vh'>
-            <VueReader url='/vue-reader/files/啼笑因缘.epub' :getRendition='getRendition'>
-            </VueReader>
+            <vue-reader url='/vue-reader/files/啼笑因缘.epub' :getRendition='getRendition'>
+            </vue-reader>
         </div>
         <div class="search">
             <input v-model.trim="searchText" type="text" placeholder="search" @keyup.enter="search" />

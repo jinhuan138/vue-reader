@@ -59,7 +59,7 @@ export default {
       plugins: [autoprefixer(), cssnano()]
     }),
     terser(),
-    cleanup()
+    cleanup(),
   ],
-  external: ['vue', 'vue-demi']
+  // external:['vue', 'vue-demi','epubjs']
 };
