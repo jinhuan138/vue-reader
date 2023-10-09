@@ -22,7 +22,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "compile": "rollup -c",
+    "compile": "rollup -c && rollup --c full.config.js",
     "dev:2": "vue-demi-switch 2 vue2 && npm run dev --workspace=test/vue2",
     "dev:2.7": "vue-demi-switch 2.7 vue2 && npm run dev --workspace=test/vue2.7",
     "format": "prettier --write src/modules/**/*.{ts,vue}",
