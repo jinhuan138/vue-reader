@@ -155,10 +155,10 @@ export default defineComponent({
             watch(location, debounce((val: string | number, old: string | number) => {
                 if (val && val === old) return
                 if (typeof val === 'string') {
-                    // rendition?.display(val)
+                    rendition?.display(val)
                 }
                 if (typeof val === 'number') {
-                    // rendition?.display(val)
+                    rendition?.display(val)
                 }
             }), {
                 immediate: true
