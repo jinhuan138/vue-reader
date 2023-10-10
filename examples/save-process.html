@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>vue-reader</title>
+</head>
+
+<body>
+    <div id="app">
+        <div style='height: 100vh'>
+            <vue-reader :url='url' title="啼笑因缘" :location='location' @update:location='locationChange' />
+        </div>
+    </div>
+</body>
+<script type="importmap">
+    {
+        "imports": {
+            "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js",
+            "vue-reader":"https://unpkg.com/vue-reader@1/lib/vue-reader.esm-full.js"
+        }
+    }
+  </script>
+<script type="module">
+    import { createApp, ref } from 'vue'
+    import { VueReader } from 'vue-reader'
+    const url = 'https://jinhuan138.github.io/vue-reader/books/啼笑因缘.epub'
+    createApp({
+        components: {
+            VueReader
+        },
+        setup() {
+            const location = ref(null)
+            const firstRenderDone = ref(false)
+            const locationChange = (epubcifi) => {
+                // Since this function is also called on initial rendering, we are using custom state
+                // logic to check if this is the initial render.
+                // If you block this function from running (i.e not letting it change the page on the first render) your app crashes.
+
+                if (!firstRenderDone.value) {
+                    location.value = localStorage.getItem('book-progress')
+                    return firstRenderDone.value = true
+
+                }
+                // This is the code that runs everytime the page changes, after the initial render.
+                // Saving the current epubcifi on storage...
+                localStorage.setItem('book-progress', epubcifi)
+                // And then rendering it.
+                location.value = epubcifi// Or setLocation(localStorage.getItem("book-progress"))
+            }
+            return {
+                url, locationChange
+            }
+        }
+    }).mount('#app')
+</script>
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        color: #fff;
+    }
+
+    #app {
+        width: 100%;
+        height: 100%;
+        min-height: 100vh;
+    }
+</style>
+
+</html>
