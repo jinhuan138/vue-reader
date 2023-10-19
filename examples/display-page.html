@@ -10,7 +10,7 @@
 <body>
     <div id="app">
         <div style='height: 100vh'>
-            <vue-reader :url="url" title="啼笑因缘" :getRendition="getRendition" :tocChanged="tocChanged"
+            <vue-reader :url="url" title="啼笑因缘111" get-rendition="getRenditionsasdads" :tocChanged="tocChanged"
                 @update:location="locationChange" ref="reader" />
         </div>
         <div class='page'>
@@ -22,7 +22,9 @@
     {
         "imports": {
             "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js",
-            "vue-reader":"https://unpkg.com/vue-reader@1/lib/vue-reader.esm-full.js"
+            //"vue": "https://unpkg.com/vue@3/dist/vue.runtime.esm-browser.prod.js",
+            //"vue-reader":"https://unpkg.com/vue-reader@1/lib/vue-reader.esm-full.js"
+            "vue-reader":"../lib/vue-reader.esm-full.js"
         }
     }
   </script>
@@ -39,10 +41,8 @@
             let rendition = null, toc = [];
             const page = ref('')
             const firstRenderDone = ref(false)
-            const getRendition = (val) => {
-                console.log('rendition')
-                rendition = val
-            }
+            // const getRendition = ref('getRendition')
+
             const tocChanged = (val) => {
                 console.log('tocChanged')
                 toc = val
@@ -74,12 +74,8 @@
                     }
                 }
             }
-
-            setTimeout(() => {
-                console.log(reader, 'reader')
-            })
             return {
-                url, getRendition, tocChanged, locationChange, page, reader
+                url, tocChanged, locationChange, page, reader
             }
         }
     }).mount('#app')

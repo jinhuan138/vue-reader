@@ -34,6 +34,7 @@ export default {
         resolve(),
         vue({
             css: true,
+            target: 'browser'
         }),
         typescript({
             tsconfig: './tsconfig.json',
@@ -47,7 +48,7 @@ export default {
         postcss({
             plugins: [autoprefixer(), cssnano()]
         }),
-        terser(),
+        // terser(),
         cleanup(),
     ],
     external: ['vue']
