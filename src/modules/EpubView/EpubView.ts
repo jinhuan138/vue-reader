@@ -2,8 +2,9 @@
 //https://github.com/KaygNas/rollup-plugin-vue-demi
 //https://github.com/Shimada666/vue-demi-sfc-component-template.git
 import "./style.css";
-import { ref, h as _h, onMounted, onUnmounted, toRefs, watch, defineComponent, getCurrentInstance, type PropType, onBeforeUnmount, version } from "vue-demi";
-import ePub,{ Book, Rendition, Contents } from 'epubjs';
+import { ref, h as _h, onMounted, toRefs, watch, defineComponent, getCurrentInstance, type PropType, onBeforeUnmount, version } from "vue-demi";
+import type { Book, Rendition, Contents } from 'epubjs';
+import ePub from 'epubjs';
 import { clickListener, swipListener, wheelListener, keyListener } from '../utils/listener/listener';
 
 interface Props {
@@ -11,8 +12,6 @@ interface Props {
     location?: number | string | Rendition['location']['start'], //当前页 
     tocChanged?: (toc: Book['navigation']['toc']) => void,
     getRendition?: (rendition: Rendition) => void,
-    handleTextSelected?: (cfiRange: string, contents: Contents) => void,
-    handleKeyPress?: () => void,
     epubInitOptions?: Book['settings'],
     epubOptions?: Rendition['settings'],
 }
@@ -27,6 +26,12 @@ export default defineComponent({
 
     emits: {
         'update:location'(location: Props['location']) {
+            return true
+        },
+        select(cfiRange: string, contents: Contents) {
+            return true
+        },
+        keyup(e: any) {
             return true
         }
     },
@@ -45,12 +50,6 @@ export default defineComponent({
         getRendition: {
             type: Function as PropType<Props['getRendition']>,
         },
-        handleTextSelected: {
-            type: Function as PropType<Props['handleTextSelected']>,
-        },
-        handleKeyPress: {
-            type: Function as PropType<Props['handleKeyPress']>,
-        },
         epubInitOptions: {
             type: Object as PropType<Props['epubInitOptions']>,
             default: () => ({})
@@ -67,7 +66,7 @@ export default defineComponent({
         const h = _h.bind(vm);
 
         const { url, location } = toRefs(props)
-        const { tocChanged, getRendition, handleKeyPress, handleTextSelected, epubInitOptions, epubOptions } = props
+        const { tocChanged, getRendition, epubInitOptions, epubOptions } = props
 
         const viewer = ref<HTMLDivElement | null>(null)
         const toc = ref<Book['navigation']['toc']>([])
@@ -122,13 +121,9 @@ export default defineComponent({
                     keyListener(iframe.document, flipPage);
                 });
                 rendition.on('locationChanged', onLocationChange)
-                rendition.on("displayError", () => console.error("error rendering book"))
-                if (handleTextSelected) {
-                    rendition.on('selected', handleTextSelected)
-                }
-                if (handleKeyPress) {
-                    rendition.on('selected', handleKeyPress)
-                }
+                rendition.on("displayError", (section: Book['section']) => console.error("error rendering book", section))
+                rendition.on('selected', (cfiRange: string, contents: Contents) => emit('select', cfiRange, contents))
+                rendition.on('keyup', (event) => emit('keyPress', event))
             }
         };
 
@@ -188,7 +183,7 @@ export default defineComponent({
             initBook()
         })
 
-        onUnmounted(() => {
+        onBeforeUnmount(() => {
             book?.destroy()
         })
 

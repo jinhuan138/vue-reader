@@ -1,24 +1,32 @@
 <template>
-   <div style='height: 100vh'>
-            <vue-reader url='/files/alice.epub' title="啼笑因缘" :getRendition='getRendition' :tocChanged='tocChanged'
-                @update:location='locationChange' />
-        </div>
-        <div class='page' style="color:black">
-            {{ page }}
-        </div>
+    <div style='height: 100vh'>
+        <vue-reader url='/files/alice.epub' title="啼笑因缘" :getRendition='getRendition' :tocChanged='tocChanged'
+            @update:location='locationChange' @keyPress="keyPress" @select="select"/>
+    </div>
+    <div class='page' style="color:black">
+        {{ page }}
+    </div>
 </template>
 <script setup>
 import { VueReader } from "@/modules/index";
-import { onMounted,ref } from "vue";
+import { onMounted, ref } from "vue";
 let rendition = null, toc = []
 const page = ref('')
 const firstRenderDone = ref(false)
 
-const getRendition = (val) =>{
-  rendition = val
-  console.log('rendition')
-} 
+const getRendition = (val) => {
+    rendition = val
+    console.log('rendition')
+}
 const tocChanged = val => toc = val
+
+const keyPress = (val) => {
+    console.log('keypress', val)
+}
+
+const select = (val,cont) => {
+    console.log('select', val,cont)
+}
 
 const getLabel = (toc, href) => {
     let label = 'n/a';

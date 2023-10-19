@@ -1,7 +1,11 @@
 {
   "name": "vue-reader",
   "version": "1.2.8",
-  "main": "lib/vue-reader.esm.js",
+  "type": "module",
+  "main": "lib/vue-reader.cjs.js",
+  "module": "lib/vue-reader.esm.js",
+  "unpkg": "lib/vue-reader.global-full.js",
+  "jsdelivr": "lib/vue-reader.global-full.js",
   "files": [
     "lib"
   ],
@@ -17,7 +21,6 @@
     "type": "git",
     "url": "git@github.com:jinhuan138/vue-reader.git"
   },
-  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
