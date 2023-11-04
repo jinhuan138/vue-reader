@@ -77,11 +77,11 @@ export default {
 
 ## EpubView Events
 
-| **Name**        | **Description**                                              | **type**                      |
-| --------------- | ------------------------------------------------------------ | ----------------------------- |
+| **Name**        | **Description**                                                                                                                                          | **type**                      |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------- |
 | update:location | a function that receives the current location while user is reading. This function is called everytime the page changes, and also when it first renders. | `function(location)`          |
-| select          | when select text                                             | `function(cfirange,contents)` |
-| keyPress        | when press the key                                           | `function(keyboardEvent)`     |
+| select          | when select text                                                                                                                                         | `function(cfirange,contents)` |
+| keyPress        | when press the key                                                                                                                                       | `function(keyboardEvent)`     |
 
 ## EpubView  Slots
 

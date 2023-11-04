@@ -99,7 +99,11 @@ Saving the current page on storage is pretty simple, but we need to keep in mind
 ```vue
 <template>
     <div style='height: 100vh'>
-        <vue-reader :location='location' url='/vue-reader/files/啼笑因缘.epub' @update:location='locationChange'/>
+        <vue-reader 
+           :location='location' 
+           url='/vue-reader/files/啼笑因缘.epub' 
+           @update:location='locationChange'
+         />
     </div>
 </template>
 <script setup>
@@ -175,12 +179,10 @@ We store the epubjs rendition in a ref, and get the page numbers in the callback
             url='/vue-reader/files/啼笑因缘.epub' 
             :getRendition='getRendition' 
             :tocChanged='tocChanged'
-            @update:location='locationChange'>
-        </vue-reader>
+            @update:location='locationChange'
+         />
     </div>
-    <div class='page'>
-        {{ page }}
-    </div>
+    <div class='page'>{{ page }}</div>
 </template>
 <script setup>
 import { ref } from 'vue'
@@ -238,42 +240,43 @@ Hooking into epubJS rendition object is the key for this also.
 
 ```vue
 <template>
-    <div style='position: relative'>
-        <div style='height: 100vh'>
-            <vue-reader url='/vue-reader/files/啼笑因缘.epub' :getRendition='getRendition'>
-            </vue-reader>
-        </div>
-        <div class='size'>
-            <button @click='changeSize(Math.max(80, size - 10))' class='reader-button'>-</button>
-            <span>Current size: {{ size }}%</span>
-            <button @click='changeSize(Math.min(130, size + 10))' class='reader-button'>+</button>
-        </div>
+<div style='height: 100vh;position: relative'>
+    <vue-reader 
+       url='/vue-reader/files/啼笑因缘.epub' 
+       :getRendition='getRendition'
+    />
+    <div class='size'>
+        <button @click='changeSize(Math.max(80, size - 10))' class='reader-button'>-</button>
+        <span>Current size: {{ size }}%</span>
+        <button @click='changeSize(Math.min(130, size + 10))' class='reader-button'>+</button>
     </div>
+</div>
+
 </template>
 <script setup>
-import { ref } from 'vue'
+    import { ref } from 'vue'
 
-let rendition = null
-const size = ref(100)
-const changeSize = (val) => {
-    size.value = val
-    rendition.themes.fontSize(`${val}%`)
-}
-const getRendition = (val) => {
-    rendition = val
-    rendition.themes.fontSize(`${size.value}%`)
-}
+    let rendition = null
+    const size = ref(100)
+    const changeSize = (val) => {
+        size.value = val
+        rendition.themes.fontSize(`${val}%`)
+    }
+    const getRendition = (val) => {
+        rendition = val
+        rendition.themes.fontSize(`${size.value}%`)
+    }
 </script>
 <style scoped>
-.size {
-    position: absolute;
-    bottom: 1rem;
-    right: 1rem;
-    left: 1rem;
-    z-index: 1;
-    text-align: center;
-    color: #000;
-}
+    .size {
+        position: absolute;
+        bottom: 1rem;
+        right: 1rem;
+        left: 1rem;
+        z-index: 1;
+        text-align: center;
+        color: #000;
+    }
 </style>
 ```
 
@@ -288,34 +291,92 @@ This is useful for when you want to set custom font families, custom background 
 
 ```vue
 <template>
-    <div style='height:100vh'>
-        <vue-reader 
-            url='/vue-reader/files/啼笑因缘.epub' 
-            :getRendition='getRendition'>
-        </vue-reader>
+<div style='height: 100vh; position: relative'>
+    <vue-reader 
+       url='/vue-reader/files/啼笑因缘.epub' 
+       :getRendition='getRendition'
+       :class='theme + "-theme"'
+    />
+    <div class='theme'>
+        <button class='reader-button' @click="theme = 'light'">Light theme</button>
+        <button class='reader-button' @click="theme = 'dark'">Dark theme</button>
     </div>
+</div>
 </template>
 <script setup>
+    import { ref, watch } from 'vue'
+    let rendition = null
 
-const getRendition = (rendition) => {
-    rendition.themes.register('custom', {
-        "*": {
-            color: '#fff',
-            'background-color': "#252525",
-        },
-        'image': {
-            border: '1px solid red'
-        },
-        'p': {
-            'font-family': 'Helvetica, sans-serif',
-            'font-weight': '400',
-            'font-size': '20px',
-            border: '1px solid green'
+    const theme = ref('dark')
+
+    const updateTheme = (rendition, theme) => {
+        const themes = rendition.themes
+        switch (theme) {
+            case 'dark': {
+                themes.override('color', '#fff')
+                themes.override('background', '#000')
+                break
+            }
+            case 'light': {
+                themes.override('color', '#000')
+                themes.override('background', '#fff')
+                break
+            }
+        }
+    }
+
+    const getRendition = (_rendition) => {
+        rendition = _rendition
+        updateTheme(_rendition, theme.value)
+    }
+
+    watch(theme, (currentTheme) => {
+        if (rendition) {
+            updateTheme(rendition, currentTheme)
         }
     })
-    rendition.themes.select('custom')
-}
 </script>
+<style>
+    .theme {
+        position: absolute;
+        bottom: 1rem;
+        right: 1rem;
+        left: 1rem;
+        z-index: 1;
+        text-align: center;
+    }
+
+    .dark-theme .readerArea {
+        background-color: #000;
+    }
+
+    .dark-theme .titleArea {
+        color: #ccc;
+    }
+
+    .dark-theme .tocButtonExpanded {
+        color: #222;
+    }
+
+    .dark-theme .tocButtonBar {
+        background: #fff;
+    }
+
+    .dark-theme .tocButton {
+        color: white;
+    }
+    .dark-theme .tocArea {
+        background-color: #111;
+    }
+
+    .dark-theme .readerArea .arrow {
+        color: white;
+    }
+
+    .dark-theme .readerArea .arrow:hover {
+        color: #ccc;
+    }
+</style>
 ```
 
 :::
@@ -328,75 +389,73 @@ This shows how to hook into epubJS annotations object and let the user highlight
 
 ```vue
 <template>
-    <div style='position: relative'>
-        <div style='height: 100vh'>
-            <vue-reader url='/vue-reader/files/啼笑因缘.epub' :getRendition='getRendition'>
-            </vue-reader>
-        </div>
-        <div class='selection'>
-            Selection:
-            <ul>
-                <li v-for='({ text, cfiRange }, index) in selections' :key='index'>
-                    {{ text || '' }}
-                    <button @click='rendition.display(cfiRange)' class='reader-button'>show</button>
-                    <button @click='remove(cfiRange, index)' class='reader-button'>x</button>
-                </li>
-            </ul>
-        </div>
+<div style='height: 100vh;position: relative'>
+    <vue-reader url='/vue-reader/files/啼笑因缘.epub' :getRendition='getRendition'>
+    </vue-reader>
+    <div class='selection'>
+        Selection:
+        <ul>
+            <li v-for='({ text, cfiRange }, index) in selections' :key='index'>
+                {{ text || '' }}
+                <button @click='rendition.display(cfiRange)' class='reader-button'>show</button>
+                <button @click='remove(cfiRange, index)' class='reader-button'>x</button>
+    		</li>
+    	</ul>
     </div>
+</div>
 </template>
 <script setup>
-import { ref, onUnmounted } from 'vue'
+    import { ref, onUnmounted } from 'vue'
 
-let rendition = null
-const selections = ref([])
+    let rendition = null
+    const selections = ref([])
 
-const setRenderSelection = (cfiRange, contents) => {
-    selections.value.push({
-        text: rendition.getRange(cfiRange).toString(),
-        cfiRange
+    const setRenderSelection = (cfiRange, contents) => {
+        selections.value.push({
+            text: rendition.getRange(cfiRange).toString(),
+            cfiRange
+        })
+        rendition.annotations.add(
+            'highlight',
+            cfiRange,
+            {},
+            null,
+            'hl',
+            { fill: 'red', 'fill-opacity': '0.5', 'mix-blend-mode': 'multiply' }
+        )
+        contents.window.getSelection().removeAllRanges()
+    }
+
+    const getRendition = (val) => {
+        rendition = val
+        rendition.themes.default({
+            '::selection': {
+                background: 'orange'
+            }
+        })
+        rendition.on('selected', setRenderSelection)
+    }
+
+    const remove = (cfiRange, index) => {
+        rendition.annotations.remove(cfiRange, 'highlight')
+        selections.value = selections.value.filter((item, j) => j !== index)
+    }
+
+    onUnmounted(() => {
+        rendition.off('selected', setRenderSelection)
     })
-    rendition.annotations.add(
-        'highlight',
-        cfiRange,
-        {},
-        null,
-        'hl',
-        { fill: 'red', 'fill-opacity': '0.5', 'mix-blend-mode': 'multiply' }
-    )
-    contents.window.getSelection().removeAllRanges()
-}
-
-const getRendition = (val) => {
-    rendition = val
-    rendition.themes.default({
-        '::selection': {
-            background: 'orange'
-        }
-    })
-    rendition.on('selected', setRenderSelection)
-}
-
-const remove = (cfiRange, index) => {
-    rendition.annotations.remove(cfiRange, 'highlight')
-    selections.value = selections.value.filter((item, j) => j !== index)
-}
-
-onUnmounted(() => {
-    rendition.off('selected', setRenderSelection)
-})
 </script>
-  
+
 <style scoped>
-.selection {
-    position: absolute;
-    bottom: 1rem;
-    right: 1rem;
-    left: 1rem;
-    z-index: 1;
-    background-color: white;
-    color: #000;
-}
+    .selection {
+        position: absolute;
+        bottom: 1rem;
+        right: 1rem;
+        left: 1rem;
+        z-index: 1;
+        background-color: white;
+        color: #000;
+    }
 </style>
 ```
 
@@ -458,72 +517,70 @@ Epubjs is rendering the epub-content inside and iframe which defaults to `sandbo
 
 ```vue
 <template>
-    <div style='position: relative'>
-        <div style='height: 100vh'>
-            <vue-reader url='/vue-reader/files/啼笑因缘.epub' :getRendition='getRendition' @update:location='locationChange' />
-        </div>
-        <div class='speak'>
-            <button class='reader-button' @click='speak("click")'>
-                {{ isReading ? 'cancel' : 'speak' }}
-            </button>
-        </div>
-    </div>
+<div style='height: 100vh;position: relative'>
+    <vue-reader url='/vue-reader/files/啼笑因缘.epub' :getRendition='getRendition' @update:location='locationChange' />
+    <div class='speak'>
+        <button class='reader-button' @click='speak("click")'>
+            {{ isReading ? 'cancel' : 'speak' }}
+    	</button>
+	</div>
+</div>
 </template>
 <script setup>
-import { ref } from 'vue'
+    import { ref } from 'vue'
 
-let isAudioOn = false, text = '', rendition
-let isReading = ref(false)
+    let isAudioOn = false, text = '', rendition
+    let isReading = ref(false)
 
-const getRendition = val => rendition = val
-const locationChange = () => {
-    const range = rendition.getRange(rendition.currentLocation().start.cfi);
-    const endRange = rendition.getRange(rendition.currentLocation().end.cfi);
-    range.setEnd(endRange.startContainer, endRange.startOffset);
+    const getRendition = val => rendition = val
+    const locationChange = () => {
+        const range = rendition.getRange(rendition.currentLocation().start.cfi);
+        const endRange = rendition.getRange(rendition.currentLocation().end.cfi);
+        range.setEnd(endRange.startContainer, endRange.startOffset);
 
-    text = range.toString().replace(/\s\s/g, '')
-        .replace(/\r/g, '')
-        .replace(/\n/g, '')
-        .replace(/\t/g, '')
-        .replace(/\f/g, '')
-}
-
-const speak = (type) => {
-    if (type === 'click') isReading.value = !isReading.value
-    if (isReading.value) {
-        voice(text)
-    } else {
-        isAudioOn = false
-        window.speechSynthesis.cancel()
+        text = range.toString().replace(/\s\s/g, '')
+            .replace(/\r/g, '')
+            .replace(/\n/g, '')
+            .replace(/\t/g, '')
+            .replace(/\f/g, '')
     }
-}
 
-const voice = (text, rate = 1) => {
-    isAudioOn = true
-    const msg = new SpeechSynthesisUtterance()
-    msg.text = text;
-    msg.voice = window.speechSynthesis.getVoices()[0];
-    msg.rate = rate
-    window.speechSynthesis.speak(msg);
-    msg.onerror = (err) => {
-        console.log(err);
-    };
-    msg.onend = async (event) => {
-        if (!isReading.value && !isAudioOn) return
-        rendition.next()
-        speak()
-    };
-}
+    const speak = (type) => {
+        if (type === 'click') isReading.value = !isReading.value
+        if (isReading.value) {
+            voice(text)
+        } else {
+            isAudioOn = false
+            window.speechSynthesis.cancel()
+        }
+    }
+
+    const voice = (text, rate = 1) => {
+        isAudioOn = true
+        const msg = new SpeechSynthesisUtterance()
+        msg.text = text;
+        msg.voice = window.speechSynthesis.getVoices()[0];
+        msg.rate = rate
+        window.speechSynthesis.speak(msg);
+        msg.onerror = (err) => {
+            console.log(err);
+        };
+        msg.onend = async (event) => {
+            if (!isReading.value && !isAudioOn) return
+            rendition.next()
+            speak()
+        };
+    }
 </script>
 <style>
-.speak {
-    position: absolute;
-    bottom: 1rem;
-    right: 1rem;
-    left: 1rem;
-    z-index: 1;
-    text-align: center;
-}
+    .speak {
+        position: absolute;
+        bottom: 1rem;
+        right: 1rem;
+        left: 1rem;
+        z-index: 1;
+        text-align: center;
+    }
 </style>
 ```
 
@@ -573,34 +630,39 @@ const getRendition = (rendition) => {
 
 ```vue
 <template>
-    <div style='position: relative' :style='{ height: url ? "100vh" : "50px" }'>
-        <div style='height: 100vh' v-if="url">
-            <vue-reader :url='url'/>
-        </div>
-        <input type="file" :multiple="false" accept=".epub" @change="onchange" class="input">
-    </div>
+<div style='height: 100vh; position: relative' :style='{ height: url ? "100vh" : "50px" }'>
+    <vue-reader 
+       v-if='url' 
+       :url='url'/>
+    <input
+       class="input"
+       type="file" 
+       accept=".epub" 
+       @change="onchange" 
+     >
+</div>
 </template>
 <script setup>
-import { ref } from 'vue'
+    import { ref } from 'vue'
 
-const url = ref(null)
-const onchange = (e) => {
-    const file = e.target.files[0];
-    if (window.FileReader) {
-        var reader = new FileReader();
-        reader.onloadend = e => url.value = reader.result
-        reader.readAsArrayBuffer(file);
+    const url = ref(null)
+    const onchange = (e) => {
+        const file = e.target.files[0];
+        if (window.FileReader) {
+            var reader = new FileReader();
+            reader.onloadend = e => url.value = reader.result
+            reader.readAsArrayBuffer(file);
+        }
     }
-}
 </script>
 <style>
-.input {
-    position: absolute;
-    bottom: 1rem;
-    right: 1rem;
-    left: 1rem;
-    z-index: 1;
-}
+    .input {
+        position: absolute;
+        bottom: 1rem;
+        right: 1rem;
+        left: 1rem;
+        z-index: 1;
+    }
 </style>
 ```
 
@@ -612,73 +674,73 @@ const onchange = (e) => {
 
 ```vue
 <template>
-    <div style='position: relative'>
-        <div style='height: 100vh'>
-            <vue-reader :getRendition="getRendition" url="/vue-reader/files/啼笑因缘.epub">
-            </vue-reader>
-        </div>
-        <div class="progress">
-            <input type="number" :value="current" :min="0" :max="100" @change="change">%
-            <input type="range" :value="current" :min="0" :max="100" :step="1" @change="change">
-        </div>
+<div style='height: 100vh; position: relative'>
+    <vue-reader
+       url="/vue-reader/files/啼笑因缘.epub"
+       :getRendition="getRendition" >
+    </vue-reader>
+    <div class="progress">
+        <input type="number" :value="current" :min="0" :max="100" @change="change">%
+        <input type="range" :value="current" :min="0" :max="100" :step="1" @change="change">
     </div>
+</div>
 </template>
 <script setup>
-import { ref } from 'vue'
+    import { ref } from 'vue'
 
-const current = ref(0)
-let rendition, book, displayed
+    const current = ref(0)
+    let rendition, book, displayed
 
-const getRendition = (val) => {
-    rendition = val
-    book = rendition.book
-    displayed = rendition.display();
-    book.ready.then(() => {
-        return book.locations.generate(1600);
-    }).then(locations => {
-        // Wait for book to be rendered to get current page
-        displayed.then(function () {
-            // Get the current CFI
-            var currentLocation = rendition.currentLocation();
-            // Get the Percentage (or location) from that CFI
-            const currentPage = book.locations.percentageFromCfi(currentLocation.start.cfi);
-            current.value = currentPage
-        });
-        rendition.on('relocated', (location) => {
-            const percent = book.locations.percentageFromCfi(location.start.cfi);
-            const percentage = Math.floor(percent * 100);
-            current.value = percentage
-        });
-    })
-}
+    const getRendition = (val) => {
+        rendition = val
+        book = rendition.book
+        displayed = rendition.display();
+        book.ready.then(() => {
+            return book.locations.generate(1600);
+        }).then(locations => {
+            // Wait for book to be rendered to get current page
+            displayed.then(function () {
+                // Get the current CFI
+                var currentLocation = rendition.currentLocation();
+                // Get the Percentage (or location) from that CFI
+                const currentPage = book.locations.percentageFromCfi(currentLocation.start.cfi);
+                current.value = currentPage
+            });
+            rendition.on('relocated', (location) => {
+                const percent = book.locations.percentageFromCfi(location.start.cfi);
+                const percentage = Math.floor(percent * 100);
+                current.value = percentage
+            });
+        })
+    }
 
-const change = (e) => {
-    const value = e.target.value
-    current.value = value
-    var cfi = book.locations.cfiFromPercentage(value / 100);
-    rendition.display(cfi);
-}
+    const change = (e) => {
+        const value = e.target.value
+        current.value = value
+        var cfi = book.locations.cfiFromPercentage(value / 100);
+        rendition.display(cfi);
+    }
 </script>
 <style>
-.progress {
-    position: absolute;
-    bottom: 1rem;
-    right: 1rem;
-    left: 1rem;
-    z-index: 1;
-    color: #000;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-}
+    .progress {
+        position: absolute;
+        bottom: 1rem;
+        right: 1rem;
+        left: 1rem;
+        z-index: 1;
+        color: #000;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
 
-.progress>input[type=number] {
-    text-align: center;
-}
+    .progress>input[type=number] {
+        text-align: center;
+    }
 
-.progress>input[type=range] {
-    width: 100%;
-}
+    .progress>input[type=range] {
+        width: 100%;
+    }
 </style>
 ```
 
@@ -690,105 +752,104 @@ const change = (e) => {
 
 ```vue
 <template>
-    <div style='position: relative'>
-        <div style='height: 100vh'>
-            <vue-reader url='/vue-reader/files/啼笑因缘.epub' :getRendition='getRendition'>
-            </vue-reader>
-        </div>
+ <div style='height: 100vh; position: relative'>
+    <vue-reader url='/vue-reader/files/啼笑因缘.epub' :getRendition='getRendition' />
         <div class="search">
-            <input v-model.trim="searchText" type="text" placeholder="search" @keyup.enter="search" />
-            <div class="searchResults">
-                <div class="item" v-for="(item, index) in searchResults" :key="index" @click="go(item.cfi, $event)">
-                    <span
-                        v-html='item.excerpt.trim().replace(searchText, `<span style="color: orange">${searchText}</span>`)'>
-                    </span>
-                </div>
-                <div v-if="!searchResults.length">Empty</div>
+          <input v-model.trim="searchText" placeholder="search" @keyup.enter="search" />
+          <div class="searchResults">
+             <div v-if="!searchResults.length">Empty</div>
+              <div class="item" v-for="(item, index) in searchResults" :key="index" @click="go(item.cfi, $event)">
+                <span
+                    v-html='item.excerpt.trim().replace(searchText, `<span style="color: orange">${searchText}</span>`)'>
+                </span>
             </div>
         </div>
-    </div>
+     </div>
+ </div>
 </template>
 <script setup>
-import { ref } from 'vue'
+    import { ref } from 'vue'
 
-let rendition = null
-const searchText = ref('只在捻花一笑中')
-const searchResults = ref([])
-const getRendition = (val) => rendition = val
+    let rendition = null
+    const searchText = ref('只在捻花一笑中')
+    const searchResults = ref([])
+    const getRendition = (val) => rendition = val
 
-const search = async () => {
-    if (!searchText.value) return searchResults.value = []
-    const res = await doSearch(searchText.value)
-    searchResults.value = res.slice(0, 5)
-}
+    const search = async () => {
+        if (!searchText.value) return searchResults.value = []
+        const res = await doSearch(searchText.value)
+        searchResults.value = res.slice(0, 5)
+    }
 
-const doSearch = (value) => {
-    const { book } = rendition
-    return Promise.all(book.spine.spineItems.map(item => {
-        return item.load(book.load.bind(book)).then(doc => {
-            const res = item.find(value);
-            item.unload();
-            return Promise.resolve(res);
-        });
-    })).then(res => Promise.resolve([].concat.apply([], res)));
-}
+    const doSearch = (value) => {
+        const { book } = rendition
+        return Promise.all(book.spine.spineItems.map(item => {
+            return item.load(book.load.bind(book)).then(doc => {
+                const res = item.find(value);
+                item.unload();
+                return Promise.resolve(res);
+            });
+        })).then(res => Promise.resolve([].concat.apply([], res)));
+    }
 
-const go = (href, e) => {
-    rendition.display(href)
-    e.stopPropagation();
-    e.preventDefault();
-}
+    const go = (href, e) => {
+        rendition.display(href)
+        e.stopPropagation();
+        e.preventDefault();
+    }
 
 </script>
 <style scoped>
-.search {
-    position: absolute;
-    bottom: 1rem;
-    right: 1rem;
-    left: 1rem;
-    text-align: center;
-    z-index: 1;
-    color: #000;
-    background: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+    .search {
+        position: absolute;
+        bottom: 1rem;
+        right: 1rem;
+        left: 1rem;
+        text-align: center;
+        z-index: 1;
+        color: #000;
+        background: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 
 
-.search .searchResults {
-    width: 200px;
-}
+    .search .searchResults {
+        width: 200px;
+    }
 
-.search .searchResults .item {
-    cursor: pointer;
-    border-radius: 4px;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    border-bottom: 1px solid #000;
-}
+    .search .searchResults .item {
+        cursor: pointer;
+        border-radius: 4px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        border-bottom: 1px solid #000;
+    }
 
-.search .searchResults .item:hover {
-    background: rgba(0, 0, 0, 0.05);
-}
+    .search .searchResults .item:hover {
+        background: rgba(0, 0, 0, 0.05);
+    }
 </style>
 ```
 
 :::
 
 <style> 
-    .reader-button{ 
-      width: 48px; 
-      height: 24px; 
-      border:1px solid #dcdfe6;
-       border-radius:4px; text-align:  center; 
-       color:#606266; } 
-
-    .reader-button:hover,reader-button:focus{ 
-      color: #409eff;
-      border-color: #c6e2ff;
-       background-color: #ecf5ff; 
-       outline: none;
-       } 
+.reader-button {
+    min-width: 48px; 
+    height: 24px; 
+    border:1px solid #dcdfe6;
+    border-radius: 4px; 
+    text-align: center; 
+    color: #606266;
+    margin:0 5px;
+} 
+.reader-button:hover,reader-button:focus { 
+    color: #409eff;
+    border-color: #c6e2ff;
+    background-color: #ecf5ff; 
+    outline: none;
+} 
 </style>

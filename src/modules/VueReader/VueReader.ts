@@ -1,5 +1,5 @@
 import "./style.css";
-import { ref, h as _h, toRefs, reactive, defineComponent, getCurrentInstance, type PropType, onBeforeUnmount, version } from "vue-demi";
+import { ref, h as _h, toRefs, reactive, defineComponent, getCurrentInstance, type PropType, onBeforeUnmount, version, Transition } from "vue-demi";
 import { Rendition, Book } from 'epubjs';
 import EpubView from "../EpubView/EpubView";
 
@@ -81,8 +81,8 @@ export default defineComponent({
             })
             const book = rendition.book
             book.ready.then(() => {
-              const meta = book.package.metadata;
-              bookName.value = meta.title
+                const meta = book.package.metadata;
+                bookName.value = meta.title
             })
         }
 
@@ -141,7 +141,7 @@ export default defineComponent({
                     h('span', { class: 'tocButtonBar', style: 'top: 66%' }),
                 ]),
                 // 书名
-                h('div', { class: 'titleArea' }, slots.title ? slots.title?.() : title.value || bookName.value),
+                h('div', { class: 'titleArea', title: bookName.value }, slots.title ? slots.title?.() : title.value || bookName.value),
                 // 阅读
                 h(EpubView, {
                     ref: parseFloat(version) < 2.7 ? 'epubRef' : epubRef,
@@ -218,17 +218,21 @@ export default defineComponent({
                             }),
                         ]),
                         // 二级目录
-                        item.subitems && item.subitems.length > 0 && h('div', { style: { display: item.expansion ? undefined : 'none' } },
-                            item.subitems.map((subitem, subIndex) => {
-                                return h('button', {
-                                    key: subIndex,
-                                    class: ['tocAreaButton', currentLocation.value && subitem.href.includes(currentLocation.value!.start.href) ? 'active' : ''],
-                                    onClick: () => setLocation(subitem.href),
-                                    on: {
-                                        click: () => setLocation(subitem.href)
-                                    },
-                                }, " ".repeat(4) + subitem.label)
-                            }))
+                        item.subitems && item.subitems.length > 0 && h(Transition, { name: 'collapse-transition' },
+                            {
+                                default: () => h('div', { style: { display: item.expansion ? undefined : 'none' } },
+                                    item.subitems.map((subitem, subIndex) => {
+                                        return h('button', {
+                                            key: subIndex,
+                                            class: ['tocAreaButton', currentLocation.value && subitem.href.includes(currentLocation.value!.start.href) ? 'active' : ''],
+                                            onClick: () => setLocation(subitem.href),
+                                            on: {
+                                                click: () => setLocation(subitem.href)
+                                            },
+                                        }, " ".repeat(4) + subitem.label)
+                                    }))
+                            }
+                        )
                     ])
                 })),
                 // 目录遮罩

@@ -1,57 +1,80 @@
 <template>
-    <div style='height: 100vh'>
-        <vue-reader url='/files/alice.epub' title="啼笑因缘" :getRendition='getRendition' :tocChanged='tocChanged'
-            @update:location='locationChange' @keyPress="keyPress" @select="select"/>
-    </div>
-    <div class='page' style="color:black">
-        {{ page }}
+    <div style='height:100vh'>
+        <vue-reader url='/files/啼笑因缘.epub' :getRendition='getRendition' :class='theme + "-theme"'>
+        </vue-reader>
+        <div>
+            <button @click="theme = 'light'">
+                Light theme
+            </button>
+            <button @click="theme = 'dark'">
+                Dark theme
+            </button>
+        </div>
     </div>
 </template>
 <script setup>
-import { VueReader } from "@/modules/index";
-import { onMounted, ref } from "vue";
-let rendition = null, toc = []
-const page = ref('')
-const firstRenderDone = ref(false)
+import VueReader from '../modules/index'
+import { ref, watch } from 'vue'
+let rendition = null
+const theme = ref('dark')
 
-const getRendition = (val) => {
-    rendition = val
-    console.log('rendition')
-}
-const tocChanged = val => toc = val
-
-const keyPress = (val) => {
-    console.log('keypress', val)
-}
-
-const select = (val,cont) => {
-    console.log('select', val,cont)
-}
-
-const getLabel = (toc, href) => {
-    let label = 'n/a';
-    toc.some(item => {
-        if (item.subitems.length > 0) {
-            const subChapter = getLabel(item.subitems, href);
-            if (subChapter !== 'n/a') {
-                label = subChapter
-                return true
-            }
-        } else if (item.href.includes(href)) {
-            label = item.label
-            return true
+const updateTheme = (rendition, theme) => {
+    const themes = rendition.themes
+    switch (theme) {
+        case 'dark': {
+            themes.override('color', '#fff')
+            themes.override('background', '#000')
+            break
         }
-    })
-    return label;
-}
-const locationChange = (epubcifi) => {
-    if (epubcifi) {
-        const { displayed, href } = rendition.location.start
-        const { cfi } = rendition.location.end
-        if (href !== 'titlepage.xhtml') {
-            const label = getLabel(toc, href)
-            page.value = `${displayed.page}/${displayed.total} ${label}`
+        case 'light': {
+            themes.override('color', '#000')
+            themes.override('background', '#fff')
+            break
         }
     }
 }
+
+const getRendition = (_rendition) => {
+    rendition = _rendition
+    updateTheme(_rendition, theme.value)
+}
+
+watch(theme, (currentTheme) => {
+    if (rendition) {
+        updateTheme(rendition, currentTheme)
+    }
+})
 </script>
+
+<style>
+.dark-theme .readerArea {
+    background-color: #000;
+}
+
+.dark-theme .titleArea {
+    color: #ccc;
+}
+
+.dark-theme .tocButtonExpanded {
+    color: #222;
+}
+
+.dark-theme .tocButtonBar {
+    background: #fff;
+}
+
+.dark-theme .tocButton {
+    color: white;
+}
+.dark-theme .tocArea {
+    background-color: #111;
+}
+
+.dark-theme .readerArea .arrow {
+    color: white;
+}
+
+.dark-theme .readerArea .arrow:hover {
+    color: #ccc;
+}
+</style>
