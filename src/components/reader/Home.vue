@@ -29,7 +29,7 @@
                                         ? info.bgColorFromCover
                                         : '#6d6d6d',
                                 }">
-                                    {{ trunc(info.title, 30) }}
+                                    {{ trunc(info.title, 12) }}
                                 </div>
                             </template>
                             <!-- 书籍信息 -->
@@ -40,6 +40,7 @@
                                     <el-button type="primary" round :icon="Delete" @click="delFile(info.id)">删除</el-button>
                                 </p>
                                 <el-divider />
+                                <p v-if="info.title">书名: {{ info.title }}</p>
                                 <p v-if="info.creator">作者: {{ info.creator }}</p>
                                 <p v-if="info.description">
                                     描述: <span :title="info.description"> {{ trunc(info.description, 30) }}</span>
@@ -255,6 +256,7 @@ const delFile = (id) => {
 ::-webkit-scrollbar {
     display: none;
 }
+
 .main {
 
     /* margin-top: 40px; */
@@ -284,15 +286,20 @@ const delFile = (id) => {
             }
 
             .title {
+                top: -3px;
                 width: 100%;
+                padding: 0 10px;
                 height: 50px;
                 font-size: 14px;
-                display: inline-grid;
-                align-content: center;
-                text-align: center;
+                display: flex;
+                justify-content: center;
+                align-items: center;
                 color: #ffffff;
                 position: relative;
-                top: -3px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+
             }
         }
     }
