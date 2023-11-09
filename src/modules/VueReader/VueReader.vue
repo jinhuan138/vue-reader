@@ -2,8 +2,13 @@
   <div class="container">
     <div class="readerArea" :class="{ containerExpanded: expandedToc }">
       <!--展开目录 -->
-      <button v-if="showToc" class="tocButton" :class="{ tocButtonExpanded: expandedToc }" type="button"
-        @click="toggleToc">
+      <button
+        v-if="showToc"
+        class="tocButton"
+        :class="{ tocButtonExpanded: expandedToc }"
+        type="button"
+        @click="toggleToc"
+      >
         <span class="tocButtonBar" style="top: 35%"></span>
         <span class="tocButtonBar" style="top: 66%"></span>
       </button>
@@ -12,20 +17,32 @@
         <div class="titleArea">{{ title || bookName }}</div>
       </slot>
       <!-- 阅读 -->
-      <epub-view ref="epubRef" v-bind="$attrs" :url="url" :tocChanged="onTocChange" :getRendition="onGetRendition">
+      <epub-view
+        ref="epubRef"
+        v-bind="$attrs"
+        :url="url"
+        :tocChanged="onTocChange"
+        :getRendition="onGetRendition"
+      >
         <template #loadingView>
           <slot name="loadingView">
-            <div class="loadingView">
-              Loading…
-            </div>
+            <div class="loadingView">Loading…</div>
           </slot>
         </template>
       </epub-view>
       <!-- 翻页 -->
-      <button class="arrow pre" @click="pre" :disabled="currentLocation?.atStart">
+      <button
+        class="arrow pre"
+        @click="pre"
+        :disabled="currentLocation?.atStart"
+      >
         ‹
       </button>
-      <button class="arrow next" @click="next" :disabled="currentLocation?.atEnd">
+      <button
+        class="arrow next"
+        @click="next"
+        :disabled="currentLocation?.atEnd"
+      >
         ›
       </button>
     </div>
@@ -33,21 +50,43 @@
     <div v-if="showToc">
       <div class="tocArea">
         <div v-for="(item, index) in toc" :key="index">
-          <button type="button" class="tocAreaButton" @click="setLocation(item.href)"
-            :class="{ active: currentLocation ? item.href.includes(currentLocation.start.href) : false }">
+          <button
+            type="button"
+            class="tocAreaButton"
+            @click="setLocation(item.href)"
+            :class="{
+              active: currentLocation
+                ? item.href.includes(currentLocation.start.href)
+                : false,
+            }"
+          >
             {{ item.label }}
             <!-- 展开 -->
-            <div class="expansion" v-if="item.subitems && item.subitems.length > 0"
-              :style="{ transform: item.expansion ? 'rotate(180deg)' : 'rotate(0deg)' }"
-              @click.stop="item.expansion = !item.expansion"></div>
+            <div
+              class="expansion"
+              v-if="item.subitems && item.subitems.length > 0"
+              :style="{
+                transform: item.expansion ? 'rotate(180deg)' : 'rotate(0deg)',
+              }"
+              @click.stop="item.expansion = !item.expansion"
+            ></div>
           </button>
           <!-- 二级目录 -->
           <template v-if="item.subitems && item.subitems.length > 0">
             <div v-show="item.expansion">
-              <button type="button" v-for="(subitem, index) in item.subitems" :key="index" class="tocAreaButton"
+              <button
+                type="button"
+                v-for="(subitem, index) in item.subitems"
+                :key="index"
+                class="tocAreaButton"
                 @click="setLocation(subitem['href'])"
-                :class="{ active: currentLocation ? subitem['href'].includes(currentLocation.start.href) : false }">
-                {{ "&nbsp;".repeat(4) + subitem['label'] }}
+                :class="{
+                  active: currentLocation
+                    ? subitem['href'].includes(currentLocation.start.href)
+                    : false,
+                }"
+              >
+                {{ '&nbsp;'.repeat(4) + subitem['label'] }}
               </button>
             </div>
           </template>
@@ -59,32 +98,32 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, reactive, toRefs } from "vue";
-import { Rendition, Book } from 'epubjs';
-import EpubView from "../EpubView/EpubView.vue";
+import { ref, reactive, toRefs } from 'vue'
+import { Rendition, Book } from 'epubjs'
+import EpubView from '../EpubView/EpubView.vue'
 
 interface NavItem {
-  id: string,
-  href: string,
-  label: string,
-  subitems: Array<NavItem>,
-  parent?: string,
+  id: string
+  href: string
+  label: string
+  subitems: Array<NavItem>
+  parent?: string
   expansion: boolean
 }
 
 interface Props {
-  url: string | ArrayBuffer,
-  title?: string,
-  showToc?: boolean,
-  tocChanged?: (toc: Book['navigation']['toc']) => void,
-  getRendition?: (rendition: Rendition) => void,
+  url: string | ArrayBuffer
+  title?: string
+  showToc?: boolean
+  tocChanged?: (toc: Book['navigation']['toc']) => void
+  getRendition?: (rendition: Rendition) => void
 }
 
 const epubRef = ref<InstanceType<typeof EpubView>>()
 const currentLocation = ref<Rendition['location'] | null>(null)
 
 const props = withDefaults(defineProps<Props>(), {
-  showToc: true
+  showToc: true,
 })
 
 const { tocChanged, getRendition } = props
@@ -92,12 +131,12 @@ const { tocChanged, getRendition } = props
 const { title, url } = toRefs(props)
 
 interface EpubBook {
-  toc: Array<NavItem>,
+  toc: Array<NavItem>
   expandedToc: boolean
 }
 const book: EpubBook = reactive({
-  toc: [],//目录
-  expandedToc: false,//目录展开
+  toc: [], //目录
+  expandedToc: false, //目录展开
 })
 const { toc, expandedToc } = toRefs(book)
 
@@ -108,26 +147,26 @@ const toggleToc = () => {
 }
 
 const onTocChange = (_toc) => {
-  toc.value = _toc.map(i => ({ ...i, expansion: false }))
+  toc.value = _toc.map((i) => ({ ...i, expansion: false }))
   tocChanged && tocChanged(_toc)
 }
 
 const onGetRendition = (rendition) => {
   getRendition && getRendition(rendition)
-  rendition.on("relocated", (location) => {
+  rendition.on('relocated', (location) => {
     currentLocation.value = location
   })
   const book = rendition.book
   book.ready.then(() => {
-    const meta = book.package.metadata;
+    const meta = book.package.metadata
     bookName.value = meta.title
   })
 }
 
 const setLocation = (href: string | number) => {
-  epubRef?.value?.setLocation(href);
-  expandedToc.value = false;
-};
+  epubRef?.value?.setLocation(href)
+  expandedToc.value = false
+}
 
 const next = () => {
   epubRef.value?.nextPage()
@@ -136,7 +175,6 @@ const next = () => {
 const pre = () => {
   epubRef.value?.prevPage()
 }
-
 </script>
 <style scoped>
 /* container */
@@ -231,8 +269,8 @@ const pre = () => {
 }
 
 .tocArea .active {
-  color: #1565C0;
-  border-bottom: 2px solid #1565C0;
+  color: #1565c0;
+  border-bottom: 2px solid #1565c0;
 }
 
 /* 二级目录 */
@@ -247,7 +285,7 @@ const pre = () => {
 .tocArea .tocAreaButton .expansion::after {
   border-style: solid;
   border-width: 0 2px 2px 0;
-  content: "";
+  content: '';
   display: inline-block;
   padding: 3px;
   transform: rotate(45deg);
@@ -293,29 +331,29 @@ const pre = () => {
   margin-top: -32px;
   font-size: 64px;
   padding: 0 10px;
-  color: #E2E2E2;
+  color: #e2e2e2;
   font-family: arial, sans-serif;
   cursor: pointer;
   user-select: none;
   appearance: none;
-  font-weight: normal
+  font-weight: normal;
 }
 
 .arrow:hover {
-  color: #777
+  color: #777;
 }
 
 .arrow:disabled {
   cursor: not-allowed;
-  color: #E2E2E2;
+  color: #e2e2e2;
 }
 
 .pre {
-    left: 1px;
+  left: 1px;
 }
 
 .next {
-    right: 1px
+  right: 1px;
 }
 
 /* loading */
@@ -326,6 +364,6 @@ const pre = () => {
   right: 10%;
   color: #ccc;
   text-align: center;
-  margin-top: -.5em;
+  margin-top: -0.5em;
 }
 </style>
