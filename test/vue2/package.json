@@ -8,7 +8,7 @@
   "dependencies": {
     "@vue/composition-api": "^1.7.1",
     "vue": "~2.6.14",
-    "vue-demi":"latest"
+    "vue-demi": "latest"
   },
   "devDependencies": {
     "unplugin-vue2-script-setup": "^0.11.3",

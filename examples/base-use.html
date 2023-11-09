@@ -1,58 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>vue-reader</title>
-</head>
+  </head>
 
-<body>
+  <body>
     <div id="app">
-        <div style='height: 100vh'>
-            <vue-reader :url='url' title="啼笑因缘" />
-        </div>
+      <div style="height: 100vh">
+        <vue-reader :url="url" title="啼笑因缘" />
+      </div>
     </div>
-</body>
-<script type="importmap">
+  </body>
+  <script type="importmap">
     {
-        "imports": {
-            "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js",
-            "vue-reader":"https://unpkg.com/vue-reader@1/lib/vue-reader.esm-full.js"
-        }
+      "imports": {
+        "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js",
+        "vue-reader": "https://unpkg.com/vue-reader@1/lib/vue-reader.esm-full.js"
+      }
     }
   </script>
-<script type="module">
+  <script type="module">
     import { createApp } from 'vue'
     import { VueReader } from 'vue-reader'
     const url = 'https://jinhuan138.github.io/vue-reader/books/啼笑因缘.epub'
     createApp({
-        components: {
-            VueReader
-        },
-        setup() {
-            return {
-                url
-            }
+      components: {
+        VueReader,
+      },
+      setup() {
+        return {
+          url,
         }
+      },
     }).mount('#app')
-</script>
-<style>
+  </script>
+  <style>
     body {
-        margin: 0;
-        padding: 0;
-        min-height: 100vh;
-        position: absolute;
-        height: 100%;
-        width: 100%;
-        color: #fff;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      position: absolute;
+      height: 100%;
+      width: 100%;
+      color: #fff;
     }
 
     #app {
-        width: 100%;
-        height: 100%;
-        min-height: 100vh;
+      width: 100%;
+      height: 100%;
+      min-height: 100vh;
     }
-</style>
-
+  </style>
 </html>

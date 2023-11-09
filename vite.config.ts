@@ -1,15 +1,15 @@
-import { defineConfig,type  PluginOption  } from 'vite'
+import { defineConfig, type PluginOption } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { resolve } from 'path'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
-import tsconfigPaths from 'vite-tsconfig-paths';
-import { visualizer } from 'rollup-plugin-visualizer';
+import tsconfigPaths from 'vite-tsconfig-paths'
+import { visualizer } from 'rollup-plugin-visualizer'
 
 // https://cn.vitejs.dev/
 export default defineConfig({
-  base: "/",
+  base: '/',
   plugins: [
     vue(),
     tsconfigPaths({
@@ -30,13 +30,13 @@ export default defineConfig({
     extensions: ['.ts', '.js'],
     alias: [
       { find: '@', replacement: resolve(__dirname, 'src') },
-      { find: 'comps', replacement: resolve(__dirname, 'src/components') }
-    ]
+      { find: 'comps', replacement: resolve(__dirname, 'src/components') },
+    ],
   },
   optimizeDeps: {
-    exclude: ['vue-demi']
+    exclude: ['vue-demi'],
   },
   server: {
     port: 8025,
-  }
+  },
 })
