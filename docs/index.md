@@ -389,74 +389,74 @@ This shows how to hook into epubJS annotations object and let the user highlight
 
 ```vue
 <template>
-<div style='height: 100vh;position: relative'>
-    <vue-reader url='/vue-reader/files/啼笑因缘.epub' :getRendition='getRendition'>
+  <div style="height: 100vh">
+    <vue-reader url="/vue-reader/files/啼笑因缘.epub" :getRendition="getRendition">
     </vue-reader>
-    <div class='selection'>
-        Selection:
-        <ul>
-            <li v-for='({ text, cfiRange }, index) in selections' :key='index'>
-                {{ text || '' }}
-                <button @click='rendition.display(cfiRange)' class='reader-button'>show</button>
-                <button @click='remove(cfiRange, index)' class='reader-button'>x</button>
-    		</li>
-    	</ul>
-    </div>
-</div>
+  </div>
+  <div class="selection">
+    Selection:
+    <ul>
+      <li v-for="({ text, cfiRange }, index) in selections" :key="index">
+        {{ text || '' }}
+        <button @click="show(cfiRange)" class="reader-button">show</button>
+        <button @click="remove(cfiRange, index)" class="reader-button">
+          x
+        </button>
+      </li>
+    </ul>
+  </div>
 </template>
 <script setup>
-    import { ref, onUnmounted } from 'vue'
+import { ref, onUnmounted } from 'vue'
 
-    let rendition = null
-    const selections = ref([])
+let rendition = null
+const selections = ref([])
 
-    const setRenderSelection = (cfiRange, contents) => {
-        selections.value.push({
-            text: rendition.getRange(cfiRange).toString(),
-            cfiRange
-        })
-        rendition.annotations.add(
-            'highlight',
-            cfiRange,
-            {},
-            null,
-            'hl',
-            { fill: 'red', 'fill-opacity': '0.5', 'mix-blend-mode': 'multiply' }
-        )
-        contents.window.getSelection().removeAllRanges()
-    }
+const setRenderSelection = (cfiRange, contents) => {
+  selections.value.push({
+    text: rendition.getRange(cfiRange).toString(),
+    cfiRange,
+  })
+  rendition.annotations.add('highlight', cfiRange, {}, null, 'hl', {
+    fill: 'red',
+    'fill-opacity': '0.5',
+    'mix-blend-mode': 'multiply',
+  })
+  contents.window.getSelection().removeAllRanges()
+}
 
-    const getRendition = (val) => {
-        rendition = val
-        rendition.themes.default({
-            '::selection': {
-                background: 'orange'
-            }
-        })
-        rendition.on('selected', setRenderSelection)
-    }
+const getRendition = (val) => {
+  rendition = val
+  rendition.themes.default({
+    '::selection': {
+      background: 'orange',
+    },
+  })
+  rendition.on('selected', setRenderSelection)
+}
 
-    const remove = (cfiRange, index) => {
-        rendition.annotations.remove(cfiRange, 'highlight')
-        selections.value = selections.value.filter((item, j) => j !== index)
-    }
+const remove = (cfiRange, index) => {
+  rendition.annotations.remove(cfiRange, 'highlight')
+  selections.value = selections.value.filter((item, j) => j !== index)
+}
 
-    onUnmounted(() => {
-        rendition.off('selected', setRenderSelection)
-    })
+const show = (cfiRange) => {
+  rendition.display(cfiRange)
+}
+
+onUnmounted(() => {
+  rendition.off('selected', setRenderSelection)
+})
 </script>
 
 <style scoped>
-    .selection {
-        position: absolute;
-        bottom: 1rem;
-        right: 1rem;
-        left: 1rem;
-        z-index: 1;
-        background-color: white;
-        color: #000;
-    }
+.selection {
+  z-index: 1;
+  background-color: white;
+  color: #000;
+}
 </style>
+
 ```
 
 :::
