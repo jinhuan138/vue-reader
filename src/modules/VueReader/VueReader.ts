@@ -278,6 +278,7 @@ export default defineComponent({
                         transform: item.expansion
                           ? 'rotate(180deg)'
                           : 'rotate(0deg)',
+                        top: item.expansion ? '60%' : '50%',
                       },
                     }),
                   ]
