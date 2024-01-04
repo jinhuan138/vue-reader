@@ -55,9 +55,7 @@
             class="tocAreaButton"
             @click="setLocation(item.href)"
             :class="{
-              active: currentLocation
-                ? item.href.includes(currentLocation.start.href)
-                : false,
+              active: item.href === currentHref,
             }"
           >
             {{ item.label }}
@@ -81,9 +79,7 @@
                 class="tocAreaButton"
                 @click="setLocation(subitem['href'])"
                 :class="{
-                  active: currentLocation
-                    ? subitem['href'].includes(currentLocation.start.href)
-                    : false,
+                  active: subitem.href === currentHref,
                 }"
               >
                 {{ '&nbsp;'.repeat(4) + subitem['label'] }}
@@ -121,6 +117,7 @@ interface Props {
 
 const epubRef = ref<InstanceType<typeof EpubView>>()
 const currentLocation = ref<Rendition['location'] | null>(null)
+const currentHref = ref<string | number | null>(null)
 
 const props = withDefaults(defineProps<Props>(), {
   showToc: true,
@@ -155,6 +152,7 @@ const onGetRendition = (rendition) => {
   getRendition && getRendition(rendition)
   rendition.on('relocated', (location) => {
     currentLocation.value = location
+    currentHref.value = location.start.href
   })
   const book = rendition.book
   book.ready.then(() => {
@@ -165,16 +163,12 @@ const onGetRendition = (rendition) => {
 
 const setLocation = (href: string | number) => {
   epubRef?.value?.setLocation(href)
+  currentHref.value = href
   expandedToc.value = false
 }
 
-const next = () => {
-  epubRef.value?.nextPage()
-}
-
-const pre = () => {
-  epubRef.value?.prevPage()
-}
+const next = epubRef.value?.nextPage
+const pre = epubRef.value?.prevPage
 </script>
 <style scoped>
 /* container */

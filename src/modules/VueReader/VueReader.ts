@@ -64,6 +64,7 @@ export default defineComponent({
 
     const epubRef = ref<InstanceType<typeof EpubView>>()
     const currentLocation = ref<Rendition['location'] | null>(null)
+    const currentHref = ref<string | number | null>(null)
 
     const { tocChanged, getRendition } = props
     const { title, url, showToc } = toRefs(props)
@@ -89,6 +90,7 @@ export default defineComponent({
       getRendition && getRendition(rendition)
       rendition.on('relocated', (location) => {
         currentLocation.value = location
+        currentHref.value = location.start.href
       })
       const book = rendition.book
       book.ready.then(() => {
@@ -100,6 +102,7 @@ export default defineComponent({
     const setLocation = (href: string | number) => {
       const instance: any = epubRef.value || vm?.refs['epubRef']
       instance?.setLocation(href)
+      currentHref.value = href
       expandedToc.value = false
     }
 
@@ -145,24 +148,24 @@ export default defineComponent({
           [
             // 展开目录
             showToc.value &&
-              h(
-                'button',
-                {
-                  class: [
-                    'tocButton',
-                    { tocButtonExpanded: expandedToc.value },
-                  ],
-                  type: 'button',
-                  on: {
-                    click: () => toggleToc(),
-                  },
-                  onClick: toggleToc,
+            h(
+              'button',
+              {
+                class: [
+                  'tocButton',
+                  { tocButtonExpanded: expandedToc.value },
+                ],
+                type: 'button',
+                on: {
+                  click: () => toggleToc(),
                 },
-                [
-                  h('span', { class: 'tocButtonBar', style: 'top: 35%' }),
-                  h('span', { class: 'tocButtonBar', style: 'top: 66%' }),
-                ]
-              ),
+                onClick: toggleToc,
+              },
+              [
+                h('span', { class: 'tocButtonBar', style: 'top: 35%' }),
+                h('span', { class: 'tocButtonBar', style: 'top: 66%' }),
+              ]
+            ),
             // 书名
             h(
               'div',
@@ -234,105 +237,101 @@ export default defineComponent({
         ),
         // 目录
         showToc.value &&
-          h('div', [
-            h(
-              'div',
-              { class: 'tocArea' },
-              toc.value.map((item, index) => {
-                return h('div', { key: index }, [
-                  h(
-                    'button',
-                    {
-                      class: [
-                        'tocAreaButton',
-                        currentLocation.value &&
-                        item.href.includes(currentLocation.value!.start.href)
-                          ? 'active'
-                          : '',
-                      ],
-                      on: {
-                        click: () => setLocation(item.href),
-                      },
-                      onClick: () => setLocation(item.href),
+        h('div', [
+          h(
+            'div',
+            { class: 'tocArea' },
+            toc.value.map((item, index) => {
+              return h('div', { key: index }, [
+                h(
+                  'button',
+                  {
+                    class: [
+                      'tocAreaButton',
+                      item.href === currentHref!.value
+                        ? 'active'
+                        : '',
+                    ],
+                    on: {
+                      click: () => setLocation(item.href),
                     },
-                    [
-                      item.label,
-                      // 展开
-                      item.subitems &&
-                        item.subitems.length > 0 &&
-                        h('div', {
-                          class: 'expansion',
-                          on: {
-                            click: (event) => {
-                              event.stopPropagation()
-                              item.expansion = !item.expansion
-                            },
-                          },
-                          onClick: (event) => {
-                            event.stopPropagation()
-                            item.expansion = !item.expansion
-                          },
-                          style: {
-                            transform: item.expansion
-                              ? 'rotate(180deg)'
-                              : 'rotate(0deg)',
-                          },
-                        }),
-                    ]
-                  ),
-                  // 二级目录
-                  item.subitems &&
+                    onClick: () => setLocation(item.href),
+                  },
+                  [
+                    item.label,
+                    // 展开
+                    item.subitems &&
                     item.subitems.length > 0 &&
-                    h(
-                      Transition,
-                      { name: 'collapse-transition' },
-                      {
-                        default: () =>
-                          h(
-                            'div',
+                    h('div', {
+                      class: 'expansion',
+                      on: {
+                        click: (event) => {
+                          event.stopPropagation()
+                          item.expansion = !item.expansion
+                        },
+                      },
+                      onClick: (event) => {
+                        event.stopPropagation()
+                        item.expansion = !item.expansion
+                      },
+                      style: {
+                        transform: item.expansion
+                          ? 'rotate(180deg)'
+                          : 'rotate(0deg)',
+                      },
+                    }),
+                  ]
+                ),
+                // 二级目录
+                item.subitems &&
+                item.subitems.length > 0 &&
+                h(
+                  Transition,
+                  { name: 'collapse-transition' },
+                  {
+                    default: () =>
+                      h(
+                        'div',
+                        {
+                          style: {
+                            display: item.expansion ? undefined : 'none',
+                          },
+                        },
+                        item.subitems.map((subitem, subIndex) => {
+                          return h(
+                            'button',
                             {
-                              style: {
-                                display: item.expansion ? undefined : 'none',
+                              key: subIndex,
+                              class: [
+                                'tocAreaButton',
+                                subitem.href === currentHref!.value
+                                  ? 'active'
+                                  : '',
+                              ],
+                              onClick: () => setLocation(subitem.href),
+                              on: {
+                                click: () => setLocation(subitem.href),
                               },
                             },
-                            item.subitems.map((subitem, subIndex) => {
-                              return h(
-                                'button',
-                                {
-                                  key: subIndex,
-                                  class: [
-                                    'tocAreaButton',
-                                    currentLocation.value &&
-                                    subitem.href.includes(
-                                      currentLocation.value!.start.href
-                                    )
-                                      ? 'active'
-                                      : '',
-                                  ],
-                                  onClick: () => setLocation(subitem.href),
-                                  on: {
-                                    click: () => setLocation(subitem.href),
-                                  },
-                                },
-                                ' '.repeat(4) + subitem.label
-                              )
-                            })
-                          ),
-                      }
-                    ),
-                ])
-              })
-            ),
-            // 目录遮罩
-            expandedToc.value &&
-              h('div', {
-                class: ['tocBackground'],
-                onClick: toggleToc,
-                on: {
-                  click: () => toggleToc(),
-                },
-              }),
-          ]),
+                            ' '.repeat(4) + subitem.label
+                          )
+                        })
+                      ),
+                  }
+                ),
+              ])
+            })
+          ),
+          // 目录遮罩
+          expandedToc.value &&
+          h('div', {
+            class: ['tocBackground'],
+            onClick: toggleToc,
+            on: {
+              click: () => toggleToc(),
+            },
+          }),
+        ]),
       ])
   },
 })
