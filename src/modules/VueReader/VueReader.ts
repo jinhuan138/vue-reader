@@ -72,78 +72,80 @@ const TocComponent = defineComponent({
     const { toc, current } = toRefs(props)
 
     return () =>
-      toc.value.map((item, index) => {
-        return h('div', { key: index }, [
-          h(
-            'button',
-            {
-              class: [
-                'tocAreaButton',
-                item.href === current!.value ? 'active' : '',
-              ],
-              on: {
-                click: () => setLocation(item.href),
-              },
-              onClick: () => setLocation(item.href),
-            },
-            [
-              `${isSubmenu ? ' '.repeat(4) : ''}${item.label}`,
-              // 展开
-              item.subitems &&
-                item.subitems.length > 0 &&
-                h('div', {
-                  class: 'expansion',
-                  on: {
-                    click: (event) => {
-                      event.stopPropagation()
-                      item.expansion = !item.expansion
-                    },
-                  },
-                  onClick: (event) => {
-                    event.stopPropagation()
-                    item.expansion = !item.expansion
-                  },
-                  style: {
-                    transform: item.expansion
-                      ? 'rotate(180deg)'
-                      : 'rotate(0deg)',
-                    top: item.expansion ? '60%' : '50%',
-                  },
-                }),
-            ]
-          ),
-          //多级目录
-          item.subitems &&
-            item.subitems.length > 0 &&
+      h(
+        'div',
+        null,
+        toc.value.map((item, index) => {
+          return h('div', { key: index }, [
             h(
-              Transition,
-              { name: 'collapse-transition' },
+              'button',
               {
-                default: () =>
-                  h(
-                    'div',
-                    {
-                      style: {
-                        display: item.expansion ? undefined : 'none',
+                class: [
+                  'tocAreaButton',
+                  item.href === current!.value ? 'active' : '',
+                ],
+                on: {
+                  click: () => {
+                    if (item.subitems.length > 0) {
+                      item.expansion = !item.expansion
+                      setLocation(item.href, false)
+                    } else {
+                      setLocation(item.href)
+                    }
+                  },
+                },
+                onClick: () => {
+                  if (item.subitems.length > 0) {
+                    item.expansion = !item.expansion
+                    setLocation(item.href, false)
+                  } else {
+                    setLocation(item.href)
+                  }
+                },
+              },
+              [
+                `${isSubmenu ? ' '.repeat(4) : ''}${item.label}`,
+                // 展开
+                item.subitems &&
+                  item.subitems.length > 0 &&
+                  h('div', {
+                    class: `${item.expansion ? 'open' : ''} expansion`,
+                  }),
+              ]
+            ),
+            //多级目录
+            item.subitems &&
+              item.subitems.length > 0 &&
+              h(
+                Transition,
+                { name: 'collapse-transition' },
+                {
+                  default: () =>
+                    h(
+                      'div',
+                      {
+                        style: {
+                          display: item.expansion ? undefined : 'none',
+                        },
                       },
-                    },
-                    h(TocComponent, {
-                      toc: item.subitems,
-                      current: current.value,
-                      setLocation,
-                      isSubmenu: true,
-                      attrs: {
-                        toc: toc.value,
+                      h(TocComponent, {
+                        toc: item.subitems,
                         current: current.value,
                         setLocation,
                         isSubmenu: true,
-                      },
-                    })
-                  ),
-              }
-            ),
-        ])
-      })
+                        attrs: {
+                          toc: toc.value,
+                          current: current.value,
+                          setLocation,
+                          isSubmenu: true,
+                        },
+                      })
+                    ),
+                }
+              ),
+          ])
+        })
+      )
   },
 })
 
@@ -201,7 +203,7 @@ export default defineComponent({
       getRendition && getRendition(rendition)
       rendition.on('relocated', (location) => {
         currentLocation.value = location
-        currentHref.value = location.start.href
+        // currentHref.value = location.start.href
       })
       const book = rendition.book
       book.ready.then(() => {
@@ -210,19 +212,20 @@ export default defineComponent({
       })
     }
 
-    const instance: any = epubRef.value || vm?.refs['epubRef']
-
-    const setLocation = (href: string | number) => {
+    const setLocation = (href: string | number, close?: boolean = true) => {
+      const instance: any = epubRef.value || vm?.refs['epubRef']
       instance?.setLocation(href)
       currentHref.value = href
-      expandedToc.value = false
+      expandedToc.value = !close
     }
 
     const next = () => {
+      const instance: any = epubRef.value || vm?.refs['epubRef']
       instance?.nextPage()
     }
 
     const pre = () => {
+      const instance: any = epubRef.value || vm?.refs['epubRef']
       instance?.prevPage()
     }
 
@@ -247,18 +250,6 @@ export default defineComponent({
         })
       }
       expose({ setLocation, next, pre })
-    }
-
-    const tocProps: any = {
-      toc: toc.value,
-      current: currentHref.value,
-      setLocation,
-      attrs: {
-        toc: toc.value,
-        current: currentHref.value,
-        setLocation,
-        isSubmenu: false,
-      },
     }
 
     return () =>
@@ -293,7 +284,7 @@ export default defineComponent({
               { class: 'titleArea', title: bookName.value },
               slots.title ? slots.title?.() : title.value || bookName.value
             ),
-            // 阅读
+            // 阅读区
             h(
               EpubView,
               {
@@ -359,7 +350,20 @@ export default defineComponent({
         // 目录
         showToc.value &&
           h('div', [
-            h('div', { class: 'tocArea' }, h(TocComponent, tocProps)),
+            h(
+              'div',
+              { class: 'tocArea' },
+              h(TocComponent, {
+                toc: toc.value,
+                current: currentHref.value,
+                setLocation,
+                attrs: {
+                  toc: toc.value,
+                  current: currentHref.value,
+                  setLocation,
+                },
+              })
+            ),
             // 目录遮罩
             expandedToc.value &&
               h('div', {

@@ -53,8 +53,6 @@ export default defineComponent({
     },
   },
 
-  expose: ['nextPage', 'prevPage', 'setLocation'],
-
   props: {
     url: {
       required: true,

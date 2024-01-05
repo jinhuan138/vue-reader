@@ -1,7 +1,7 @@
 <template>
   <div style="height: 100vh">
     <vue-reader
-      url="/files/啼笑因缘.epub"
+      url="/books/三体（全集）.epub"
       :getRendition="getRendition"
       :class="theme + '-theme'"
     >
@@ -16,7 +16,7 @@
 import VueReader from '../modules/index'
 import { ref, watch } from 'vue'
 let rendition = null
-const theme = ref('dark')
+const theme = ref('light')
 
 const updateTheme = (rendition, theme) => {
   const themes = rendition.themes
