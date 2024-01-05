@@ -106,25 +106,33 @@
   position: absolute;
   width: 10px;
   background-color: #a2a5b4;
-  transition: background 0.3s ease-in-out, transform 0.3s ease-in-out,
-    top 0.3s ease-in-out, color 0.3s ease-in-out;
+  transition: transform 0.3s ease-in-out, top 0.3s ease-in-out;
 }
 
 .tocArea .tocAreaButton .expansion::after,
 .tocArea .tocAreaButton .expansion::before {
   content: '';
   position: absolute;
-  width: 8px;
+  width: 6px;
   height: 2px;
   background-color: currentcolor;
   border-radius: 2px;
+  transition: transform 0.3s ease-in-out, top 0.3s ease-in-out;
 }
-/* ↑ */
+/* ↓ */
 .tocArea .tocAreaButton .expansion::before {
-  transform: rotate(45deg) translateX(2.5px);
+  transform: rotate(-45deg) translateX(2.5px);
 }
 
 .tocArea .tocAreaButton .expansion::after {
+  transform: rotate(45deg) translateX(-2.5px);
+}
+/* ↑ */
+.tocArea .tocAreaButton .open::before {
+  transform: rotate(45deg) translateX(2.5px);
+}
+
+.tocArea .tocAreaButton .open::after {
   transform: rotate(-45deg) translateX(-2.5px);
 }
 /* tocButton */
