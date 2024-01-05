@@ -13,6 +13,7 @@ import {
   type PropType,
   onBeforeUnmount,
   version,
+  SetupContext,
 } from 'vue-demi'
 import type { Book, Rendition, Contents } from 'epubjs'
 import ePub from 'epubjs'
@@ -52,6 +53,8 @@ export default defineComponent({
     },
   },
 
+  expose: ['nextPage', 'prevPage', 'setLocation'],
+
   props: {
     url: {
       required: true,
@@ -76,7 +79,7 @@ export default defineComponent({
     },
   },
 
-  setup(props, context: any) {
+  setup(props, context: SetupContext) {
     const { emit, slots, expose } = context
     const vm = getCurrentInstance()
     const h = _h.bind(vm)
@@ -218,20 +221,19 @@ export default defineComponent({
       expose({ nextPage, prevPage, setLocation })
     } else {
       const expose = (exposing: Record<string, any>) => {
-        const instance = getCurrentInstance()
-        if (!instance) {
+        if (!vm) {
           throw new Error('expose should be called in setup().')
         }
 
         const keys = Object.keys(exposing)
 
         keys.forEach((key) => {
-          instance.proxy![key] = exposing[key]
+          vm.proxy![key] = exposing[key]
         })
 
         onBeforeUnmount(() => {
           keys.forEach((key) => {
-            instance.proxy![key] = undefined
+            vm.proxy![key] = undefined
           })
         })
       }
