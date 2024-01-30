@@ -34,7 +34,7 @@ interface Props {
 interface TocProps {
   toc: Array<NavItem>
   current: String | Number
-  setLocation: (href: string | number) => void
+  setLocation: (href: string | number, close?: boolean) => void
   isSubmenu?: boolean
 }
 
@@ -212,7 +212,7 @@ export default defineComponent({
       })
     }
 
-    const setLocation = (href: string | number, close?: boolean = true) => {
+    const setLocation = (href: string | number, close: boolean = true) => {
       const instance: any = epubRef.value || vm?.refs['epubRef']
       instance?.setLocation(href)
       currentHref.value = href
