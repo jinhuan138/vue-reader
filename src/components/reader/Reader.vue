@@ -109,6 +109,23 @@ const getRendition = (val) => {
   })
   rendition.hooks.content.register(applyStyle)
 
+  rendition.hooks.content.register((contents) => {
+    //hover 显示注释
+    const { document } = contents
+    const annotation = Array.from(document.querySelectorAll('a'))
+    if (annotation.length) {
+      annotation.forEach((el) => {
+        if (el.href) {
+          const id = el.href.split('#')[1]
+          const target = annotation.find((a) => a.id === id)
+          if (target && target.parentNode) {
+            el.title = target.parentNode.textContent
+          }
+        }
+      })
+    }
+  })
+
   book.ready
     .then(() => {
       const meta = book.package.metadata
