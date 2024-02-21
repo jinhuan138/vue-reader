@@ -210,6 +210,23 @@ export default defineComponent({
         const meta = book.package.metadata
         bookName.value = meta.title
       })
+      rendition.hooks.content.register((contents) => {
+        const { document } = contents
+        const annotation = Array.from(
+          document.querySelectorAll('a')
+        ) as Array<HTMLAnchorElement>
+        if (annotation.length) {
+          annotation.forEach((el: HTMLAnchorElement) => {
+            if (el.href) {
+              const id = el.href.split('#')[1]
+              const target = annotation.find((a) => a.id === id)
+              if (target && target.parentNode) {
+                el.title = target.parentNode.textContent as string
+              }
+            }
+          })
+        }
+      })
     }
 
     const setLocation = (href: string | number, close: boolean = true) => {
