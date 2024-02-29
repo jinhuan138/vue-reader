@@ -35,7 +35,7 @@ export default {
   ],
   plugins: [
     RollupClear({
-      targets: ['lib'],
+      targets: ['/src/modules'],
       watch: true,
     }),
     externals({ devDeps: false }),
