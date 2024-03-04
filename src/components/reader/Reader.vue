@@ -114,7 +114,8 @@ const getRendition = (val) => {
     const { document } = contents
     const annotation = Array.from(document.querySelectorAll('a'))
     if (annotation.length) {
-      annotation.forEach((el) => {
+      const halfLength = Math.floor(annotation.length / 2);
+      annotation.slice(0,halfLength).forEach((el) => {
         if (el.href) {
           const id = el.href.split('#')[1]
           const target = annotation.find((a) => a.id === id)
