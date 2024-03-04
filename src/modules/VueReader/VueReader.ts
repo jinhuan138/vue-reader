@@ -216,7 +216,8 @@ export default defineComponent({
           document.querySelectorAll('a')
         ) as Array<HTMLAnchorElement>
         if (annotation.length) {
-          annotation.forEach((el: HTMLAnchorElement) => {
+          const halfLength = Math.floor(annotation.length / 2);
+          annotation.slice(0,halfLength).forEach((el: HTMLAnchorElement) => {
             if (el.href) {
               const id = el.href.split('#')[1]
               const target = annotation.find((a) => a.id === id)
