@@ -49,6 +49,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.20.12",
+    "@babel/preset-env": "^7.24.0",
     "@element-plus/icons-vue": "^2.1.0",
     "@esbuild/win32-x64": "^0.17.14",
     "@rollup/plugin-babel": "^6.0.3",
