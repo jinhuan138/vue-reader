@@ -1,7 +1,7 @@
 //https://cn.rollupjs.org/
 import resolve from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
-import babel from '@rollup/plugin-babel'
+import { getBabelOutputPlugin } from '@rollup/plugin-babel'
 import terser from '@rollup/plugin-terser' //压缩代码
 import strip from '@rollup/plugin-strip' //删除log
 import vue from 'rollup-plugin-vue'
@@ -28,10 +28,10 @@ export default {
       file: `./lib/${name}.cjs.js`,
       format: 'cjs',
     },
-    {
-      file: `./lib/${name}.global.js`,
-      format: 'iife',
-    },
+    // {
+    //   file: `./lib/${name}.global.js`,
+    //   format: 'iife',
+    // },
   ],
   plugins: [
     RollupClear({
@@ -50,16 +50,16 @@ export default {
       tsconfig: './tsconfig.json',
       exclude: ['node_modules'],
     }),
-    commonjs(),
-    babel({
-      exclude: '**/node_modules/**',
-      babelHelpers: 'bundled',
-    }),
+    commonjs({ include: 'node_modules/**' }),
     postcss({
       plugins: [autoprefixer(), cssnano()],
+    }),
+    getBabelOutputPlugin({
+      exclude: '**/node_modules/**',
+      presets: ['@babel/preset-env'],
     }),
     terser(),
     cleanup(),
   ],
-  // external:['vue', 'vue-demi','epubjs']
+  // external: ['vue', 'vue-demi', 'epubjs'],
 }
