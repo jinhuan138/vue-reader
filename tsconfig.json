@@ -1,5 +1,7 @@
 {
   "compilerOptions": {
+    "outDir": "lib",
+    "jsx": "preserve",
     "declarationMap": true,
     "inlineSources": true,
     "declaration": true,
@@ -30,6 +32,6 @@
     "lib": ["esnext", "dom"]
   },
   "vueCompilerOptions": {},
-  "include": ["src/**/*.ts", "src/**/*.vue", "types/*.ts"],
+  "include": ["src/**/*.ts","src/**/*.tsx", "src/**/*.vue", "types/*.ts"],
   "exclude": ["node_modules"]
 }

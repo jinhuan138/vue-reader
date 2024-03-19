@@ -1,7 +1,6 @@
 import './style.css'
 import {
   ref,
-  h as _h,
   toRefs,
   reactive,
   defineComponent,
@@ -10,6 +9,7 @@ import {
   onBeforeUnmount,
   version,
   Transition,
+  h as _h,
 } from 'vue-demi'
 import { Rendition, Book } from 'epubjs'
 import EpubView from '../EpubView/EpubView'
@@ -104,7 +104,7 @@ const TocComponent = defineComponent({
                 },
               },
               [
-                `${isSubmenu ? ' '.repeat(4) : ''}${item.label}`,
+                isSubmenu ? ' '.repeat(4) + item.label : item.label,
                 // 展开
                 item.subitems &&
                   item.subitems.length > 0 &&
@@ -216,8 +216,8 @@ export default defineComponent({
           document.querySelectorAll('a')
         ) as Array<HTMLAnchorElement>
         if (annotation.length) {
-          const halfLength = Math.floor(annotation.length / 2);
-          annotation.slice(0,halfLength).forEach((el: HTMLAnchorElement) => {
+          const halfLength = Math.floor(annotation.length / 2)
+          annotation.slice(0, halfLength).forEach((el: HTMLAnchorElement) => {
             if (el.href) {
               const id = el.href.split('#')[1]
               const target = annotation.find((a) => a.id === id)
