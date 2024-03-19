@@ -1,6 +1,6 @@
 {
   "name": "vue-reader",
-  "version": "1.2.10",
+  "version": "1.2.11",
   "type": "module",
   "main": "lib/vue-reader.cjs.js",
   "module": "lib/vue-reader.es.js",
@@ -91,7 +91,7 @@
     "vitepress": "1.0.0-alpha.30",
     "vitepress-theme-demoblock": "^2.0.2",
     "vue": "3.2.44",
-    "vue-reader": "latest",
+    "vue-reader": "^1.2.11",
     "vue-router": "^4.2.5",
     "vue2": "npm:vue@2"
   },

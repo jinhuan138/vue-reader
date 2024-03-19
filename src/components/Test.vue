@@ -1,7 +1,7 @@
 <template>
   <div style="height: 100vh">
     <vue-reader
-      url="/books/三体（全集）.epub"
+      url="/books/啼笑因缘.epub"
       :getRendition="getRendition"
       :class="theme + '-theme'"
     >

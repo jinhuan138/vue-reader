@@ -128,18 +128,20 @@ const TocComponent = defineComponent({
                           display: item.expansion ? undefined : 'none',
                         },
                       },
-                      h(TocComponent, {
-                        toc: item.subitems,
-                        current: current.value,
-                        setLocation,
-                        isSubmenu: true,
-                        attrs: {
-                          toc: toc.value,
+                      [
+                        h(TocComponent, {
+                          toc: item.subitems,
                           current: current.value,
                           setLocation,
                           isSubmenu: true,
-                        },
-                      })
+                          attrs: {
+                            toc: toc.value,
+                            current: current.value,
+                            setLocation,
+                            isSubmenu: true,
+                          },
+                        }),
+                      ]
                     ),
                 }
               ),
@@ -368,9 +370,7 @@ export default defineComponent({
         // 目录
         showToc.value &&
           h('div', [
-            h(
-              'div',
-              { class: 'tocArea' },
+            h('div', { class: 'tocArea' }, [
               h(TocComponent, {
                 toc: toc.value,
                 current: currentHref.value,
@@ -380,8 +380,8 @@ export default defineComponent({
                   current: currentHref.value,
                   setLocation,
                 },
-              })
-            ),
+              }),
+            ]),
             // 目录遮罩
             expandedToc.value &&
               h('div', {
