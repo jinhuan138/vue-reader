@@ -1,7 +1,8 @@
 //https://cn.rollupjs.org/
+import { defineConfig } from 'rollup'
 import resolve from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
-import { getBabelOutputPlugin } from '@rollup/plugin-babel'
+import babel from '@rollup/plugin-babel'
 import terser from '@rollup/plugin-terser' //压缩代码
 import strip from '@rollup/plugin-strip' //删除log
 import vue from 'rollup-plugin-vue'
@@ -17,21 +18,17 @@ import { readFileSync } from 'fs'
 const pkg = JSON.parse(readFileSync('package.json', { encoding: 'utf8' }))
 const name = pkg.name
 
-export default {
+export default defineConfig({
   input: 'src/modules/index.ts',
   output: [
     {
-      file: `./lib/${name}.esm.js`,
+      file: `./lib/${name}.es.js`,
       format: 'es',
     },
     {
       file: `./lib/${name}.cjs.js`,
       format: 'cjs',
     },
-    // {
-    //   file: `./lib/${name}.global.js`,
-    //   format: 'iife',
-    // },
   ],
   plugins: [
     RollupClear({
@@ -43,9 +40,7 @@ export default {
       labels: ['unittest'],
     }),
     resolve(),
-    vue({
-      css: true,
-    }),
+    vue(),
     typescript({
       tsconfig: './tsconfig.json',
       exclude: ['node_modules'],
@@ -54,12 +49,13 @@ export default {
     postcss({
       plugins: [autoprefixer(), cssnano()],
     }),
-    getBabelOutputPlugin({
-      exclude: '**/node_modules/**',
+    babel({
+      exclude: 'node_modules/**',
+      babelHelpers: 'bundled',
       presets: ['@babel/preset-env'],
     }),
     terser(),
     cleanup(),
   ],
   // external: ['vue', 'vue-demi', 'epubjs'],
-}
+})

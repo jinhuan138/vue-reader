@@ -1,4 +1,5 @@
 //https://cn.rollupjs.org/
+import { defineConfig } from 'rollup';
 import resolve from '@rollup/plugin-node-resolve'
 import commonjs from '@rollup/plugin-commonjs'
 import babel from '@rollup/plugin-babel'
@@ -15,11 +16,11 @@ import { readFileSync } from 'fs'
 const pkg = JSON.parse(readFileSync('package.json', { encoding: 'utf8' }))
 const name = pkg.name
 
-export default {
+export default defineConfig({
   input: 'src/modules/index.ts',
   output: [
     {
-      file: `./lib/${name}.esm-full.js`,
+      file: `./lib/${name}.es-full.js`,
       format: 'es',
     },
     {
@@ -52,4 +53,4 @@ export default {
     cleanup(),
   ],
   external: ['vue'],
-}
+})

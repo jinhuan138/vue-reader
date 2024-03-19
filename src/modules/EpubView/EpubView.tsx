@@ -11,9 +11,7 @@ import {
   getCurrentInstance,
   type PropType,
   onBeforeUnmount,
-  version,
   SetupContext,
-  h as _h,
 } from 'vue-demi'
 import type { Book, Rendition, Contents } from 'epubjs'
 import ePub from 'epubjs'
@@ -80,7 +78,6 @@ export default defineComponent({
   setup(props, context: SetupContext) {
     const { emit, slots, expose } = context
     const vm = getCurrentInstance()
-    const h = _h.bind(vm)
 
     const { url, location } = toRefs(props)
     const { tocChanged, getRendition, epubInitOptions, epubOptions } = props
@@ -240,20 +237,13 @@ export default defineComponent({
 
     // Vue 3 and Vue 2 have different vnode props format:
     // see https://v3-migration.vuejs.org/zh/breaking-changes/render-function-api.html
-    return () =>
-      h('div', { class: 'reader' }, [
-        h('div', { class: 'viewHolder' }, [
-          h('div', {
-            ref: parseFloat(version) >= 2.7 ? viewer : 'viewer',
-            class: 'view',
-            id: 'viewer',
-            attrs: { id: 'viewer' },
-            style: {
-              display: !isLoaded.value ? 'none' : null,
-            },
-          }),
-          !isLoaded.value && h('div', slots.loadingView?.()),
-        ]),
-      ])
+    return () => (
+      <div class="reader">
+        <div class="viewHolder">
+          <div ref={viewer} id="viewer" v-show={isLoaded.value}></div>
+          {!isLoaded.value && slots.loadingView?.()}
+        </div>
+      </div>
+    )
   },
 })
