@@ -1,5 +1,8 @@
 <template>
-  <el-container direction="vertical">
+  <el-container
+    direction="vertical"
+    style="z-index: 999; background-color: #fff"
+  >
     <titlebar :title="title">
       <el-button-group>
         <el-button size="small" :icon="Back" circle @click="onBackBtn" />
@@ -41,6 +44,12 @@
           <el-progress :percentage="loadProcess" />
         </template>
       </EpubView>
+      <vue-easy-lightbox
+        :visible="visibleRef"
+        :imgs="imgsRef"
+        :index="indexRef"
+        @hide="visibleRef = false"
+      ></vue-easy-lightbox>
     </el-main>
 
     <el-footer height="45">
@@ -72,6 +81,7 @@ import { getInfo } from './utils/dbUtilis'
 import { dark, tan } from './utils/themes'
 import { useReaderStore } from './utils/stores'
 import { ref, computed, onMounted } from 'vue'
+import VueEasyLightbox from 'vue-easy-lightbox'
 
 const reader = useReaderStore()
 
@@ -94,6 +104,10 @@ const url = computed(() => {
 let rendition = null,
   flattenedToc = null
 
+const imgsRef = ref([])
+const indexRef = ref(0)
+const visibleRef = ref(false)
+
 const getRendition = (val) => {
   rendition = val
   const book = rendition.book
@@ -109,13 +123,12 @@ const getRendition = (val) => {
   })
   rendition.hooks.content.register(applyStyle)
 
-  rendition.hooks.content.register((contents) => {
+  rendition.hooks.content.register(({ document }) => {
     //hover 显示注释
-    const { document } = contents
     const annotation = Array.from(document.querySelectorAll('a'))
     if (annotation.length) {
-      const halfLength = Math.floor(annotation.length / 2);
-      annotation.slice(0,halfLength).forEach((el) => {
+      const halfLength = Math.floor(annotation.length / 2)
+      annotation.slice(0, halfLength).forEach((el) => {
         if (el.href) {
           const id = el.href.split('#')[1]
           const target = annotation.find((a) => a.id === id)
@@ -125,6 +138,19 @@ const getRendition = (val) => {
         }
       })
     }
+    //图片查看
+    imgsRef.value = []
+    const imgs = [
+      ...document.querySelectorAll('img'),
+      ...document.querySelectorAll('image'),
+    ]
+    imgs.forEach((img, index) => {
+      img.addEventListener('click', () => {
+        visibleRef.value = true
+        indexRef.value = index
+      })
+      imgsRef.value.push(img.src)
+    })
   })
 
   book.ready

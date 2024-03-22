@@ -1,48 +1,56 @@
 <template>
   <div style="height: 100vh">
     <vue-reader
-      url="/books/啼笑因缘.epub"
+      url="/books/红楼梦.epub"
       :getRendition="getRendition"
-      :class="theme + '-theme'"
     >
+      <template v-slot:loadingView>加载中。。。{{progress}}%</template>
     </vue-reader>
-    <div>
-      <button @click="theme = 'light'">Light theme</button>
-      <button @click="theme = 'dark'">Dark theme</button>
-    </div>
+    <vue-easy-lightbox
+      :visible="visibleRef"
+      :imgs="imgsRef"
+      :index="indexRef"
+      @hide="visibleRef = false"
+    ></vue-easy-lightbox>
   </div>
 </template>
 <script setup>
 import VueReader from '../modules/index'
-import { ref, watch } from 'vue'
-let rendition = null
-const theme = ref('light')
+import VueEasyLightbox from 'vue-easy-lightbox'
+import { ref, onUnmounted } from 'vue'
 
-const updateTheme = (rendition, theme) => {
-  const themes = rendition.themes
-  switch (theme) {
-    case 'dark': {
-      themes.override('color', '#fff')
-      themes.override('background', '#000')
-      break
-    }
-    case 'light': {
-      themes.override('color', '#000')
-      themes.override('background', '#fff')
-      break
-    }
-  }
+const imgsRef = ref([])
+const indexRef = ref(0)
+const visibleRef = ref(false)
+
+const getRendition = (rendition) => {
+  rendition.hooks.content.register(({ document }, view) => {
+    imgsRef.value = []
+    const imgs = [
+      ...document.querySelectorAll('img'),
+      ...document.querySelectorAll('image'),
+    ]
+    imgs.forEach((img, index) => {
+      img.addEventListener('click', () => {
+        visibleRef.value = true
+        indexRef.value = index
+      })
+      imgsRef.value.push(img.src)
+    })
+  })
 }
-
-const getRendition = (_rendition) => {
-  rendition = _rendition
-  updateTheme(_rendition, theme.value)
+//请求
+const progress =ref(0)
+const originalOpen = XMLHttpRequest.prototype.open
+const onProgress = (e) => {
+  progress.value = (e.loaded / e.total*100).toFixed(2)
 }
-
-watch(theme, (currentTheme) => {
-  if (rendition) {
-    updateTheme(rendition, currentTheme)
-  }
+XMLHttpRequest.prototype.open = function () {
+  this.addEventListener('progress', onProgress)
+  originalOpen.apply(this, arguments)
+}
+onUnmounted(() => {
+  XMLHttpRequest.prototype.open = originalOpen
 })
 </script>
 
