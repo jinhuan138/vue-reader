@@ -9,6 +9,7 @@
   "files": [
     "lib"
   ],
+  "types": "lib/src/modules/index.d.ts",
   "keywords": [
     "vue3",
     "vue2",
@@ -91,6 +92,7 @@
     "vitepress": "1.0.0-alpha.30",
     "vitepress-theme-demoblock": "^2.0.2",
     "vue": "3.2.44",
+    "vue-easy-lightbox": "^1.19.0",
     "vue-reader": "^1.2.11",
     "vue-router": "^4.2.5",
     "vue2": "npm:vue@2"
@@ -111,6 +113,5 @@
     "> 1%",
     "iOS 7",
     "last 3 iOS versions"
-  ],
-  "types": "lib/src/modules/index.d.ts"
+  ]
 }
