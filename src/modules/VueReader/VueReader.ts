@@ -9,6 +9,7 @@ import {
   onBeforeUnmount,
   version,
   Transition,
+  onUnmounted,
   h as _h,
 } from 'vue-demi'
 import { Rendition, Book } from 'epubjs'
@@ -45,6 +46,13 @@ interface EpubBook {
 
 const TocComponent = defineComponent({
   name: 'TocComponent',
+
+  emits: {
+    progress(percentage: number) {
+      return true
+    },
+  },
+
   props: {
     toc: {
       type: Array as PropType<Array<NavItem>>,
@@ -64,6 +72,7 @@ const TocComponent = defineComponent({
       required: false,
     },
   },
+
   setup(props) {
     const vm = getCurrentInstance()
     const h = _h.bind(vm)
@@ -212,8 +221,7 @@ export default defineComponent({
         const meta = book.package.metadata
         bookName.value = meta.title
       })
-      rendition.hooks.content.register((contents) => {
-        const { document } = contents
+      rendition.hooks.content.register(({ document }) => {
         const annotation = Array.from(
           document.querySelectorAll('a')
         ) as Array<HTMLAnchorElement>
@@ -238,6 +246,25 @@ export default defineComponent({
       currentHref.value = href
       expandedToc.value = !close
     }
+
+    //Request
+    const originalOpen = XMLHttpRequest.prototype.open
+    const onProgress = (e: ProgressEvent) => {
+      emit('progress', Math.floor((e.loaded / e.total) * 100))
+    }
+    XMLHttpRequest.prototype.open = function (
+      method: string,
+      requestUrl: string | URL
+    ) {
+      if (requestUrl === url.value) {
+        this.addEventListener('progress', onProgress)
+      }
+      originalOpen.apply(this, arguments as any)
+    }
+
+    onUnmounted(() => {
+      XMLHttpRequest.prototype.open = originalOpen
+    })
 
     const next = () => {
       const instance: any = epubRef.value || vm?.refs['epubRef']

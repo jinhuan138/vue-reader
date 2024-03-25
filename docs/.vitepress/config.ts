@@ -1,7 +1,7 @@
 //https://vitepress.dev/
 import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig } from 'vitepress'
-import { demoBlockPlugin } from 'vitepress-theme-demoblock'
+import { demoBlockPlugin,demoblockVitePlugin } from 'vitepress-theme-demoblock'
 import { resolve } from 'path'
 
 export default defineConfig({
@@ -39,6 +39,7 @@ export default defineConfig({
     vue: {
     },
     vite: {
+        plugins: [demoblockVitePlugin()],
         publicDir: resolve(__dirname, "../../public"),
         server: {
             port: 3030,
