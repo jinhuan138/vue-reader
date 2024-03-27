@@ -160,36 +160,6 @@ export default defineComponent({
       }
     }
 
-    const debounce = (func: Function, wait: number = 1000) => {
-      let timeout: NodeJS.Timeout | null
-      return function executedFunction(...args: Array<any>) {
-        const later = () => {
-          timeout = null
-          func(...args)
-        }
-        clearTimeout(timeout as NodeJS.Timeout)
-        timeout = setTimeout(later, wait)
-      }
-    }
-
-    if (location) {
-      watch(
-        location,
-        debounce((val: string | number, old: string | number) => {
-          if (val && val === old) return
-          if (typeof val === 'string') {
-            rendition?.display(val)
-          }
-          if (typeof val === 'number') {
-            rendition?.display(val)
-          }
-        }),
-        {
-          immediate: true,
-        }
-      )
-    }
-
     watch(url, () => {
       initBook()
     })
