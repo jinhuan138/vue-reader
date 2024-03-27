@@ -106,35 +106,27 @@ Saving the current page on storage is pretty simple, but we need to keep in mind
 :::demo 
 ```vue
 <template>
-    <div style='height: 100vh'>
-        <vue-reader 
-           :location='location' 
-           url='/vue-reader/files/啼笑因缘.epub' 
-           @update:location='locationChange'
-         />
-    </div>
+  <div style="height: 100vh">
+    <vue-reader
+      :location="location"
+      url="/vue-reader/files/啼笑因缘.epub"
+      @update:location="locationChange"
+    />
+  </div>
 </template>
 <script setup>
 import { VueReader } from 'vue-reader'
-import { ref } from 'vue'
+import { useStorage } from '@vueuse/core'
 
-const location = ref(null)
-const firstRenderDone = ref(false)
+const location = useStorage('book-progress', 0, undefined, {
+  serializer: {
+    read: (v) => JSON.parse(v),
+    write: (v) => JSON.stringify(v),
+  },
+})
+
 const locationChange = (epubcifi) => {
-    // Since this function is also called on initial rendering, we are using custom state
-    // logic to check if this is the initial render.
-    // If you block this function from running (i.e not letting it change the page on the first render) your app crashes.
-
-    if (!firstRenderDone.value) {
-        location.value = localStorage.getItem('book-progress')
-        return firstRenderDone.value = true
-
-    }
-    // This is the code that runs everytime the page changes, after the initial render.
-    // Saving the current epubcifi on storage...
-    localStorage.setItem('book-progress', epubcifi)
-    // And then rendering it.
-    location.value = epubcifi// Or setLocation(localStorage.getItem("book-progress"))
+  location.value = epubcifi
 }
 </script>
 ```
@@ -182,59 +174,57 @@ We store the epubjs rendition in a ref, and get the page numbers in the callback
 :::demo
 ```vue
 <template>
-    <div style='height: 100vh'>
-        <vue-reader 
-            url='/vue-reader/files/啼笑因缘.epub' 
-            :getRendition='getRendition' 
-            :tocChanged='tocChanged'
-            @update:location='locationChange'
-         />
-    </div>
-    <div class='page'>{{ page }}</div>
+  <div style="height: 100vh">
+    <vue-reader
+      url="/vue-reader/files/啼笑因缘.epub"
+      :getRendition="getRendition"
+      :tocChanged="tocChanged"
+      @update:location="locationChange"
+    />
+  </div>
+  <div class="page">{{ page }}</div>
 </template>
 <script setup>
 import { VueReader } from 'vue-reader'
 import { ref } from 'vue'
 
-let rendition = null, toc = []
+let rendition = null,
+  toc = []
 const page = ref('')
-const firstRenderDone = ref(false)
 
-const getRendition = val => rendition = val
-const tocChanged = val => toc = val
+const getRendition = (val) => (rendition = val)
+const tocChanged = (val) => (toc = val)
 
 const getLabel = (toc, href) => {
-    let label = 'n/a';
-    toc.some(item => {
-        if (item.subitems.length > 0) {
-            const subChapter = getLabel(item.subitems, href);
-            if (subChapter !== 'n/a') {
-                label = subChapter
-                return true
-            }
-        } else if (item.href.includes(href)) {
-            label = item.label
-            return true
-        }
-    })
-    return label;
+  let label = 'n/a'
+  toc.some((item) => {
+    if (item.subitems.length > 0) {
+      const subChapter = getLabel(item.subitems, href)
+      if (subChapter !== 'n/a') {
+        label = subChapter
+        return true
+      }
+    } else if (item.href.includes(href)) {
+      label = item.label
+      return true
+    }
+  })
+  return label
 }
 const locationChange = (epubcifi) => {
-    if (epubcifi) {
-        const { displayed, href } = rendition.location.start
-        const { cfi } = rendition.location.end
-        if (href !== 'titlepage.xhtml') {
-            const label = getLabel(toc, href)
-            page.value = `${displayed.page}/${displayed.total} ${label}`
-        }
-    }
+  if (epubcifi) {
+    const { displayed, href } = rendition.location.start
+    const { cfi } = rendition.location.end
+      const label = getLabel(toc, href)
+      page.value = `${displayed.page}/${displayed.total} ${label}`
+  }
 }
 </script>
 <style scoped>
 .page {
-    text-align: center;
-    z-index: 1;
-    color: #000;
+  text-align: center;
+  z-index: 1;
+  color: #000;
 }
 </style>
 ```

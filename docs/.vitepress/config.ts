@@ -10,7 +10,7 @@ export default defineConfig({
     base: '/vue-reader',
     cleanUrls: true,
     markdown: {
-        // theme: { light: 'github-light', dark: 'github-dark' },
+        theme: { light: 'github-light', dark: 'github-dark' },
         config: (md) => {
             md.use(demoBlockPlugin)
         }
