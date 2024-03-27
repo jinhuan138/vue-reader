@@ -94,7 +94,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, reactive, toRefs } from 'vue'
+import { ref, reactive, toRefs,onUnmounted } from 'vue'
 import { Rendition, Book } from 'epubjs'
 import EpubView from '../EpubView/EpubView.vue'
 
@@ -114,6 +114,8 @@ interface Props {
   tocChanged?: (toc: Book['navigation']['toc']) => void
   getRendition?: (rendition: Rendition) => void
 }
+
+const emit = defineEmits(['progress'])
 
 const epubRef = ref<InstanceType<typeof EpubView>>()
 const currentLocation = ref<Rendition['location'] | null>(null)
@@ -166,6 +168,25 @@ const setLocation = (href: string | number) => {
   currentHref.value = href
   expandedToc.value = false
 }
+
+//Request
+const originalOpen = XMLHttpRequest.prototype.open
+const onProgress = (e: ProgressEvent) => {
+  emit('progress', Math.floor((e.loaded / e.total) * 100))
+}
+XMLHttpRequest.prototype.open = function (
+  method: string,
+  requestUrl: string | URL
+) {
+  if (requestUrl === url.value) {
+    this.addEventListener('progress', onProgress)
+  }
+  originalOpen.apply(this, arguments as any)
+}
+
+onUnmounted(() => {
+  XMLHttpRequest.prototype.open = originalOpen
+})
 
 const next = epubRef.value?.nextPage
 const pre = epubRef.value?.prevPage
