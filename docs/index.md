@@ -738,6 +738,7 @@ const onchange = (e) => {
 </template>
 <script setup>
 import { VueReader } from 'vue-reader'
+import { ElProgress } from 'element-plus'
 import { ref } from 'vue'
 
 const current = ref(0)
@@ -886,7 +887,7 @@ const getRendition = (rendition) => {
                 .trim()
                 .replace(
                   searchText,
-                  `<span style=&quot;color: orange&quot;>${searchText}</span>`
+                  `<span style='color: orange;'>${searchText}</span>`
                 )
             "
           >

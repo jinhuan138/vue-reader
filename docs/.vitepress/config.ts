@@ -53,6 +53,9 @@ export default defineConfig({
                 { find: '/', replacement: resolve(__dirname, '../../') },
                 { find: 'comps', replacement: resolve(__dirname, '../../src/components') },
             ]
-        }
+        },
+        ssr: {
+            noExternal: ['vue-reader']
+        },
     }
 })
