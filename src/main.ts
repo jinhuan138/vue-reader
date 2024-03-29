@@ -5,6 +5,7 @@
 //https://github.com/weijan-vscode/vscode-epub-viewer.git
 //https://github.com/m8524769/espacio.git
 //http://futurepress.github.io/epub.js/examples/
+//https://github.com/futurepress/epub.js/wiki/Tips-and-Tricks-(v0.3)#searching-the-entire-book
 import { createApp } from 'vue'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'

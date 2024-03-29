@@ -11,8 +11,12 @@
 
       <toc-menu :toc="currentBook.toc" @node-click="onNodeClick"></toc-menu>
 
-      <!-- <bookmark-menu :bookmarks="currentBook.bookmarks" @node-click="onNodeClick" @add-bookmark="addBookmark"
-                @remove-bookmark="removeBookmark" /> -->
+      <bookmark-menu
+        :bookmarks="currentBook.bookmarks"
+        @node-click="onNodeClick"
+        @add-bookmark="addBookmark"
+        @remove-bookmark="removeBookmark"
+      />
 
       <search-menu
         :search-result="searchResult"
