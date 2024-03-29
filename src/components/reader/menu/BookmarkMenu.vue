@@ -12,42 +12,32 @@
       <span slot-scope="{ node }" class="custom-tree-node">
         <span>{{ node.label }}</span>
         <span>
-          <el-button
-            type="text"
-            icon="close"
-            @click="() => removeBookmark(node)"
-          />
+          <el-button type="text" icon="close" @click="removeBookmark(node)" />
         </span>
       </span>
     </el-tree>
   </el-popover>
 </template>
 
-<script>
-export default {
-  name: 'BookmarkMenu',
-  props: {
-    bookmarks: {
-      default: () => {},
-      type: Array,
-    },
-    theme: {
-      default: 'default',
-      type: String,
-    },
+<script setup>
+const props = defineProps({
+  bookmarks: {
+    default: () => [],
+    type: Array,
   },
-  methods: {
-    addBookmark() {
-      this.$emit('add-bookmark')
-    },
-    removeBookmark(data) {
-      this.$emit('remove-bookmark', data)
-    },
-    onNodeClick(data) {
-      this.$emit('node-click', data)
-    },
+  theme: {
+    default: 'default',
+    type: String,
   },
+})
+const emit = defineEmits(['add-bookmark', 'node-click'])
+const addBookmark = () => {
+  emit('add-bookmark')
+}
+const removeBookmark = (data) => {
+  emit('remove-bookmark', data)
+}
+const onNodeClick = () => {
+  emit('node-click', data)
 }
 </script>
-
-<style lang="scss" scoped></style>
