@@ -863,10 +863,7 @@ const getRendition = (rendition) => {
 ```vue
 <template>
   <div style="height: 100vh; position: relative">
-    <vue-reader
-      url="/vue-reader/files/啼笑因缘.epub"
-      :getRendition="getRendition"
-    />
+    <vue-reader url="/files/啼笑因缘.epub" :getRendition="getRendition" />
     <div class="search">
       <input
         v-model.trim="searchText"
@@ -904,6 +901,7 @@ import { ref } from 'vue'
 let rendition = null
 const searchText = ref('只在捻花一笑中')
 const searchResults = ref([])
+
 const getRendition = (val) => (rendition = val)
 
 const search = async () => {
@@ -912,17 +910,27 @@ const search = async () => {
   searchResults.value = res.slice(0, 5)
 }
 
-const doSearch = (value) => {
+//Searching the entire book
+const doSearch = (q) => {
   const { book } = rendition
   return Promise.all(
-    book.spine.spineItems.map((item) => {
-      return item.load(book.load.bind(book)).then((doc) => {
-        const res = item.find(value)
-        item.unload()
-        return Promise.resolve(res)
-      })
-    })
-  ).then((res) => Promise.resolve([].concat.apply([], res)))
+    book.spine.spineItems.map((item) =>
+      item
+        .load(book.load.bind(book))
+        .then(item.find.bind(item, q))
+        .finally(item.unload.bind(item))
+    )
+  ).then((results) => Promise.resolve([].concat.apply([], results)))
+}
+
+//Searching the current chapter
+const doChapterSearch = (q) => {
+  const { book } = rendition
+  let item = book.spine.get(rendition.location.start.cfi)
+  return item
+    .load(book.load.bind(book))
+    .then(item.find.bind(item, q))
+    .finally(item.unload.bind(item))
 }
 
 const go = (href, e) => {
