@@ -49,44 +49,11 @@
     <!-- 目录 -->
     <div v-if="showToc">
       <div class="tocArea">
-        <div v-for="(item, index) in toc" :key="index">
-          <button
-            type="button"
-            class="tocAreaButton"
-            @click="setLocation(item.href)"
-            :class="{
-              active: item.href === currentHref,
-            }"
-          >
-            {{ item.label }}
-            <!-- 展开 -->
-            <div
-              class="expansion"
-              v-if="item.subitems && item.subitems.length > 0"
-              :style="{
-                transform: item.expansion ? 'rotate(180deg)' : 'rotate(0deg)',
-              }"
-              @click.stop="item.expansion = !item.expansion"
-            ></div>
-          </button>
-          <!-- 二级目录 -->
-          <template v-if="item.subitems && item.subitems.length > 0">
-            <div v-show="item.expansion">
-              <button
-                type="button"
-                v-for="(subitem, index) in item.subitems"
-                :key="index"
-                class="tocAreaButton"
-                @click="setLocation(subitem['href'])"
-                :class="{
-                  active: subitem.href === currentHref,
-                }"
-              >
-                {{ '&nbsp;'.repeat(4) + subitem['label'] }}
-              </button>
-            </div>
-          </template>
-        </div>
+        <TocComponent
+          :toc="toc"
+          :current="currentHref"
+          :setLocation="setLocation"
+        />
       </div>
       <!-- 目录遮罩 -->
       <div v-if="expandedToc" class="tocBackground" @click="toggleToc"></div>
@@ -94,10 +61,129 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, reactive, toRefs,onUnmounted } from 'vue'
+import {
+  ref,
+  toRefs,
+  reactive,
+  defineComponent,
+  getCurrentInstance,
+  type PropType,
+  onBeforeUnmount,
+  version,
+  Transition,
+  onUnmounted,
+  h as _h,
+} from 'vue-demi'
 import { Rendition, Book } from 'epubjs'
 import EpubView from '../EpubView/EpubView.vue'
 
+//目录
+interface TocProps {
+  toc: Array<NavItem>
+  current: String | Number
+  setLocation: (href: string | number, close?: boolean) => void
+  isSubmenu?: boolean
+}
+
+const TocComponent = defineComponent({
+  name: 'TocComponent',
+
+  emits: {
+    progress(percentage: number) {
+      return true
+    },
+  },
+
+  props: {
+    toc: {
+      type: Array as PropType<Array<NavItem>>,
+      default: () => [],
+    },
+    current: {
+      type: [String, Number],
+      default: '',
+    },
+    setLocation: {
+      type: Function as PropType<TocProps['setLocation']>,
+      required: true,
+    },
+    isSubmenu: {
+      type: Boolean,
+      default: false,
+      required: false,
+    },
+  },
+
+  setup(props) {
+    const vm = getCurrentInstance()
+    const h = _h.bind(vm)
+
+    const { setLocation, isSubmenu } = props
+    const { toc, current } = toRefs(props)
+
+    return () =>
+      h(
+        'div',
+        null,
+        toc.value.map((item, index) => {
+          return h('div', { key: index }, [
+            h(
+              'button',
+              {
+                class: [
+                  'tocAreaButton',
+                  item.href === current!.value ? 'active' : '',
+                ],
+                onClick: () => {
+                  if (item.subitems.length > 0) {
+                    item.expansion = !item.expansion
+                    setLocation(item.href, false)
+                  } else {
+                    setLocation(item.href)
+                  }
+                },
+              },
+              [
+                isSubmenu ? ' '.repeat(4) + item.label : item.label,
+                // 展开
+                item.subitems &&
+                  item.subitems.length > 0 &&
+                  h('div', {
+                    class: `${item.expansion ? 'open' : ''} expansion`,
+                  }),
+              ]
+            ),
+            //多级目录
+            item.subitems &&
+              item.subitems.length > 0 &&
+              h(
+                Transition,
+                { name: 'collapse-transition' },
+                {
+                  default: () =>
+                    h(
+                      'div',
+                      {
+                        style: {
+                          display: item.expansion ? undefined : 'none',
+                        },
+                      },
+                      [
+                        h(TocComponent, {
+                          toc: item.subitems,
+                          current: current.value,
+                          setLocation,
+                          isSubmenu: true,
+                        }),
+                      ]
+                    ),
+                }
+              ),
+          ])
+        })
+      )
+  },
+})
 interface NavItem {
   id: string
   href: string
@@ -163,10 +249,10 @@ const onGetRendition = (rendition) => {
   })
 }
 
-const setLocation = (href: string | number) => {
+const setLocation = (href: string | number,close: boolean = true) => {
   epubRef?.value?.setLocation(href)
   currentHref.value = href
-  expandedToc.value = false
+  expandedToc.value = !close
 }
 
 //Request
@@ -191,7 +277,7 @@ onUnmounted(() => {
 const next = epubRef.value?.nextPage
 const pre = epubRef.value?.prevPage
 </script>
-<style scoped>
+<style>
 /* container */
 .container {
   overflow: hidden;
@@ -212,13 +298,16 @@ const pre = epubRef.value?.prevPage
   transition: all 0.3s ease;
 }
 
-.titleArea {
+.container .titleArea {
   position: absolute;
   top: 20px;
   left: 50px;
   right: 50px;
   text-align: center;
   color: #999;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* toc */
@@ -290,23 +379,42 @@ const pre = epubRef.value?.prevPage
 
 /* 二级目录 */
 .tocArea .tocAreaButton .expansion {
-  position: absolute;
   cursor: pointer;
-  right: 12px;
+  transform: translateY(-50%);
   top: 50%;
-  margin-top: -12px;
+  right: 12px;
+  position: absolute;
+  width: 10px;
+  background-color: #a2a5b4;
+  transition: transform 0.3s ease-in-out, top 0.3s ease-in-out;
+}
+
+.tocArea .tocAreaButton .expansion::after,
+.tocArea .tocAreaButton .expansion::before {
+  content: '';
+  position: absolute;
+  width: 6px;
+  height: 2px;
+  background-color: currentcolor;
+  border-radius: 2px;
+  transition: transform 0.3s ease-in-out, top 0.3s ease-in-out;
+}
+/* ↓ */
+.tocArea .tocAreaButton .expansion::before {
+  transform: rotate(-45deg) translateX(2.5px);
 }
 
 .tocArea .tocAreaButton .expansion::after {
-  border-style: solid;
-  border-width: 0 2px 2px 0;
-  content: '';
-  display: inline-block;
-  padding: 3px;
-  transform: rotate(45deg);
-  vertical-align: middle;
+  transform: rotate(45deg) translateX(-2.5px);
+}
+/* ↑ */
+.tocArea .tocAreaButton .open::before {
+  transform: rotate(45deg) translateX(2.5px);
 }
 
+.tocArea .tocAreaButton .open::after {
+  transform: rotate(-45deg) translateX(-2.5px);
+}
 /* tocButton */
 .tocButton {
   background: none;
@@ -363,7 +471,7 @@ const pre = epubRef.value?.prevPage
   color: #e2e2e2;
 }
 
-.pre {
+.prev {
   left: 1px;
 }
 

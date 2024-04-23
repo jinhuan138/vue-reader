@@ -446,3 +446,7 @@ Epubjs is rendering the epub-content inside and iframe which defaults to `sandbo
 ## Related
 
 - [react-reader](https://github.com/gerhardsletten/react-reader)
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=jinhuan138/vue-reader&type=Date)](https://star-history.com/#jinhuan138/vue-reader&Date)
