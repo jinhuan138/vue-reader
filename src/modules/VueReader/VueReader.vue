@@ -88,12 +88,6 @@ interface TocProps {
 const TocComponent = defineComponent({
   name: 'TocComponent',
 
-  emits: {
-    progress(percentage: number) {
-      return true
-    },
-  },
-
   props: {
     toc: {
       type: Array as PropType<Array<NavItem>>,
@@ -184,6 +178,7 @@ const TocComponent = defineComponent({
       )
   },
 })
+
 interface NavItem {
   id: string
   href: string
@@ -249,7 +244,7 @@ const onGetRendition = (rendition) => {
   })
 }
 
-const setLocation = (href: string | number,close: boolean = true) => {
+const setLocation = (href: string | number, close: boolean = true) => {
   epubRef?.value?.setLocation(href)
   currentHref.value = href
   expandedToc.value = !close

@@ -47,12 +47,6 @@ interface EpubBook {
 const TocComponent = defineComponent({
   name: 'TocComponent',
 
-  emits: {
-    progress(percentage: number) {
-      return true
-    },
-  },
-
   props: {
     toc: {
       type: Array as PropType<Array<NavItem>>,
@@ -162,6 +156,12 @@ const TocComponent = defineComponent({
 
 export default defineComponent({
   name: 'VueReader',
+  
+  emits: {
+    progress(percentage: number) {
+      return true
+    },
+  },
 
   props: {
     url: {
