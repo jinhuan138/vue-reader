@@ -15,20 +15,24 @@ export default defineConfig({
             md.use(demoBlockPlugin)
         }
     },
-    locales: {
-        root: {
-            label: 'English',
-            lang: 'en'
-        },
-        zh: {
-            label: '中文',
-            lang: 'zh'
-        }
-    },
+    head:[
+        ['link', { rel: 'alternate icon', href: '/logo.png', type: 'image/png', sizes: '16x16' }],
+    ],
+    // locales: {
+    //     root: {
+    //         label: 'English',
+    //         lang: 'en'
+    //     },
+    //     zh: {
+    //         label: '中文',
+    //         lang: 'zh'
+    //     }
+    // },
     plugins: [
         visualizer()
     ],
     themeConfig: {
+        logo: '/logo.svg',
         nav: [
             { text: "Reader", link: "/reader" },
         ],
