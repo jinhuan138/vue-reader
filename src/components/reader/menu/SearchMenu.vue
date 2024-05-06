@@ -22,6 +22,7 @@
       :show-header="false"
       :data="searchResult"
       @cell-click="onNodeClick"
+      height="250"
     >
       <el-table-column prop="label" width="350"></el-table-column>
     </el-table>

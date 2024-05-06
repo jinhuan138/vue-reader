@@ -489,6 +489,32 @@ import { VueReader } from 'vue-reader'
 </script>
 ```
 
+## Smooth Scroll
+
+Sets css-property for epub-js manager to scroll-behavior: smooth
+
+:::demo
+
+```vue
+<template>
+  <div style="height: 100vh">
+    <vue-reader url="/vue-reader/files/啼笑因缘.epub" :getRendition="getRendition">
+    </vue-reader>
+  </div>
+</template>
+<script setup>
+import VueReader from 'vue-reader'
+
+const getRendition = (rendition) => {
+  rendition.hooks.content.register((contents) => {
+    rendition.manager.container.style['scroll-behavior'] = 'smooth'
+  })
+}
+</script>
+```
+
+:::
+
 ## Display a scrolled epub-view
 
 Pass options for this into epubJS in the prop `epubOptions`
@@ -863,7 +889,7 @@ const getRendition = (rendition) => {
 ```vue
 <template>
   <div style="height: 100vh; position: relative">
-    <vue-reader url="/files/啼笑因缘.epub" :getRendition="getRendition" />
+    <vue-reader url="/vue-reader/files/啼笑因缘.epub" :getRendition="getRendition" />
     <div class="search">
       <input
         v-model.trim="searchText"
@@ -971,6 +997,37 @@ const go = (href, e) => {
   background: rgba(0, 0, 0, 0.05);
 }
 </style>
+```
+
+:::
+
+## Disable context menu
+
+
+
+:::demo
+
+```vue
+<template>
+  <div style="height: 100vh">
+    <vue-reader url="/vue-reader/files/啼笑因缘.epub" :getRendition="getRendition">
+    </vue-reader>
+  </div>
+</template>
+<script setup>
+import VueReader from 'vue-reader'
+
+const getRendition = (rendition) => {
+  rendition.hooks.content.register((contents) => {
+    const body = contents.window.document.querySelector('body')
+    if (body) {
+      body.oncontextmenu = () => {
+        return false
+      }
+    }
+  })
+}
+</script>
 ```
 
 :::
