@@ -862,6 +862,14 @@ const indexRef = ref(0)
 const visibleRef = ref(false)
 
 const getRendition = (rendition) => {
+  rendition.themes.default({
+    img: {
+      cursor: 'pointer'
+    },
+    image: {
+      cursor: 'pointer'
+    }
+  });
   rendition.hooks.content.register(({ document }, view) => {
     imgsRef.value = []
     const imgs = [
@@ -1002,8 +1010,6 @@ const go = (href, e) => {
 :::
 
 ## Disable context menu
-
-
 
 :::demo
 
