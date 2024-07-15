@@ -156,7 +156,7 @@ const TocComponent = defineComponent({
 
 export default defineComponent({
   name: 'VueReader',
-  
+
   emits: {
     progress(percentage: number) {
       return true
@@ -179,6 +179,10 @@ export default defineComponent({
     getRendition: {
       type: Function as PropType<Props['getRendition']>,
     },
+    backgroundColor: {
+      type: String,
+      default: '#fff',
+    },
   },
 
   setup(props, context: any) {
@@ -191,7 +195,7 @@ export default defineComponent({
     const currentHref = ref<string | number>('')
 
     const { tocChanged, getRendition } = props
-    const { title, url, showToc } = toRefs(props)
+    const { title, url, showToc, backgroundColor } = toRefs(props)
 
     const book = reactive<EpubBook>({
       toc: [], //目录
@@ -303,7 +307,15 @@ export default defineComponent({
       h('div', { class: 'container' }, [
         h(
           'div',
-          { class: ['readerArea', { containerExpanded: expandedToc.value }] },
+          {
+            class: [
+              'readerArea',
+              {
+                containerExpanded: expandedToc.value,
+              },
+            ],
+            style: { backgroundColor: backgroundColor.value },
+          },
           [
             // 展开目录
             showToc.value &&
