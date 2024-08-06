@@ -234,7 +234,7 @@ export default defineComponent({
           annotation.slice(0, halfLength).forEach((el: HTMLAnchorElement) => {
             if (el.href) {
               const id = el.href.split('#')[1]
-              const target = annotation.find((a) => a.id === id)
+              const target = annotation.slice(halfLength).find((a) => a.id === id)
               if (target && target.parentNode) {
                 el.title = target.parentNode.textContent as string
               }
