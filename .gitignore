@@ -29,6 +29,7 @@ pnpm-lock.yaml
 
 # vitepress
 docs/.vitepress/cache
+.vitepress
 
 #books
 public/books/cover/

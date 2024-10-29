@@ -255,14 +255,12 @@ Hooking into epubJS rendition object is the key for this also.
     <div class="size">
       <button
         @click="changeSize(Math.max(80, size - 10))"
-        class="reader-button"
       >
         -
       </button>
       <span>Current size: {{ size }}%</span>
       <button
         @click="changeSize(Math.min(130, size + 10))"
-        class="reader-button"
       >
         +
       </button>
@@ -315,10 +313,10 @@ This is useful for when you want to set custom font families, custom background 
       :class="theme + '-theme'"
     />
     <div class="theme">
-      <button class="reader-button" @click="theme = 'light'">
+      <button @click="theme = 'light'">
         Light theme
       </button>
-      <button class="reader-button" @click="theme = 'dark'">Dark theme</button>
+      <button @click="theme = 'dark'">Dark theme</button>
     </div>
   </div>
 </template>
@@ -357,14 +355,6 @@ watch(theme, (currentTheme) => {
 })
 </script>
 <style>
-.theme {
-  position: absolute;
-  bottom: 1rem;
-  right: 1rem;
-  left: 1rem;
-  z-index: 1;
-  text-align: center;
-}
 
 .dark-theme .readerArea {
   background-color: #000;
@@ -418,8 +408,8 @@ This shows how to hook into epubJS annotations object and let the user highlight
     <ul>
       <li v-for="({ text, cfiRange }, index) in selections" :key="index">
         {{ text || '' }}
-        <button @click="show(cfiRange)" class="reader-button">show</button>
-        <button @click="remove(cfiRange, index)" class="reader-button">
+        <button @click="show(cfiRange)">show</button>
+        <button @click="remove(cfiRange, index)">
           x
         </button>
       </li>
@@ -575,8 +565,8 @@ Epubjs is rendering the epub-content inside and iframe which defaults to `sandbo
       :getRendition="getRendition"
       @update:location="locationChange"
     />
-    <div class="speak">
-      <button class="reader-button" @click="speak('click')">
+    <div class="theme">
+      <button @click="speak('click')">
         {{ isReading ? 'cancel' : 'speak' }}
       </button>
     </div>
@@ -633,16 +623,6 @@ const voice = (text, rate = 1) => {
   }
 }
 </script>
-<style>
-.speak {
-  position: absolute;
-  bottom: 1rem;
-  right: 1rem;
-  left: 1rem;
-  z-index: 1;
-  text-align: center;
-}
-</style>
 ```
 
 :::
@@ -1024,8 +1004,7 @@ const go = (href, e) => {
 ```vue
 <template>
   <div style="height: 100vh">
-    <vue-reader url="/vue-reader/files/啼笑因缘.epub" :getRendition="getRendition">
-    </vue-reader>
+    <vue-reader url="/vue-reader/files/啼笑因缘.epub" :getRendition="getRendition"/>
   </div>
 </template>
 <script setup>
@@ -1046,8 +1025,78 @@ const getRendition = (rendition) => {
 
 :::
 
+## Custom font
+
+:::demo
+
+```vue
+<template>
+  <div style="height: 100vh; position: relative">
+    <vue-reader url="/vue-reader/files/alice.epub" :getRendition="getRendition"/>
+    <div class="theme">
+      <button @click="updateTheme">Toggle theme ({{ theme }})</button>
+    </div>
+  </div>
+</template>
+<script setup>
+import VueReader from 'vue-reader'
+import { ref } from 'vue'
+    
+const theme = ref('custom')
+let rendition = null
+
+const updateTheme = () => {
+  const themes = rendition.themes
+
+  switch (theme.value) {
+    case 'default': {
+      themes.override('font-family', 'pinia')
+      theme.value = 'custom'
+      break
+    }
+    case 'custom': {
+      themes.override('font-family', 'Arial')
+      theme.value = 'default'
+      break
+    }
+  }
+}
+
+const getRendition = (val) => {
+  rendition = val
+  rendition.hooks.content.register((contents) => {
+    const document = contents.window.document
+    console.log('document', document)
+    if (document) {
+      const css = `
+              @font-face {
+                font-family: "pinia";
+                font-weight: 400;
+                font-style: normal;
+                src: url("/vue-reader/files/pinia.ttf") format('truetype');
+              }
+              `
+      const style = document.createElement('style')
+      style.appendChild(document.createTextNode(css))
+      document.head.appendChild(style)
+    }
+  })
+}
+</script>
+```
+
+:::
+
 <style> 
-.reader-button {
+.theme {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  left: 1rem;
+  z-index: 1;
+  text-align: center;
+}
+button {
     min-width: 48px; 
     height: 24px; 
     border:1px solid #dcdfe6;
@@ -1056,7 +1105,7 @@ const getRendition = (rendition) => {
     color: #606266;
     margin:0 5px;
 } 
-.reader-button:hover,reader-button:focus { 
+button:hover,button:focus { 
     color: #409eff;
     border-color: #c6e2ff;
     background-color: #ecf5ff; 
