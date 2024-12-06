@@ -114,5 +114,6 @@
     "> 1%",
     "iOS 7",
     "last 3 iOS versions"
-  ]
+  ],
+  "packageManager": "pnpm@9.6.0"
 }
