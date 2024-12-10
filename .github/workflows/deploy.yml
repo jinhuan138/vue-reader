@@ -1,53 +1,62 @@
-# 将静态内容部署到 GitHub Pages 的简易工作流程
-name: Deploy vue-reader docs to Pages
+name: Deploy vscode-book-reader to Pages
 
 on:
-  # 仅在推送到默认分支时运行。
+  # 在针对 `main` 分支的推送上运行
+  # 如果是使用 `master` 分支作为默认分支，请将其更改为 `master`
   push:
-    branches: ['master']
+    branches: [master]
 
-  # 这个选项可以使你手动在 Action tab 页面触发工作流
+  # 允许你从 Actions 选项卡手动运行此工作流程
   workflow_dispatch:
 
-# 设置 GITHUB_TOKEN 的权限，以允许部署到 GitHub Pages。
+# 设置 GITHUB_TOKEN 的权限，以允许部署到 GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# 允许一个并发的部署
+# 只允许同时进行一次部署，跳过正在运行和最新队列之间的运行队列
+# 但是，不要取消正在进行的运行，因为我们希望允许这些生产部署完成
 concurrency:
-  group: 'pages'
-  cancel-in-progress: true
-
-# ----分割线：上面的内容与静态网址是一样的，一般不用改-----
+  group: pages
+  cancel-in-progress: false
 
 jobs:
-  # 单次部署的工作描述
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  # 构建工作
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Set up Node
+        with:
+          fetch-depth: 0 # 如果未启用 lastUpdated，则不需要
+      - uses: pnpm/action-setup@v3 # 使用 pnpm
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 16.15.1
-          cache: 'npm'
-      - name: Install dependencies
-        run: npm install
-      - name: Build
-        run: npm run docs:build
+          node-version: 20
+          cache: pnpm # 缓存设置为 pnpm
+          version: 9.6.0 # 您可以根据需要指定特定的 pnpm 版本
       - name: Setup Pages
-        uses: actions/configure-pages@v3
+        uses: actions/configure-pages@v4
+      - name: Install dependencies
+        run: pnpm install # 使用 pnpm 安装依赖
+      - name: Build with VitePress
+        run: pnpm run build # 使用 pnpm 运行构建
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v2
+        uses: actions/upload-pages-artifact@v3
         with:
-          # Upload dist repository
-          path: 'docs/.vitepress/dist'
+          path: docs/.vitepress/dist # 打包之后产物的文件夹
+
+  # 部署工作
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    needs: build
+    runs-on: ubuntu-latest
+    name: Deploy
+    steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v2
+        uses: actions/deploy-pages@v4
