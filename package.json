@@ -40,10 +40,6 @@
   "bugs": {
     "url": "https://github.com/jinhuan138/vue-reader/issues"
   },
-  "workspaces": [
-    "test/vue2",
-    "test/vue2.7"
-  ],
   "dependencies": {
     "epubjs": "^0.3.93",
     "vue-demi": "latest"
