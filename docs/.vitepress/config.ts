@@ -1,5 +1,4 @@
 //https://vitepress.dev/
-import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig } from 'vitepress'
 import { demoBlockPlugin,demoblockVitePlugin } from 'vitepress-theme-demoblock'
 import { resolve } from 'path'
@@ -28,9 +27,6 @@ export default defineConfig({
     //         lang: 'zh'
     //     }
     // },
-    plugins: [
-        visualizer()
-    ],
     themeConfig: {
         logo: '/logo.svg',
         nav: [
