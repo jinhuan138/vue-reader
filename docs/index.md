@@ -1096,7 +1096,7 @@ const getRendition = (val) => {
   z-index: 1;
   text-align: center;
 }
-button {
+.button {
     min-width: 48px; 
     height: 24px; 
     border:1px solid #dcdfe6;
@@ -1105,7 +1105,7 @@ button {
     color: #606266;
     margin:0 5px;
 } 
-button:hover,button:focus { 
+.button:hover,.button:focus { 
     color: #409eff;
     border-color: #c6e2ff;
     background-color: #ecf5ff; 

@@ -27,14 +27,13 @@
     "build": "vite build",
     "preview": "vite preview",
     "compile": "rollup -c rollup.config.ts --configPlugin typescript && rollup -c full.config.ts --configPlugin typescript",
-    "dev:2": "vue-demi-switch 2 vue2 && npm run dev --workspace=test/vue2",
-    "dev:2.7": "vue-demi-switch 2.7 vue2 && npm run dev --workspace=test/vue2.7",
+    "dev:2": "vue-demi-switch 2 vue2 && npm -C test/vue2 run dev",
+    "dev:2.7": "vue-demi-switch 2.7 vue2 && npm -C test/vue2.7 run dev",
     "format": "prettier --write src/modules/**/*.{ts,vue,tsx}",
     "book": "node build/book",
-    "docs:dev": "vitepress dev docs",
-    "docs:build": "vitepress build docs",
-    "docs:serve": "vitepress serve docs",
-    "docs:preview": "vitepress preview docs"
+    "docs:dev": "npm -C docs run docs:dev",
+    "docs:build": "npm -C docs run docs:build",
+    "docs:preview": "npm -C docs run docs:preview"
   },
   "license": "ISC",
   "bugs": {
@@ -86,8 +85,6 @@
     "unplugin-vue-components": "^0.24.1",
     "vite": "^4.2.1",
     "vite-tsconfig-paths": "^4.0.7",
-    "vitepress": "^1.0.1",
-    "vitepress-theme-demoblock": "^3.0.4",
     "vue": "^3.4.21",
     "vue-easy-lightbox": "^1.19.0",
     "vue-reader": "^1.2.13",
