@@ -30,10 +30,10 @@
     "dev:2": "vue-demi-switch 2 vue2 && npm -C test/vue2 run dev",
     "dev:2.7": "vue-demi-switch 2.7 vue2 && npm -C test/vue2.7 run dev",
     "format": "prettier --write src/modules/**/*.{ts,vue,tsx}",
-    "book": "node build/book",
     "docs:dev": "npm -C docs run docs:dev",
     "docs:build": "npm -C docs run docs:build",
-    "docs:preview": "npm -C docs run docs:preview"
+    "docs:preview": "npm -C docs run docs:preview",
+    "reader": "npm -C reader run dev"
   },
   "license": "ISC",
   "bugs": {
@@ -46,7 +46,6 @@
   "devDependencies": {
     "@babel/core": "^7.20.12",
     "@babel/preset-env": "^7.24.0",
-    "@element-plus/icons-vue": "^2.1.0",
     "@esbuild/win32-x64": "^0.17.14",
     "@rollup/plugin-babel": "^6.0.3",
     "@rollup/plugin-commonjs": "^24.0.1",
@@ -57,17 +56,9 @@
     "@types/node": "^18.15.11",
     "@vitejs/plugin-vue": "^4.1.0",
     "@vitejs/plugin-vue-jsx": "^3.1.0",
-    "@vueuse/core": "^10.9.0",
     "autoprefixer": "^10.4.14",
     "cssnano": "^5.1.15",
-    "dexie": "^3.2.3",
-    "element-plus": "^2.3.1",
-    "epub": "^1.2.1",
-    "file-saver": "^2.0.5",
     "i": "^0.3.7",
-    "node-vibrant": "3.2.1-alpha.1",
-    "pinia": "2.0.23",
-    "pinia-plugin-persistedstate": "^3.2.0",
     "postcss": "^8.4.21",
     "postcss-preset-env": "^8.0.1",
     "prettier": "^2.8.7",
@@ -78,18 +69,12 @@
     "rollup-plugin-typescript2": "^0.34.1",
     "rollup-plugin-visualizer": "^5.9.2",
     "rollup-plugin-vue": "6.0.0",
-    "sass": "^1.61.0",
-    "spark-md5": "^3.0.2",
     "typescript": "^5.0.4",
-    "unplugin-auto-import": "^0.16.6",
-    "unplugin-vue-components": "^0.24.1",
     "vite": "^4.2.1",
     "vite-tsconfig-paths": "^4.0.7",
     "vue": "^3.4.21",
-    "vue-easy-lightbox": "^1.19.0",
-    "vue-reader": "^1.2.13",
-    "vue-router": "^4.2.5",
-    "vue2": "npm:vue@2"
+    "vue2": "npm:vue@2",
+    "vue-reader": "catalog:"
   },
   "peerDependencies": {
     "@vue/composition-api": "^1.0.0-rc.1",
@@ -108,5 +93,6 @@
     "iOS 7",
     "last 3 iOS versions"
   ],
-  "packageManager": "pnpm@9.6.0"
+  "packageManager": "pnpm@9.6.0",
+  "preinstall": "npx only-allow pnpm"
 }

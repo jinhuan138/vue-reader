@@ -3,7 +3,7 @@ import { EnhanceAppContext } from "vitepress"
 import 'vitepress-theme-demoblock/dist/theme/styles/index.css'
 import Demo from 'vitepress-theme-demoblock/dist/client/components/Demo.vue'
 import DemoBlock from 'vitepress-theme-demoblock/dist/client/components/DemoBlock.vue'
-import reader from '../../../src/components/reader/index.vue'
+import reader from '../../../reader/src/components/index.vue'
 import { createPinia } from 'pinia'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'

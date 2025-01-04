@@ -8,24 +8,7 @@
 //https://github.com/futurepress/epub.js/wiki/Tips-and-Tricks-(v0.3)#searching-the-entire-book
 //https://github.com/altmshfkgudtjr/react-epub-viewer
 import { createApp } from 'vue'
-import ElementPlus from 'element-plus'
-import 'element-plus/dist/index.css'
-import { createPinia } from 'pinia'
-import piniaPersist from 'pinia-plugin-persistedstate'
-import router from 'router'
 import './style.css'
 import App from './App.vue'
-import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+createApp(App).mount('#app')
 
-const pinia = createPinia()
-pinia.use(piniaPersist)
-const app = createApp(App)
-
-for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
-  app.component(key, component)
-}
-
-app.use(router)
-app.use(ElementPlus)
-app.use(pinia)
-app.mount('#app')
