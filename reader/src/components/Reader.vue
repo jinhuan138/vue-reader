@@ -73,14 +73,14 @@
 //https://github.com/hepengwei/visualization-collection
 import { db } from './utils/db'
 import { Back, Grid } from '@element-plus/icons-vue'
-import { EpubView } from '@/modules/index'
+import { EpubView } from 'vue-reader'
 import titlebar from './Titlebar.vue'
 import TocMenu from './menu/TocMenu.vue'
 import BookmarkMenu from './menu/BookmarkMenu.vue'
 import SearchMenu from './menu/SearchMenu.vue'
 import ThemeMenu from './menu/ThemeMenu.vue'
 import BubleMenu from './menu/BubleMenu.vue'
-import selectListener from '../../modules/utils/listener/select'
+// import selectListener from '../../modules/utils/listener/select'
 import { getInfo } from './utils/dbUtilis'
 import { dark, tan } from './utils/themes'
 import { useReaderStore } from './utils/stores'
@@ -91,7 +91,7 @@ const reader = useReaderStore()
 
 const props = defineProps({
   bookInfo: {
-    type: [Object, Number, ArrayBuffer],
+    type: [Object],
   },
 })
 const isReady = ref(false)
@@ -117,7 +117,7 @@ const getRendition = (val) => {
   const book = rendition.book
   // const displayed = rendition.display();
   rendition.on('rendered', (e, iframe) => {
-    selectListener(iframe.document, rendition, toggleBuble)
+    // selectListener(iframe.document, rendition, toggleBuble)
   })
   rendition.on('relocated', (location) => {
     // info.lastCfi = location.start.cfi;

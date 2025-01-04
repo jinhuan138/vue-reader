@@ -37,10 +37,10 @@ const trunc = (str, n) => {
 }
 
 const closeWindow = () => {
-  import('vitepress').then(({ useRouter }) => {
-    const router = useRouter()
-    router.go('/vue-reader/')
-  })
+  // import('vitepress').then(({ useRouter }) => {
+  //   const router = useRouter()
+  //   router.go('/vue-reader/')
+  // })
 }
 const minimizeWindow = () => {
   if (document.exitFullscreen) {
