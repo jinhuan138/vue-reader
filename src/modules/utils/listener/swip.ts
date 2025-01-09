@@ -56,8 +56,8 @@ export default function swipListener(
       if (elapsedTime <= allowedTime) {
         // Horizontal swipe
         if (Math.abs(distX) >= threshold && Math.abs(distY) <= restraint)
-          // If dist traveled is negative, it indicates left swipe
-          fn(distX < 0 ? 'prev' : 'next')
+          // If dist traveled is negative, it indicates right swipe
+          fn(distX < 0 ? 'next' : 'prev')
         // Vertical swipe
         else if (Math.abs(distY) >= threshold && Math.abs(distX) <= restraint)
           // If dist traveled is negative, it indicates up swipe
