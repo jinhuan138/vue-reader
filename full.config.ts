@@ -34,7 +34,6 @@ export default defineConfig({
     }),
     resolve(),
     vue({
-      css: true,
       target: 'browser',
     }),
     typescript({
