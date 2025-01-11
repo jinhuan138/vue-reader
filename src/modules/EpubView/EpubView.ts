@@ -48,9 +48,12 @@ export default defineComponent({
     select(cfiRange: string, contents: Contents) {
       return true
     },
-    keyup(e: any) {
+    keyup(e: Event) {
       return true
     },
+    keyPress(e:Event){
+      return true
+    }
   },
 
   props: {
