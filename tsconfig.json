@@ -29,8 +29,7 @@
       "@/*": ["src/*"],
       "comps/*": ["src/components/*"]
     },
-    "lib": ["esnext", "dom"],
-    "types": ["element-plus/global"]
+    "lib": ["esnext", "dom"]
   },
   "vueCompilerOptions": {},
   "include": ["src/**/*.ts","src/**/*.tsx", "src/**/*.vue", "types/*.ts"],
