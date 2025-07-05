@@ -16,6 +16,11 @@ export default defineConfig({
     },
     head:[
         ['link', { rel: 'alternate icon', href: '/logo.png', type: 'image/png', sizes: '16x16' }],
+        ['script', {
+            async: 'async',
+            src: 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9017742413133429',
+            crossorigin: 'anonymous',
+        }],
     ],
     // locales: {
     //     root: {
