@@ -3,11 +3,11 @@ import EPub from 'epub'
 import { join, dirname } from 'node:path'
 import fs from 'fs'
 import { fileURLToPath } from 'node:url'
-import Vibrant from 'node-vibrant'
-import { getNodeFileMD5 } from '../src/components/reader/utils/md5.js'
+import { Vibrant } from 'node-vibrant/node'
+import { getNodeFileMD5 } from '../reader/src/components/utils/md5.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
-const libraryPath = join(__dirname, '../public/books')
+const libraryPath = join(__dirname, '../public/files')
 const booksJson = []
 const delDir = (path) => {
   let files = []
@@ -49,7 +49,7 @@ const parseBook = (name) => {
           booksJson.push({
             ...book.metadata,
             id: md5,
-            coverPath: `/books/cover/${name.replace('.epub', '')}.jpg`,
+            coverPath: `/files/cover/${name.replace('.epub', '')}.jpg`,
             url: name,
             bgColorFromCover: palette.DarkVibrant.hex,
             size,

@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import books from '../../../../public/books/books.json'
+import books from '../../../../public/files/books.json'
 
 export const useReaderStore = defineStore('reader', {
   state: () => {
