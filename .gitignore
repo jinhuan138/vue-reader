@@ -31,5 +31,5 @@ docs/.vitepress/cache
 .vitepress
 
 #books
-public/books/cover/
+public/files/cover/
 stats.html

@@ -102,7 +102,7 @@ const url = computed(() => {
     // const info = await db.books.get(props.bookInfo);
     return props.bookInfo
   } else {
-    return `${import.meta.env.BASE_URL}books/${props.bookInfo.url}`
+    return `${import.meta.env.BASE_URL}files/${props.bookInfo.url}`
   }
 })
 let rendition = null,
