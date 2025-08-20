@@ -253,7 +253,7 @@ const formatSize = (size) => {
     : parseInt(size / 1024 + '') + 'Kb'
 }
 const download = (url) => {
-  saveAs('/books/' + url, url)
+  saveAs('/files/' + url, url)
 }
 const emit = defineEmits(['update:currentBook'])
 //reader
