@@ -1,23 +1,6 @@
-<div align="center">
-  <img width=250 src="https://raw.githubusercontent.com/jinhuan138/vue-reader/master/public/logo.png" />
-  <h1>VueReader</h1>
-</div>
-
-<p>
-  <a href="https://www.npmjs.com/package/vue-reader" target="_blank">
-    <img src="https://img.shields.io/npm/v/vue-reader?style=flat-square" />
-  </a>
-  <a href="https://www.npmjs.com/package/vue-reader" target="_blank" >
-    <img src="https://img.shields.io/npm/dw/vue-reader?style=flat-square" />
-  </a>
-  <a href="./LICENSE">
-    <img src="https://img.shields.io/npm/l/vue-reader?style=flat-square" />
-  </a>
-</p>
-
-<div align="center">
-  <h2><a href="https://jinhuan138.github.io/vue-reader/">📖Documentation</a></h2>
-</div>
+---
+outline: [2,3]
+---
 
 # Introduction
 
@@ -25,55 +8,74 @@ an easy way to embed a ePub into your webapp
 
 ## Installation
 
-```bash
+::: code-group
+```sh [npm]
 npm i vue-reader
+```
+
+```sh [pnpm]
 pnpm add vue-reader
 ```
+:::
 
 ## Basic Usage
 
-<details>
-<summary>Vue 3</summary>
+And in your vue-component...
 
+::: details Vue 3
+:::demo
 ```vue
 <template>
-  <div style="height: 100vh">
-    <vue-reader url="/files/啼笑因缘.epub" />
-  </div>
+   <div style='height: 100vh'>
+      <vue-reader url='/vue-reader/files/啼笑因缘.epub'/>
+   </div>
 </template>
 <script setup>
 import { VueReader } from 'vue-reader'
 </script>
 ```
 
-</details>
+:::
 
-<details>
-<summary>Vue 2</summary>
-
+::: details Vue 2
 ```vue
 <template>
-  <div style="height: 100vh">
-    <vue-reader url="/files/啼笑因缘.epub"> </vue-reader>
+  <div style='height: 100vh'>
+    <vue-reader url='/vue-reader/files/啼笑因缘.epub'/>
   </div>
 </template>
 <script>
 import { VueReader } from 'vue-reader'
+
 export default {
-  components: { VueReader },
+  components: { VueReader }
 }
 </script>
 ```
 
-</details>
+:::
+
+## Different Builds
+
+|       **Module**        |       **Filename**        |
+| :---------------------: | :-----------------------: |
+|    UMD(for browsers)    | vue-reader.global-full.js |
+|        CommonJS         |     vue-reader.cjs.js     |
+| ES Module(for bundlers) |     vue-reader.es.js      |
 
 ## VueReader Attributes
 
-| **Name** | **Description**         | **Type**               | **Default** |
-| -------- | ----------------------- | ---------------------- | ----------- |
-| url      | book url or arrayBuffer | `string`/`ArrayBuffer` | —           |
-| title    | the title of the book   | `string`               | —           |
-| showToc  | whether to show the toc | `boolean`              | true        |
+| **Name**         | **Description**           | **Type**               | **Default** |
+| -----------------| --------------------------| ---------------------- | ----------- |
+| url              | book url or arrayBuffer   | `string`/`ArrayBuffer` | —           |
+| title            | the title of the book     | `string`               | —           |
+| showToc          | whether to show the toc   | `boolean`              | true        |
+| backgroundColor  | backgroundColor of reader | `string`               | #fff        |
+
+## VueReader Events
+| **Name** | **Description**           | **Type**               |
+| -------- | -----------------------   | ---------------------- |
+| progress | book url request progress | function(percentage)   |
 
 ## VueReader Slots
 
@@ -96,13 +98,13 @@ export default {
 
 ## EpubView Events
 
-| **Name**        | **Description**                                                                                                                                          | **type**                      |
+| **Name**        | **Description**                                                                                                                                          | **Type**                      |
 | --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------- |
 | update:location | a function that receives the current location while user is reading. This function is called everytime the page changes, and also when it first renders. | `function(location)`          |
 | select          | when select text                                                                                                                                         | `function(cfirange,contents)` |
 | keyPress        | when press the key                                                                                                                                       | `function(keyboardEvent)`     |
 
-## EpubView Slots
+## EpubView  Slots
 
 | **Name**    | **Description**       |
 | ----------- | --------------------- |
@@ -110,16 +112,8 @@ export default {
 
 ## EpubView Exposes
 
-| **Name**    | **Description**       | **Type**         |
-| ----------- | --------------------- | ---------------- |
-| nextPage    | display next page     | `function`       |
-| prevPage    | display previous page | `function`       |
-| setLocation | Set the page          | `function(href)` |
-
-## Related
-
-- [react-reader](https://github.com/gerhardsletten/react-reader)
-
-## Star History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=jinhuan138/vue-reader&type=Date)](https://star-history.com/#jinhuan138/vue-reader&Date)
+| **Name**    | **Description**        | **Type**         |
+| ----------- | ---------------------- | ---------------- |
+| nextPage    | display  next page     | `function`       |
+| prevPage    | display  previous page | `function`       |
+| setLocation | Set the page           | `function(href)` |

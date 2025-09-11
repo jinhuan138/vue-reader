@@ -272,7 +272,7 @@ onUnmounted(() => {
 const next = epubRef.value?.nextPage
 const pre = epubRef.value?.prevPage
 </script>
-<style>
+<style scoped>
 /* container */
 .container {
   overflow: hidden;

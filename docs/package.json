@@ -1,5 +1,5 @@
 {
-  "name": "docs",
+  "name": "vue-reader-docs",
   "version": "1.0.0",
   "type": "module",
   "scripts": {
@@ -8,22 +8,22 @@
     "docs:preview": "vitepress preview"
   },
   "devDependencies": {
-    "@vueuse/core": "^10.9.0",
-    "vitepress": "^1.0.1",
-    "vitepress-theme-demoblock": "^3.0.4",
     "@element-plus/icons-vue": "catalog:",
     "@vitejs/plugin-vue": "catalog:",
+    "@vueuse/core": "^10.9.0",
     "dexie": "catalog:",
     "element-plus": "catalog:",
     "file-saver": "catalog:",
-    "pinia":"catalog:",
+    "pinia": "catalog:",
     "pinia-plugin-persistedstate": "catalog:",
     "sass": "catalog:",
     "spark-md5": "catalog:",
     "unplugin-auto-import": "catalog:",
     "unplugin-vue-components": "catalog:",
+    "vitepress": "^1.3.3",
+    "vitepress-theme-demoblock": "^3.1.3",
     "vue-easy-lightbox": "catalog:",
-    "vue-router":"catalog:",
-    "vue-reader": "catalog:"
+    "vue-reader": "catalog:",
+    "vue-router": "catalog:"
   }
 }
