@@ -10,7 +10,7 @@
 </template>
 <script setup lang="ts">
 //http://epubjs.org/documentation/0.3/
-//https://github.com/troyeguo/foliate-js
+//https://github.com/johnfactotum/foliate-js
 import { ref, onMounted, onUnmounted, toRefs, watch, unref } from 'vue'
 import ePub, { Book, Rendition, Contents } from 'epubjs'
 import {
