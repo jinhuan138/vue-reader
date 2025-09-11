@@ -1,0 +1,37 @@
+name: publish-npm-package
+
+on: 
+  release:
+    types:
+      - published
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # 如果未启用 lastUpdated，则不需要
+      - uses: pnpm/action-setup@v3 # 使用 pnpm
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm # 缓存设置为 pnpm
+          version: 9.6.0 # 您可以根据需要指定特定的 pnpm 版本
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+      - name: Install dependencies
+        run: pnpm install # 使用 pnpm 安装依赖
+
+      - name: Run tests and compile
+        run: pnpm run compile
+
+      - name: Publish packages
+        working-directory: /lib
+        run: pnpm publish --access public
+        env: 
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+       
+      

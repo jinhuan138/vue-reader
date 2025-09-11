@@ -7,6 +7,7 @@ import reader from '../../../reader/src/components/index.vue'
 import { createPinia } from 'pinia'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
+import '../styles/index.scss'
 const pinia = createPinia()
 import pkg from '../../../package.json'
 console.log(
