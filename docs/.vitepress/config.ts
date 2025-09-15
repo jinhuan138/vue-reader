@@ -42,7 +42,12 @@ export default defineConfig({
             { icon: 'github', link: 'https://github.com/jinhuan138/vue-reader' }
         ],
         search: {
-            provider: 'local'
+            provider: 'algolia',
+            options: {
+                appId: 'XVJRH2RXRY',
+                indexName: 'vue-reader document',
+                apiKey: '9c73a173cff0ec8c82b97b377280347b',
+            }
         },
         sidebar: {
             "/guide/": {
@@ -97,7 +102,7 @@ export default defineConfig({
                             }, {
                                 text: "import file",
                                 link: "tips/import_file",
-                            }, 
+                            },
                             {
                                 text: "current progress",
                                 link: "tips/current_progress",
