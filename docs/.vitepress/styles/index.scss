@@ -1,0 +1,40 @@
+:root {
+  --vp-c-brand-1: #f44336;
+  --vp-c-brand-2: #f44336;
+
+  --vp-home-hero-name-color: transparent;
+  --vp-home-hero-name-background: linear-gradient(135deg,
+      #f44336 10%,
+      #f33729 100%);
+  --vp-button-brand-border: #f44336;
+  --vp-button-brand-bg: #f44336;
+
+  --vp-button-brand-hover-border: #f33729;
+  --vp-button-brand-hover-bg: #f33729;
+
+  --vp-button-brand-hover-border: #f33729;
+  --vp-button-brand-active-bg: #f33729;
+}
+
+.theme {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  left: 1rem;
+  z-index: 1;
+  text-align: center;
+  display: flex;
+  justify-content: space-evenly;
+
+  .button-example {
+    color: #606266;
+    border-radius: 4px;
+    text-align: center;
+    cursor: pointer;
+    background: #f44336;
+  }
+
+  .button-example:hover {
+    background-color: #f33729;
+  }
+}

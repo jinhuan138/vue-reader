@@ -28,7 +28,6 @@ package-lock.json
 
 # vitepress
 docs/.vitepress/cache
-.vitepress
 
 #books
 public/files/cover/
