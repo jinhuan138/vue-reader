@@ -112,7 +112,7 @@ export default defineConfig({
                                 link: "tips/lightbox",
                             }, {
                                 text: "search",
-                                link: "tips/Search",
+                                link: "tips/search",
                             }, {
                                 text: "disable context menu",
                                 link: "tips/disable_context_menu",
@@ -139,5 +139,12 @@ export default defineConfig({
         ssr: {
             noExternal: ['vue-reader']
         },
+            css: {
+        preprocessorOptions: {
+            scss: {
+                api: 'modern-compiler', // or 'modern'
+            },
+        },
+    },
     }
 })
