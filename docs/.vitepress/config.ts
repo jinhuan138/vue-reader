@@ -44,9 +44,9 @@ export default defineConfig({
         search: {
             provider: 'algolia',
             options: {
-                appId: 'XVJRH2RXRY',
-                indexName: 'vue-reader document',
-                apiKey: '9c73a173cff0ec8c82b97b377280347b',
+                indexName: 'vue-reader document search',
+                appId: 'JF9QLK223Q',
+                apiKey: '28ce46c055168c5afcd85319ca19eb97',
             }
         },
         sidebar: {
