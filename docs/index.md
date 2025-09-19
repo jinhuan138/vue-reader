@@ -22,20 +22,20 @@ hero:
 features:
   - icon: 🔍
     title: Search
-    details: Search across the entire book to find relevant sections.
+    details: Search across the entire book to find relevant sections
   - icon: 🎨
     title: Customize Style
     details: Adjust font、 colors 、backgroundColor...for a personalized experience
   - icon: 🔆
     title: Highlighting
-    details: Add highlights  to enhance your reading experience.
+    details: Add highlights  to enhance your reading experience
   - icon: 🔄
     title: Scroll/Page View Modes
-    details: Switch between scrolling or paginated reading modes.
+    details: Switch between scrolling or paginated reading modes
   - icon: ⌨️
     title: keyboard events
     details: Use ⬆️⬇️⬅️➡️ to turn the page
   - icon: ⚡
     title: Vue 2/3 Support
-    details: Compatible with both Vue 2 and Vue 3 for seamless integration.
+    details: Compatible with both Vue 2 and Vue 3 for seamless integration
 ---
