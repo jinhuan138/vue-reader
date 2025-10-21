@@ -1,4 +1,3 @@
-//https://github.com/takuma-ru/vue-swipe-modal/blob/main/packages/lib/src/components/swipe-modal.ts
 //https://github.com/KaygNas/rollup-plugin-vue-demi
 //https://github.com/Shimada666/vue-demi-sfc-component-template.git
 import './style.css'
