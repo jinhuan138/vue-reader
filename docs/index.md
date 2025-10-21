@@ -17,7 +17,7 @@ hero:
       link: /guide/introduction
       theme: brand
     - text: Tips
-      link: /guide/Tips/page_number
+      link: /guide/tips/page_number
       theme: alt
 features:
   - icon: 🔍
