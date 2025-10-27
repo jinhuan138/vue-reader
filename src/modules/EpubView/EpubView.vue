@@ -11,8 +11,8 @@
 <script setup lang="ts">
 //http://epubjs.org/documentation/0.3/
 //https://github.com/johnfactotum/foliate-js
-import { ref, onMounted, onUnmounted, toRefs, watch, unref } from 'vue'
-import ePub, { Book, Rendition, Contents } from 'epubjs'
+import { ref, onMounted, onUnmounted, watch, unref } from 'vue'
+import ePub, { Book, Rendition, Contents, Location, NavItem } from 'epubjs'
 import {
   clickListener,
   swipListener,
@@ -22,43 +22,39 @@ import {
 
 interface Props {
   url: string | ArrayBuffer
-  location?: any //当前页 number | string | Rendition['location']['start']
-  tocChanged?: (toc: Book['navigation']['toc']) => void
+  location?: number | string | Location['start']
+  tocChanged?: (toc: Array<NavItem>) => void
   getRendition?: (rendition: Rendition) => void
   handleTextSelected?: (cfiRange: string, contents: Contents) => void
   handleKeyPress?: () => void
   epubInitOptions?: Book['settings']
   epubOptions?: Rendition['settings']
 }
-const props = withDefaults(defineProps<Props>(), {
-  epubInitOptions: () => ({}),
-  epubOptions: () => ({}),
-})
-
 const {
+  url,
+  location,
   tocChanged,
   getRendition,
   handleTextSelected,
   handleKeyPress,
-  epubInitOptions,
-  epubOptions,
-} = props
-const { url, location } = toRefs(props)
+  epubInitOptions = {},
+  epubOptions = {},
+} = defineProps<Props>()
 
 const emit = defineEmits<{
-  (e: 'update:location', location: Props['location']): void
+  'update:location': Location['start']
 }>()
 
 const viewer = ref<HTMLDivElement | null>(null)
-const toc = ref<Book['navigation']['toc']>([])
+const toc = ref<Array<NavItem>>([])
 const isLoaded = ref(false)
 let book: null | Book = null,
   rendition: null | Rendition = null
 
 const initBook = async () => {
   if (book) book.destroy()
-  if (url.value) {
-    book = ePub(unref(url.value), epubInitOptions)
+  if (url) {
+    book = ePub(unref(url), epubInitOptions)
     book!.loaded.navigation.then(({ toc: _toc }) => {
       isLoaded.value = true
       toc.value = _toc
@@ -76,10 +72,10 @@ const initReader = () => {
   })
   registerEvents()
   getRendition && getRendition(rendition)
-  if (typeof location?.value === 'string') {
-    rendition.display(location.value)
-  } else if (typeof location?.value === 'number') {
-    rendition.display(location.value)
+  if (typeof location === 'string') {
+    rendition.display(location)
+  } else if (typeof location === 'number') {
+    rendition.display(location)
   } else if (toc.value.length > 0 && toc?.value[0]?.href) {
     rendition.display(toc.value[0].href)
   } else {
@@ -114,17 +110,15 @@ const registerEvents = () => {
   }
 }
 
-const onLocationChange = (loc: Rendition['location']) => {
+const onLocationChange = (loc: Location) => {
   //监听翻页
-  const newLocation = loc && loc.start
-  if (location?.value !== newLocation) {
-    emit('update:location', newLocation)
+  const newLocation = loc.start
+  if (location !== newLocation) {
+    emit('update:location',loc.start)
   }
 }
 
-watch(url, () => {
-  initBook()
-})
+watch(() => url, initBook)
 
 const nextPage = () => {
   rendition?.next()
