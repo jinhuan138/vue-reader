@@ -49,11 +49,7 @@
     <!-- 目录 -->
     <div v-if="showToc">
       <div class="tocArea">
-        <TocComponent
-          :toc="toc"
-          :current="currentHref"
-          :setLocation="setLocation"
-        />
+        <Toc :toc="toc" :current="currentLocation" :setLocation="setLocation" />
       </div>
       <!-- 目录遮罩 -->
       <div v-if="expandedToc" class="tocBackground" @click="toggleToc"></div>
@@ -61,164 +57,36 @@
   </div>
 </template>
 <script setup lang="ts">
-import {
-  ref,
-  toRefs,
-  reactive,
-  defineComponent,
-  getCurrentInstance,
-  type PropType,
-  onBeforeUnmount,
-  version,
-  Transition,
-  onUnmounted,
-  h as _h,
-} from 'vue-demi'
-import { Rendition, Book } from 'epubjs'
+import { ref, onUnmounted } from 'vue'
+import { Rendition, NavItem, Location } from 'epubjs'
 import EpubView from '../EpubView/EpubView.vue'
-
-//目录
-interface TocProps {
-  toc: Array<NavItem>
-  current: String | Number
-  setLocation: (href: string | number, close?: boolean) => void
-  isSubmenu?: boolean
-}
-
-const TocComponent = defineComponent({
-  name: 'TocComponent',
-
-  props: {
-    toc: {
-      type: Array as PropType<Array<NavItem>>,
-      default: () => [],
-    },
-    current: {
-      type: [String, Number],
-      default: '',
-    },
-    setLocation: {
-      type: Function as PropType<TocProps['setLocation']>,
-      required: true,
-    },
-    isSubmenu: {
-      type: Boolean,
-      default: false,
-      required: false,
-    },
-  },
-
-  setup(props) {
-    const vm = getCurrentInstance()
-    const h = _h.bind(vm)
-
-    const { setLocation, isSubmenu } = props
-    const { toc, current } = toRefs(props)
-
-    return () =>
-      h(
-        'div',
-        null,
-        toc.value.map((item, index) => {
-          return h('div', { key: index }, [
-            h(
-              'button',
-              {
-                class: [
-                  'tocAreaButton',
-                  item.href === current!.value ? 'active' : '',
-                ],
-                onClick: () => {
-                  if (item.subitems.length > 0) {
-                    item.expansion = !item.expansion
-                    setLocation(item.href, false)
-                  } else {
-                    setLocation(item.href)
-                  }
-                },
-              },
-              [
-                isSubmenu ? ' '.repeat(4) + item.label : item.label,
-                // 展开
-                item.subitems &&
-                  item.subitems.length > 0 &&
-                  h('div', {
-                    class: `${item.expansion ? 'open' : ''} expansion`,
-                  }),
-              ]
-            ),
-            //多级目录
-            item.subitems &&
-              item.subitems.length > 0 &&
-              h(
-                Transition,
-                { name: 'collapse-transition' },
-                {
-                  default: () =>
-                    h(
-                      'div',
-                      {
-                        style: {
-                          display: item.expansion ? undefined : 'none',
-                        },
-                      },
-                      [
-                        h(TocComponent, {
-                          toc: item.subitems,
-                          current: current.value,
-                          setLocation,
-                          isSubmenu: true,
-                        }),
-                      ]
-                    ),
-                }
-              ),
-          ])
-        })
-      )
-  },
-})
-
-interface NavItem {
-  id: string
-  href: string
-  label: string
-  subitems: Array<NavItem>
-  parent?: string
-  expansion: boolean
-}
+import Toc from './Toc.vue'
 
 interface Props {
   url: string | ArrayBuffer
   title?: string
   showToc?: boolean
-  tocChanged?: (toc: Book['navigation']['toc']) => void
+  tocChanged?: (toc: Array<NavItem>) => void
   getRendition?: (rendition: Rendition) => void
 }
 
-const emit = defineEmits(['progress'])
+const emit = defineEmits<{
+  progress: [p: number]
+}>()
 
 const epubRef = ref<InstanceType<typeof EpubView>>()
-const currentLocation = ref<Rendition['location'] | null>(null)
-const currentHref = ref<string | number | null>(null)
+const currentLocation = ref<Location | null>(null)
 
-const props = withDefaults(defineProps<Props>(), {
-  showToc: true,
-})
+const {
+  tocChanged,
+  getRendition,
+  title,
+  url,
+  showToc = true,
+} = defineProps<Props>()
 
-const { tocChanged, getRendition } = props
-
-const { title, url } = toRefs(props)
-
-interface EpubBook {
-  toc: Array<NavItem>
-  expandedToc: boolean
-}
-const book: EpubBook = reactive({
-  toc: [], //目录
-  expandedToc: false, //目录展开
-})
-const { toc, expandedToc } = toRefs(book)
+const toc = ref<Array<NavItem>>([])
+const expandedToc = ref<boolean>(false)
 
 const bookName = ref('')
 
@@ -226,16 +94,15 @@ const toggleToc = () => {
   expandedToc.value = !expandedToc.value
 }
 
-const onTocChange = (_toc) => {
-  toc.value = _toc.map((i) => ({ ...i, expansion: false }))
-  tocChanged && tocChanged(_toc)
+const onTocChange = (val: Array<NavItem>) => {
+  toc.value = val
+  tocChanged && tocChanged(val)
 }
 
 const onGetRendition = (rendition) => {
   getRendition && getRendition(rendition)
   rendition.on('relocated', (location) => {
     currentLocation.value = location
-    currentHref.value = location.start.href
   })
   const book = rendition.book
   book.ready.then(() => {
@@ -246,7 +113,6 @@ const onGetRendition = (rendition) => {
 
 const setLocation = (href: string | number, close: boolean = true) => {
   epubRef?.value?.setLocation(href)
-  currentHref.value = href
   expandedToc.value = !close
 }
 
@@ -259,7 +125,7 @@ XMLHttpRequest.prototype.open = function (
   method: string,
   requestUrl: string | URL
 ) {
-  if (requestUrl === url.value) {
+  if (typeof url === 'string' && requestUrl === url) {
     this.addEventListener('progress', onProgress)
   }
   originalOpen.apply(this, arguments as any)
@@ -269,8 +135,12 @@ onUnmounted(() => {
   XMLHttpRequest.prototype.open = originalOpen
 })
 
-const next = epubRef.value?.nextPage
-const pre = epubRef.value?.prevPage
+const next = (): void => {
+  epubRef.value?.nextPage()
+}
+const pre = (): void => {
+  epubRef.value?.prevPage()
+}
 </script>
 <style scoped>
 /* container */
@@ -306,15 +176,6 @@ const pre = epubRef.value?.prevPage
 }
 
 /* toc */
-.tocBackground {
-  position: absolute;
-  left: 256px;
-  top: 0;
-  bottom: 0;
-  right: 0;
-  z-index: 1;
-}
-
 .tocArea {
   position: absolute;
   left: 0;
@@ -333,83 +194,20 @@ const pre = epubRef.value?.prevPage
   width: 5px;
   height: 5px;
 }
-
 .tocArea::-webkit-scrollbar-thumb:vertical {
   height: 5px;
   background-color: rgba(0, 0, 0, 0.1);
   border-radius: 0.5rem;
 }
-
-.tocArea .tocAreaButton {
-  user-select: none;
-  appearance: none;
-  background: none;
-  border: none;
-  display: block;
-  font-family: sans-serif;
-  width: 100%;
-  font-size: 0.9em;
-  text-align: left;
-  padding: 0.9em 1em;
-  border-bottom: 1px solid #ddd;
-  color: #aaa;
-  box-sizing: border-box;
-  outline: none;
-  cursor: pointer;
-  position: relative;
-}
-
-.tocArea .tocAreaButton:hover {
-  background: rgba(0, 0, 0, 0.05);
-}
-
-.tocArea .tocAreaButton:active {
-  background: rgba(0, 0, 0, 0.1);
-}
-
-.tocArea .active {
-  color: #1565c0;
-  border-bottom: 2px solid #1565c0;
-}
-
-/* 二级目录 */
-.tocArea .tocAreaButton .expansion {
-  cursor: pointer;
-  transform: translateY(-50%);
-  top: 50%;
-  right: 12px;
+.tocBackground {
   position: absolute;
-  width: 10px;
-  background-color: #a2a5b4;
-  transition: transform 0.3s ease-in-out, top 0.3s ease-in-out;
+  left: 256px;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  z-index: 1;
 }
 
-.tocArea .tocAreaButton .expansion::after,
-.tocArea .tocAreaButton .expansion::before {
-  content: '';
-  position: absolute;
-  width: 6px;
-  height: 2px;
-  background-color: currentcolor;
-  border-radius: 2px;
-  transition: transform 0.3s ease-in-out, top 0.3s ease-in-out;
-}
-/* ↓ */
-.tocArea .tocAreaButton .expansion::before {
-  transform: rotate(-45deg) translateX(2.5px);
-}
-
-.tocArea .tocAreaButton .expansion::after {
-  transform: rotate(45deg) translateX(-2.5px);
-}
-/* ↑ */
-.tocArea .tocAreaButton .open::before {
-  transform: rotate(45deg) translateX(2.5px);
-}
-
-.tocArea .tocAreaButton .open::after {
-  transform: rotate(-45deg) translateX(-2.5px);
-}
 /* tocButton */
 .tocButton {
   background: none;

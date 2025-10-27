@@ -1,6 +1,5 @@
 import { defineConfig, type PluginOption } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import vueJsx from '@vitejs/plugin-vue-jsx'
 import { resolve } from 'path'
 import tsconfigPaths from 'vite-tsconfig-paths'
 import { visualizer } from 'rollup-plugin-visualizer'
@@ -10,7 +9,6 @@ export default defineConfig({
   base: '/',
   plugins: [
     vue(),
-    vueJsx({}),
     tsconfigPaths({
       root: __dirname,
     }),
