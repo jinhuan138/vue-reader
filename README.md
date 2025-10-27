@@ -25,6 +25,7 @@ an easy way to embed a ePub into your webapp
 
 ## Installation
 
+> From v1.3.x, vue-reader no longer supports Vue 2. Please use v1.2.x for Vue 2 support.
 ```bash
 npm i vue-reader
 pnpm add vue-reader
