@@ -1,13 +1,28 @@
 <template>
   <div v-for="(item, index) in bookToc" :key="index">
-    <button class="tocAreaButton" :class="{ active: item.href.split('#')[0] === current?.start.href }"
-      @click="handleClick(item)">
+    <button
+      class="tocAreaButton"
+      :class="{ active: item.href.split('#')[0] === current?.start.href }"
+      @click="handleClick(item)"
+    >
       {{ isSubmenu ? ' '.repeat(4) + item.label : item.label }}
-      <div v-if="item.subitems && item.subitems.length > 0" class="expansion" :class="{ open: item.expansion }"></div>
+      <div
+        v-if="item.subitems && item.subitems.length > 0"
+        class="expansion"
+        :class="{ open: item.expansion }"
+      ></div>
     </button>
-    <div v-if="item.subitems && item.subitems.length > 0" v-show="item.expansion">
+    <div
+      v-if="item.subitems && item.subitems.length > 0"
+      v-show="item.expansion"
+    >
       <!-- 子目录 -->
-      <Toc :toc="item.subitems" :current="current" :setLocation="setLocation" :isSubmenu="true" />
+      <Toc
+        :toc="item.subitems"
+        :current="current"
+        :setLocation="setLocation"
+        :isSubmenu="true"
+      />
     </div>
   </div>
 </template>
