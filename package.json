@@ -4,8 +4,6 @@
   "type": "module",
   "main": "lib/vue-reader.cjs.js",
   "module": "lib/vue-reader.es.js",
-  "unpkg": "lib/vue-reader.global-full.js",
-  "jsdelivr": "lib/vue-reader.global-full.js",
   "files": [
     "lib"
   ],

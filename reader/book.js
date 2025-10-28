@@ -4,7 +4,7 @@ import { join, dirname } from 'node:path'
 import fs from 'fs'
 import { fileURLToPath } from 'node:url'
 import { Vibrant } from 'node-vibrant/node'
-import { getNodeFileMD5 } from '../reader/src/components/utils/md5.js'
+import { getNodeFileMD5 } from './src/components/utils/md5.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const libraryPath = join(__dirname, '../public/files')
