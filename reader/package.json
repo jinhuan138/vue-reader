@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "vue": "^3.5.13",
-    "vue-reader": "^1.2.13"
+    "vue-reader": "catalog:"
   },
   "devDependencies": {
     "@element-plus/icons-vue": "catalog:",
