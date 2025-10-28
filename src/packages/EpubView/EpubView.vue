@@ -114,7 +114,7 @@ const onLocationChange = (loc: Location) => {
   //监听翻页
   const newLocation = loc.start
   if (location !== newLocation) {
-    emit('update:location',loc.start)
+    emit('update:location', loc.start)
   }
 }
 
