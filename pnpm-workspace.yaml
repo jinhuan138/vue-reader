@@ -17,4 +17,4 @@ catalog:
   unplugin-vue-components: ^0.24.1
   vue-easy-lightbox: ^1.19.0
   vue-router: ^4.2.5
-  vue-reader: ^1.2.13
+  vue-reader: latest
