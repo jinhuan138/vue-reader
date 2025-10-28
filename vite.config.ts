@@ -2,8 +2,7 @@ import { defineConfig, type PluginOption } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { resolve } from 'path'
 import tsconfigPaths from 'vite-tsconfig-paths'
-import { visualizer } from 'rollup-plugin-visualizer'
-
+import { name } from './package.json'
 // https://cn.vitejs.dev/
 export default defineConfig({
   base: '/',
@@ -12,7 +11,6 @@ export default defineConfig({
     tsconfigPaths({
       root: __dirname,
     }),
-    visualizer() as PluginOption,
   ],
   publicDir: 'public',
   resolve: {
@@ -22,10 +20,27 @@ export default defineConfig({
       { find: 'comps', replacement: resolve(__dirname, 'src/components') },
     ],
   },
-  optimizeDeps: {
-    exclude: ['vue-demi'],
-  },
   server: {
     port: 8025,
+  },
+  build: {
+    copyPublicDir: false,
+    emptyOutDir: true,
+    minify: 'terser',
+    outDir: 'lib',
+    lib: {
+      entry: 'src/packages/index.ts',
+      name,
+      fileName: (format) => `${name}.${format}.js`,
+      formats:['es','umd','cjs']
+    },
+    rollupOptions: {
+      external: ['vue', 'epubjs'],
+      output: {
+        globals: {
+          vue: 'Vue',
+        },
+      },
+    },
   },
 })
