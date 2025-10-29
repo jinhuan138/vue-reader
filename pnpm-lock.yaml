@@ -47,7 +47,7 @@ catalogs:
       version: 1.19.0
     vue-reader:
       specifier: latest
-      version: 1.3.1
+      version: 1.3.2
     vue-router:
       specifier: ^4.2.5
       version: 4.6.3
@@ -101,7 +101,7 @@ importers:
         version: 3.4.38(typescript@5.9.3)
       vue-reader:
         specifier: 'catalog:'
-        version: 1.3.1
+        version: 1.3.2
 
   docs:
     devDependencies:
@@ -152,7 +152,7 @@ importers:
         version: 1.19.0(vue@3.5.22(typescript@5.9.3))
       vue-reader:
         specifier: 'catalog:'
-        version: 1.3.1
+        version: 1.3.2
       vue-router:
         specifier: 'catalog:'
         version: 4.6.3(vue@3.5.22(typescript@5.9.3))
@@ -164,7 +164,7 @@ importers:
         version: 3.5.22(typescript@5.9.3)
       vue-reader:
         specifier: 'catalog:'
-        version: 1.3.1
+        version: 1.3.2
     devDependencies:
       '@element-plus/icons-vue':
         specifier: 'catalog:'
@@ -2985,8 +2985,8 @@ packages:
     peerDependencies:
       vue: ^3.0.0
 
-  vue-reader@1.3.1:
-    resolution: {integrity: sha512-nioJe6YtFyKmo8w6F+ykVHN6gU/SfRUtP1fpCLk/Opo4gpXKkc0GIeV5B+L0Kz3pXjQ3P/6D8pvEV4YfMS7ZPQ==}
+  vue-reader@1.3.2:
+    resolution: {integrity: sha512-5g8V9fwC+7Q1iASvvhTJ7LHgtq2N0wwbnuKipTRPlbfoV3Wy85PCexBSup20Pw1h5xbT/HC3LPEPXPYPKklfag==}
 
   vue-router@4.6.3:
     resolution: {integrity: sha512-ARBedLm9YlbvQomnmq91Os7ck6efydTSpRP3nuOKCvgJOHNrhRoJDSKtee8kcL1Vf7nz6U+PMBL+hTvR3bTVQg==}
@@ -6109,7 +6109,7 @@ snapshots:
     dependencies:
       vue: 3.5.22(typescript@5.9.3)
 
-  vue-reader@1.3.1:
+  vue-reader@1.3.2:
     dependencies:
       epubjs: 0.3.93
 
