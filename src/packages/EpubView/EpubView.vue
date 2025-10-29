@@ -11,7 +11,7 @@
 <script setup lang="ts">
 //http://epubjs.org/documentation/0.3/
 //https://github.com/johnfactotum/foliate-js
-import { ref, onMounted, onUnmounted, watch, unref } from 'vue'
+import { ref, onMounted, onUnmounted, watch, unref, toRefs } from 'vue'
 import ePub, { Book, Rendition, Contents, Location, NavItem } from 'epubjs'
 import {
   clickListener,
@@ -20,7 +20,7 @@ import {
   keyListener,
 } from '../utils/listener/listener'
 
-interface Props {
+export interface EpubViewProps {
   url: string | ArrayBuffer
   location?: number | string | Location['start']
   tocChanged?: (toc: Array<NavItem>) => void
@@ -30,19 +30,22 @@ interface Props {
   epubInitOptions?: Book['settings']
   epubOptions?: Rendition['settings']
 }
+
+const props = defineProps<EpubViewProps>()
+
 const {
-  url,
-  location,
-  tocChanged,
-  getRendition,
-  handleTextSelected,
-  handleKeyPress,
   epubInitOptions = {},
   epubOptions = {},
-} = defineProps<Props>()
+  handleKeyPress,
+  handleTextSelected,
+  getRendition,
+  tocChanged,
+} = props
+
+const { url, location } = toRefs(props)
 
 const emit = defineEmits<{
-  'update:location': Location['start']
+  'update:location': [Location['start']]
 }>()
 
 const viewer = ref<HTMLDivElement | null>(null)
@@ -53,7 +56,7 @@ let book: null | Book = null,
 
 const initBook = async () => {
   if (book) book.destroy()
-  if (url) {
+  if (url.value) {
     book = ePub(unref(url), epubInitOptions)
     book!.loaded.navigation.then(({ toc: _toc }) => {
       isLoaded.value = true
@@ -72,8 +75,8 @@ const initReader = () => {
   })
   registerEvents()
   getRendition && getRendition(rendition)
-  if (typeof location === 'string') {
-    rendition.display(location)
+  if (typeof location.value === 'string') {
+    rendition.display(location.value)
   } else if (typeof location === 'number') {
     rendition.display(location)
   } else if (toc.value.length > 0 && toc?.value[0]?.href) {
@@ -113,12 +116,12 @@ const registerEvents = () => {
 const onLocationChange = (loc: Location) => {
   //监听翻页
   const newLocation = loc.start
-  if (location !== newLocation) {
+  if (location.value !== newLocation) {
     emit('update:location', loc.start)
   }
 }
 
-watch(() => url, initBook)
+watch(url, initBook)
 
 const nextPage = () => {
   rendition?.next()
