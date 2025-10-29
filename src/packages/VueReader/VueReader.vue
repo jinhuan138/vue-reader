@@ -14,7 +14,9 @@
       </button>
       <!-- 书名 -->
       <slot name="title">
-        <div class="titleArea">{{ title || bookName }}</div>
+        <div class="titleArea" :title="title || bookName">
+          {{ title || bookName }}
+        </div>
       </slot>
       <!-- 阅读 -->
       <epub-view
@@ -57,12 +59,12 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, onUnmounted } from 'vue'
+import { ref, toRefs, unref, onUnmounted } from 'vue'
 import { Rendition, NavItem, Location } from 'epubjs'
 import EpubView from '../EpubView/EpubView.vue'
 import Toc from './Toc.vue'
 
-interface Props {
+export interface VueReaderProps {
   url: string | ArrayBuffer
   title?: string
   showToc?: boolean
@@ -70,20 +72,20 @@ interface Props {
   getRendition?: (rendition: Rendition) => void
 }
 
+const props = withDefaults(defineProps<VueReaderProps>(), {
+  showToc: true,
+})
+
 const emit = defineEmits<{
   progress: [p: number]
 }>()
 
+const { tocChanged, getRendition } = props
+
+const { url, title, showToc } = toRefs(props)
+
 const epubRef = ref<InstanceType<typeof EpubView>>()
 const currentLocation = ref<Location | null>(null)
-
-const {
-  tocChanged,
-  getRendition,
-  title,
-  url,
-  showToc = true,
-} = defineProps<Props>()
 
 const toc = ref<Array<NavItem>>([])
 const expandedToc = ref<boolean>(false)
@@ -125,7 +127,7 @@ XMLHttpRequest.prototype.open = function (
   method: string,
   requestUrl: string | URL
 ) {
-  if (typeof url === 'string' && requestUrl === url) {
+  if (typeof unref(url) === 'string' && requestUrl === unref(url)) {
     this.addEventListener('progress', onProgress)
   }
   originalOpen.apply(this, arguments as any)

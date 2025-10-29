@@ -2,16 +2,12 @@ import { defineConfig, type PluginOption } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { resolve } from 'path'
 import tsconfigPaths from 'vite-tsconfig-paths'
+import dts from 'unplugin-dts/vite'
 import { name } from './package.json'
 // https://cn.vitejs.dev/
+const outDir = 'lib'
 export default defineConfig({
   base: '/',
-  plugins: [
-    vue(),
-    tsconfigPaths({
-      root: __dirname,
-    }),
-  ],
   publicDir: 'public',
   resolve: {
     extensions: ['.ts', '.js'],
@@ -26,13 +22,13 @@ export default defineConfig({
   build: {
     copyPublicDir: false,
     emptyOutDir: true,
-    minify: 'terser',
-    outDir: 'lib',
+    minify: false,
+    outDir,
     lib: {
-      entry: 'src/packages/index.ts',
+      entry: resolve(__dirname, 'src/packages/index.ts'),
       name,
       fileName: (format) => `${name}.${format}.js`,
-      formats:['es','umd','cjs']
+      formats: ['es', 'umd', 'cjs'],
     },
     rollupOptions: {
       external: ['vue', 'epubjs'],
@@ -43,4 +39,21 @@ export default defineConfig({
       },
     },
   },
+  plugins: [
+    vue(),
+    tsconfigPaths({
+      root: __dirname,
+    }),
+    // dts({
+    //   bundleTypes: true,
+    //   outDir,
+    //   include: [
+    //     'src/packages',
+    //     'types/*.ts',
+    //   ],
+    //   compilerOptions: {
+    //     sourceMap: false,
+    //   },
+    // }),
+  ],
 })

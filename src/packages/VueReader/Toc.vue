@@ -28,18 +28,22 @@
 </template>
 <script setup lang="ts">
 import { NavItem, Location } from 'epubjs'
-import { ref, watchEffect } from 'vue'
-interface Item extends NavItem {
+import { ref, watchEffect, toRefs } from 'vue'
+export interface Item extends NavItem {
   expansion: boolean
 }
-interface TocProps {
+export interface TocProps {
   toc: Array<NavItem>
   current: Location | null
   setLocation: (href: string | number, close?: boolean) => void
   isSubmenu?: boolean
 }
 const bookToc = ref<Item[]>([])
-const { toc, current, setLocation, isSubmenu = false } = defineProps<TocProps>()
+const props = withDefaults(defineProps<TocProps>(), {
+  isSubmenu: false,
+})
+const { setLocation } = props
+const { toc, current, isSubmenu } = toRefs(props)
 const handleClick = (item: Item): void => {
   if (item.subitems && item?.subitems?.length > 0) {
     item.expansion = !item.expansion
@@ -49,7 +53,7 @@ const handleClick = (item: Item): void => {
   }
 }
 watchEffect(() => {
-  bookToc.value = toc.map((item) => ({
+  bookToc.value = toc.value.map((item) => ({
     ...item,
     expansion: false,
   }))
