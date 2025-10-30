@@ -19,7 +19,4 @@ export default defineConfig({
       dts: 'types/components.d.ts',
     }),
   ],
-  optimizeDeps: {
-    exclude: ['vue-demi'],
-  },
 })
