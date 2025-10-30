@@ -10,6 +10,7 @@
     "book": "node build/book"
   },
   "dependencies": {
+    "mitt": "^3.0.1",
     "vue": "^3.5.13",
     "vue-reader": "catalog:"
   },
@@ -26,8 +27,8 @@
     "spark-md5": "catalog:",
     "unplugin-auto-import": "catalog:",
     "unplugin-vue-components": "catalog:",
-    "vite": "^4.2.1",
+    "vite": "catalog:",
     "vue-easy-lightbox": "catalog:",
-    "vue-router":"catalog:"
+    "vue-router": "catalog:"
   }
 }

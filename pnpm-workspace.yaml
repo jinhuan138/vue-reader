@@ -18,3 +18,4 @@ catalog:
   vue-easy-lightbox: ^1.19.0
   vue-router: ^4.2.5
   vue-reader: latest
+  vite: ^7.1.12
