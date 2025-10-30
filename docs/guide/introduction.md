@@ -111,6 +111,7 @@ export default {
 | **Name**    | **Description**       |
 | ----------- | --------------------- |
 | loadingView | epub view loadingView |
+| errorView   | epub view errorView   |
 
 ## EpubView Exposes
 

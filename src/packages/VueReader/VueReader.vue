@@ -2,13 +2,8 @@
   <div class="container">
     <div class="readerArea" :class="{ containerExpanded: expandedToc }">
       <!--展开目录 -->
-      <button
-        v-if="showToc"
-        class="tocButton"
-        :class="{ tocButtonExpanded: expandedToc }"
-        type="button"
-        @click="toggleToc"
-      >
+      <button v-if="showToc" class="tocButton" :class="{ tocButtonExpanded: expandedToc }" type="button"
+        @click="toggleToc">
         <span class="tocButtonBar" style="top: 35%"></span>
         <span class="tocButtonBar" style="top: 66%"></span>
       </button>
@@ -19,32 +14,23 @@
         </div>
       </slot>
       <!-- 阅读 -->
-      <epub-view
-        ref="epubRef"
-        v-bind="$attrs"
-        :url="url"
-        :tocChanged="onTocChange"
-        :getRendition="onGetRendition"
-      >
+      <epub-view ref="epubRef" v-bind="$attrs" :url="url" :tocChanged="onTocChange" :getRendition="onGetRendition">
         <template #loadingView>
           <slot name="loadingView">
             <div class="loadingView">Loading…</div>
           </slot>
         </template>
+        <template #errorView>
+          <slot name="errorView">
+            <div class="errorView">Error loading book</div>
+          </slot>
+        </template>
       </epub-view>
       <!-- 翻页 -->
-      <button
-        class="arrow pre"
-        @click="pre"
-        :disabled="currentLocation?.atStart"
-      >
+      <button class="arrow pre" @click="pre" :disabled="currentLocation?.atStart">
         ‹
       </button>
-      <button
-        class="arrow next"
-        @click="next"
-        :disabled="currentLocation?.atEnd"
-      >
+      <button class="arrow next" @click="next" :disabled="currentLocation?.atEnd">
         ›
       </button>
     </div>
@@ -196,11 +182,13 @@ const pre = (): void => {
   width: 5px;
   height: 5px;
 }
+
 .tocArea::-webkit-scrollbar-thumb:vertical {
   height: 5px;
   background-color: rgba(0, 0, 0, 0.1);
   border-radius: 0.5rem;
 }
+
 .tocBackground {
   position: absolute;
   left: 256px;
@@ -283,5 +271,16 @@ const pre = (): void => {
   color: #ccc;
   text-align: center;
   margin-top: -0.5em;
+}
+
+/* errorView */
+.errorView {
+  position: 'absolute';
+  top: '50%';
+  left: '10%';
+  right: '10%';
+  color: '#c00';
+  text-align: 'center';
+  margin-top: '-.5em';
 }
 </style>
