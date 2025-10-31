@@ -3,30 +3,27 @@ import vue from '@vitejs/plugin-vue'
 import { resolve } from 'path'
 import tsconfigPaths from 'vite-tsconfig-paths'
 import dts from 'unplugin-dts/vite'
-import { libInjectCss } from 'vite-plugin-lib-inject-css';
+import { libInjectCss } from 'vite-plugin-lib-inject-css'
 import { name } from './package.json'
 // https://cn.vitejs.dev/
 const outDir = 'lib'
 export default defineConfig({
   base: '/',
   publicDir: 'public',
-    plugins: [
+  plugins: [
     vue(),
     tsconfigPaths({
       root: __dirname,
     }),
     libInjectCss(),
-    // dts({
-    //   bundleTypes: true,
-    //   outDir,
-    //   include: [
-    //     'src/packages',
-    //     'types/*.ts',
-    //   ],
-    //   compilerOptions: {
-    //     sourceMap: false,
-    //   },
-    // }),
+    dts({
+      processor: 'vue',
+      // bundleTypes: true,
+      compilerOptions: {
+        sourceMap: false,
+        declarationMap:false
+      },
+    }),
   ],
   resolve: {
     extensions: ['.ts', '.js'],
