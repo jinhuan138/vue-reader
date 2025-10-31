@@ -275,12 +275,12 @@ const pre = (): void => {
 
 /* errorView */
 .errorView {
-  position: 'absolute';
-  top: '50%';
-  left: '10%';
-  right: '10%';
-  color: '#c00';
-  text-align: 'center';
-  margin-top: '-.5em';
+  position: absolute;
+  top: 50%;
+  left: 10%;
+  right: 10%;
+  color: #c00;
+  text-align: center;
+  margin-top: -.5em;
 }
 </style>
