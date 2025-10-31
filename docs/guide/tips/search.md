@@ -5,7 +5,7 @@
 ```vue
 <template>
   <div style="height: 100vh; position: relative">
-    <vue-reader url="/vue-reader/files/啼笑因缘.epub" :getRendition="getRendition" />
+    <vue-reader url="/files/啼笑因缘.epub" :getRendition="getRendition" />
     <div class="search">
       <input
         v-model.trim="searchText"
@@ -36,25 +36,42 @@
     </div>
   </div>
 </template>
-<script setup>
+<script setup lang="ts">
 import { VueReader } from 'vue-reader'
+import { Rendition } from 'epubjs'
 import { ref } from 'vue'
 
-let rendition = null
-const searchText = ref('只在捻花一笑中')
-const searchResults = ref([])
+let rendition: null | Rendition = null
+interface SearchResultItem {
+  cfi: string
+  excerpt: string
+}
+const searchText = ref<string>('只在捻花一笑中')
+const searchResults = ref<SearchResultItem[]>([])
 
-const getRendition = (val) => (rendition = val)
+const getRendition = (val: Rendition): void => {
+  rendition = val
+}
 
-const search = async () => {
-  if (!searchText.value) return (searchResults.value = [])
-  const res = await doSearch(searchText.value)
-  searchResults.value = res.slice(0, 5)
+const highlightSearchResults = (results: SearchResultItem[]) => {
+  if (!rendition) return
+  results.forEach((result) => {
+    rendition?.annotations.add('highlight', result.cfi)
+  })
+}
+const search = async (): Promise<void> => {
+  if (!searchText.value) {
+    searchResults.value = []
+  } else {
+    const res = await doSearch(searchText.value)
+    searchResults.value = res.slice(0, 5)
+    highlightSearchResults(searchResults.value)
+  }
 }
 
 //Searching the entire book
 const doSearch = (q) => {
-  const { book } = rendition
+  const { book } = rendition!
   return Promise.all(
     book.spine.spineItems.map((item) =>
       item
@@ -67,8 +84,8 @@ const doSearch = (q) => {
 
 //Searching the current chapter
 const doChapterSearch = (q) => {
-  const { book } = rendition
-  let item = book.spine.get(rendition.location.start.cfi)
+  const { book } = rendition!
+  let item = book.spine.get(rendition!.location.start.cfi)
   return item
     .load(book.load.bind(book))
     .then(item.find.bind(item, q))
@@ -76,7 +93,7 @@ const doChapterSearch = (q) => {
 }
 
 const go = (href, e) => {
-  rendition.display(href)
+  rendition?.display(href)
   e.stopPropagation()
   e.preventDefault()
 }
