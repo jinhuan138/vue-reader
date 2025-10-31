@@ -28,6 +28,6 @@
     },
     "lib": ["esnext", "dom"]
   },
-  "include": ["src/packages","types/*.ts",],
+  "include": ["src/packages","types/*.d.ts"],
   "exclude": ["node_modules",]
 }
