@@ -13,7 +13,7 @@
 //http://epubjs.org/documentation/0.3/
 //https://github.com/johnfactotum/foliate-js
 import { ref, onMounted, onUnmounted, watch, unref, toRefs } from 'vue'
-import ePub from 'epubjs'
+import Epub from 'epubjs'
 import type { Book, Rendition, Contents, Location, NavItem } from 'epubjs'
 import type { BookOptions } from 'epubjs/types/book'
 import type { RenditionOptions } from 'epubjs/types/rendition'
@@ -62,9 +62,8 @@ let book: null | Book = null,
 const initBook = async () => {
   if (book) book.destroy()
   if (url.value) {
-    book = ePub(unref(url), epubInitOptions)
+    book = Epub(unref(url), epubInitOptions)
     book.on('openFailed', (error: Error) => {
-      console.error(error)
       isError.value = true
     })
     book!.loaded.navigation.then(({ toc: _toc }) => {
