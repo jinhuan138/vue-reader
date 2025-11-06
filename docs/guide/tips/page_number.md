@@ -13,7 +13,7 @@ We store the epubjs rendition in a ref, and get the page numbers in the callback
       @update:location="locationChange"
     />
   </div>
-  <div class="page">{{ page }}</div>
+  <div :class="$style.page">{{ page }}</div>
 </template>
 <script setup>
 import { VueReader } from 'vue-reader'
@@ -51,7 +51,7 @@ const locationChange = (epubcifi) => {
   }
 }
 </script>
-<style scoped>
+<style module>
 .page {
   text-align: center;
   z-index: 1;
