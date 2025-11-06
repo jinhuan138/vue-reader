@@ -10,7 +10,7 @@ This shows how to hook into epubJS annotations object and let the user highlight
     <vue-reader url="/vue-reader/files/啼笑因缘.epub" :getRendition="getRendition">
     </vue-reader>
   </div>
-  <div class="selection">
+  <div :class="$style.selection">
     Selection:
     <ul>
       <li v-for="({ text, cfiRange }, index) in selections" :key="index">
@@ -67,7 +67,7 @@ onUnmounted(() => {
 })
 </script>
 
-<style scoped>
+<style module>
 .selection {
   z-index: 1;
   background-color: white;
