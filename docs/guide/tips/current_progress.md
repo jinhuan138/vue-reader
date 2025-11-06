@@ -14,7 +14,7 @@
         ><el-progress type="circle" :percentage="percentage"
       /></template>
     </vue-reader>
-    <div class="progress">
+    <div :class="$style.progress">
       <input
         type="number"
         :value="current"
@@ -77,7 +77,7 @@ const change = (e) => {
   rendition.display(cfi)
 }
 </script>
-<style scoped>
+<style module>
 .progress {
   position: absolute;
   bottom: 1rem;

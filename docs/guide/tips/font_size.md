@@ -11,14 +11,16 @@ Hooking into epubJS rendition object is the key for this also.
       url="/vue-reader/files/啼笑因缘.epub"
       :getRendition="getRendition"
     />
-    <div class="size">
+    <div :class="$style.size">
       <button
+        :class="$style.button"
         @click="changeSize(Math.max(80, size - 10))"
       >
         -
       </button>
       <span>Current size: {{ size }}%</span>
       <button
+        :class="$style.button"
         @click="changeSize(Math.min(130, size + 10))"
       >
         +
@@ -41,7 +43,7 @@ const getRendition = (val) => {
   rendition.themes.fontSize(`${size.value}%`)
 }
 </script>
-<style scoped>
+<style module>
 .size {
   position: absolute;
   bottom: 1rem;
@@ -51,13 +53,7 @@ const getRendition = (val) => {
   text-align: center;
   color: #000;
 }
-</style>
-```
-
-:::
-
-<style module> 
-button {
+.button {
     min-width: 48px; 
     height: 24px; 
     border-radius: 4px; 
@@ -67,3 +63,5 @@ button {
     background: #dcdfe6;
 } 
 </style>
+```
+:::
