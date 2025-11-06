@@ -5,7 +5,7 @@
 ```vue
 <template>
   <div style="height: 100vh; position: relative">
-    <vue-reader url="vue-reader/files/啼笑因缘.epub" :getRendition="getRendition" />
+    <vue-reader url="/vue-reader/files/啼笑因缘.epub" :getRendition="getRendition" />
     <div class="search">
       <input
         v-model.trim="searchText"
