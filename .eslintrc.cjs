@@ -1,3 +1,0 @@
-globals: {
-  NodeJS: 'readonly'
-}
