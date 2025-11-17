@@ -24,7 +24,6 @@
     "pinia": "catalog:",
     "pinia-plugin-persistedstate": "catalog:",
     "sass": "catalog:",
-    "spark-md5": "catalog:",
     "unplugin-auto-import": "catalog:",
     "unplugin-vue-components": "catalog:",
     "vite": "catalog:",
