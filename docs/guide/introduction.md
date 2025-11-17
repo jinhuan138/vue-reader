@@ -59,11 +59,11 @@ export default {
 
 ## Different Builds
 
-|       **Module**        |       **Filename**        |
-| :---------------------: | :-----------------------: |
-|    UMD(for browsers)    | vue-reader.global-full.js |
-|        CommonJS         |     vue-reader.cjs.js     |
-| ES Module(for bundlers) |     vue-reader.es.js      |
+|       **Module**        |       **Filename**    |
+| :---------------------: | :-------------------: |
+|    UMD(for browsers)    | vue-reader.umd.js     |
+|        CommonJS         | vue-reader.cjs.js     |
+| ES Module(for bundlers) | vue-reader.es.js      |
 
 ## VueReader Attributes
 
