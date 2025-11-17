@@ -109,7 +109,6 @@ import {
 import titlebar from './Titlebar.vue'
 import fileSaver from 'file-saver'
 import { db } from './utils/db'
-import { getFileMD5 } from './utils/md5'
 import { useReaderStore } from './utils/stores'
 import { ref, reactive, toRefs, onMounted, onBeforeUnmount } from 'vue'
 
@@ -263,18 +262,6 @@ const readerBook = (info) => {
 //导入
 const selectFile = async (item) => {
   const { raw, name, size } = item
-  // const md5 = await getFileMD5(raw)
-  // const res = await db.books.get({ md5 })
-  // if (res) return ElMessage.error('图书重复')
-  // const reader = new FileReader()
-  // reader.onerror = (error) => {
-  //     console.log(error)
-  // }
-  // reader.onloadend = (e) => {
-  //     const file = { buffer: reader.result, size, name, md5 }
-  //     saveFile(file)
-  // }
-  // reader.readAsArrayBuffer(raw)
   //不存储
   const reader = new FileReader()
   reader.onerror = (error) => {
