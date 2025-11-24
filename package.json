@@ -24,6 +24,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
+    "typecheck": "vue-tsc --noEmit -p tsconfig.json --composite false",
     "format": "prettier --write src/packages/**/*.{ts,vue}",
     "docs:dev": "npm -C docs run docs:dev",
     "docs:build": "npm -C docs run docs:build",
@@ -49,7 +50,8 @@
     "vite-plugin-lib-inject-css": "^2.2.2",
     "vite-tsconfig-paths": "^5.1.4",
     "vue": "^3.4.38",
-    "vue-reader": "catalog:"
+    "vue-reader": "catalog:",
+    "vue-tsc": "^3.1.5"
   },
   "browserslist": [
     "defaults",
