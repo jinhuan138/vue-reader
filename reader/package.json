@@ -23,7 +23,7 @@
     "file-saver": "catalog:",
     "pinia": "catalog:",
     "pinia-plugin-persistedstate": "catalog:",
-    "sass": "catalog:",
+    "sass-embedded": "catalog:",
     "unplugin-auto-import": "catalog:",
     "unplugin-vue-components": "catalog:",
     "vite": "catalog:",
