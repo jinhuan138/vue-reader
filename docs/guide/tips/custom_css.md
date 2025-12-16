@@ -11,7 +11,7 @@ This is useful for when you want to set custom font families, custom background 
     <vue-reader
       url="/vue-reader/files/啼笑因缘.epub"
       :getRendition="getRendition"
-      :backgroundColor="theme === 'light' ? '#fff' : '#000'"
+      :class="{ darkReaderTheme: theme === 'dark' }"
     />
     <div class="theme">
       <button class="button-example" @click="theme = 'light'">
@@ -55,6 +55,32 @@ watch(theme, (currentTheme) => {
   }
 })
 </script>
+<style lang="scss" scoped>
+:deep(.darkReaderTheme) {
+  .readerArea {
+    background: #000;
+    .titleArea {
+      color: #ccc;
+    }
+    .arrow {
+      color: white;
+    }
+  }
+  .tocArea {
+    color: #ccc;
+    background: #111;
+  }
+  .tocButtonExpanded {
+    background: #222;
+  }
+  .tocButtonBar {
+    background: #fff;
+  }
+  .tocButton {
+    color: white;
+  }
+}
+</style>
 ```
 
 :::
