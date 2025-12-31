@@ -33,8 +33,6 @@ const themeChips = [
 ]
 const theme = ref(themeChips[0])
 
-console.log(theme)
-
 const updateTheme = (rendition, theme) => {
   const themes = rendition.themes
   themes.override('color', theme.color)
