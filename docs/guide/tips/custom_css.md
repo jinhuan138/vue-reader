@@ -7,41 +7,38 @@ This is useful for when you want to set custom font families, custom background 
 
 ```vue
 <template>
-  <div style="height: 100vh; position: relative">
-    <vue-reader
-      url="/vue-reader/files/啼笑因缘.epub"
-      :getRendition="getRendition"
-      :class="{ darkReaderTheme: theme === 'dark' }"
-    />
-    <div class="theme">
-      <button class="button-example" @click="theme = 'light'">
-        Light theme
-      </button>
-      <button class="button-example" @click="theme = 'dark'">Dark theme</button>
+  <div :style="{
+    height: '100vh',
+    position: 'relative',
+    '--book-color': theme.color,
+    '--book-background': theme.background,
+  }">
+    <vue-reader url="/vue-reader/files/啼笑因缘.epub" :getRendition="getRendition"/>
+    <div class="theme-demo">
+      <div :style="item" v-for="item in themeChips" @click="theme = item">A</div>
     </div>
   </div>
 </template>
 <script setup>
 import { VueReader } from 'vue-reader'
-import { ref, watch } from 'vue'
-let rendition = null
+import { ref, watch, computed } from 'vue'
 
-const theme = ref('dark')
+let rendition = null
+const themeChips = [
+  { color: '#000', background: '#fff' },
+  { color: '#fff', background: '#000' },
+  { color: '#36503e', background: '#f5deb3' },
+  { color: '#594429', background: '#c5e7cf' },
+  { color: '#e8e8e8', background: '#111b21' },
+]
+const theme = ref(themeChips[0])
+
+console.log(theme)
 
 const updateTheme = (rendition, theme) => {
   const themes = rendition.themes
-  switch (theme) {
-    case 'dark': {
-      themes.override('color', '#fff')
-      themes.override('background', '#000')
-      break
-    }
-    case 'light': {
-      themes.override('color', '#000')
-      themes.override('background', '#fff')
-      break
-    }
-  }
+  themes.override('color', theme.color)
+  themes.override('background', theme.background)
 }
 
 const getRendition = (_rendition) => {
@@ -55,32 +52,44 @@ watch(theme, (currentTheme) => {
   }
 })
 </script>
-<style lang="scss" scoped>
-:deep(.darkReaderTheme) {
-  .readerArea {
-    background: #000;
-    .titleArea {
-      color: #ccc;
-    }
-    .arrow {
-      color: white;
-    }
-  }
-  .tocArea {
-    color: #ccc;
-    background: #111;
-  }
-  .tocButtonExpanded {
-    background: #222;
-  }
-  .tocButtonBar {
-    background: #fff;
-  }
-  .tocButton {
-    color: white;
-  }
+<style scoped>
+.theme-demo {
+  position: absolute;
+  bottom: 10px;
+  list-style: none;
+  display: flex;
+  gap: 10px;
+  left: 50%;
+  margin-left: -70px;
+  z-index: 999;
+}
+.theme-demo div {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 20px;
+  cursor: pointer;
+}
+
+:deep(.readerArea) {
+  background: var(--book-background) !important;
+}
+
+:deep(.readerArea .titleArea) {
+  color: var(--book-color) !important;
+}
+
+:deep(.tocArea) {
+  color: var(--book-color) !important;
+  background: var(--book-background) !important;
+}
+
+:deep(.tocAreaButton) {
+  color: var(--book-color) !important;
 }
 </style>
+
 ```
 
 :::
