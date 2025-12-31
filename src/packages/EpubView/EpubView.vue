@@ -105,8 +105,9 @@ const registerEvents = () => {
       iframe?.iframe?.contentWindow.focus()
       // clickListener(iframe?.document, rendition as Rendition, flipPage);
       // selectListener(iframe.document, rendition, toggleBuble);
-      if (!epubOptions?.flow?.includes('scrolled'))
+      if (!epubOptions?.flow?.includes('scrolled')) {
         wheelListener(iframe.document, flipPage)
+      }
       swipListener(iframe.document, flipPage)
       keyListener(iframe.document, flipPage)
     })
