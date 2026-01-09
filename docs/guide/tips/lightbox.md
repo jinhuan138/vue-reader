@@ -44,6 +44,7 @@ const getRendition = (rendition) => {
       ...document.querySelectorAll('image'),
     ]
     imgs.forEach((img, index) => {
+      img.title = '点击查看图片'
       img.addEventListener('click', () => {
         visibleRef.value = true
         indexRef.value = index
