@@ -21,7 +21,7 @@ This is useful for when you want to set custom font families, custom background 
 </template>
 <script setup>
 import { VueReader } from 'vue-reader'
-import { ref, watch, computed } from 'vue'
+import { ref, watch } from 'vue'
 
 let rendition = null
 const themeChips = [
@@ -31,6 +31,7 @@ const themeChips = [
   { color: '#594429', background: '#c5e7cf' },
   { color: '#e8e8e8', background: '#111b21' },
 ]
+
 const theme = ref(themeChips[0])
 
 const updateTheme = (rendition, theme) => {
