@@ -77,14 +77,19 @@ export default {
 | url      | book url or arrayBuffer           | `string`/`ArrayBuffer`                | —           |
 | title    | the title of the book             | `string`                              | —           |
 | showToc  | whether to show the toc           | `boolean`                             | true        |
-| [EpubView Attributes](#EpubView-Attributes)  |  EpubView attributes all can be used. | -           |
+| [EpubView Attributes](#epubView-attributes)  |  EpubView attributes all can be used. | -           |
 
 ### VueReader Slots
 
 | **Name**                          | **Description**                  |
 | --------------------------------- | -------------------------------- |
 | title                             | the title of the book            |
-| [EpubView slots](#EpubView-Slots) |  EpubView slots all can be used. |
+| [EpubView slots](#epubview-slots) |  EpubView slots all can be used. |
+
+### VueReader Exposes
+| **Name**                              | **Description**                     |
+| ------------------------------------- | ----------------------------------- | 
+| [EpubView Exposes](#epubview-exposes) |  EpubView exposes all can be used.  |
 
 ## EpubView API
 
