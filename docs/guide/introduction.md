@@ -83,6 +83,11 @@ export default {
 | title                             | the title of the book            |
 | [EpubView slots](#epubview-slots) |  EpubView slots all can be used. |
 
+### VueReader Exposes
+| **Name**                              | **Description**                     |
+| ------------------------------------- | ----------------------------------- | 
+| [EpubView Exposes](#epubView-exposes) |  EpubView exposes all can be used.  |
+
 ## EpubView API
 
 ### EpubView Attributes
