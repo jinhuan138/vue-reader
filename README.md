@@ -68,23 +68,27 @@ export default {
 
 </details>
 
-## VueReader Attributes
+## VueReader API
 
-| **Name** | **Description**         | **Type**               | **Default** |
-| -------- | ----------------------- | ---------------------- | ----------- |
-| url      | book url or arrayBuffer | `string`/`ArrayBuffer` | —           |
-| title    | the title of the book   | `string`               | —           |
-| showToc  | whether to show the toc | `boolean`              | true        |
+### VueReader Attributes
 
-## VueReader Slots
+| **Name** | **Description**                   | **Type**                              | **Default** |
+| -------- | --------------------------------- | ------------------------------------- | ----------- |
+| url      | book url or arrayBuffer           | `string`/`ArrayBuffer`                | —           |
+| title    | the title of the book             | `string`                              | —           |
+| showToc  | whether to show the toc           | `boolean`                             | true        |
+| [EpubView Attributes](#EpubView-Attributes)  |  EpubView attributes all can be used. | -           |
 
-| **Name** | **Description**                                                                     |
-| -------- | ----------------------------------------------------------------------------------- |
-| title    | You have access to title by [slot](https://v3.vuejs.org/guide/component-slots.html) |
+### VueReader Slots
 
-## VueReader props passed to inner EpubView
+| **Name**                          | **Description**                  |
+| --------------------------------- | -------------------------------- |
+| title                             | the title of the book            |
+| [EpubView slots](#EpubView-Slots) |  EpubView slots all can be used. |
 
-## EpubView Attributes
+## EpubView API
+
+### EpubView Attributes
 
 | **Name**        | **Description**                                                                                                                      | **Type**               | **Default** |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------ | ---------------------- | ----------- |
@@ -95,7 +99,7 @@ export default {
 | epubOptions     | pass custom properties to the epub rendition, see [epub.js's book.renderTo function](http://epubjs.org/documentation/0.3/#rendition) | `object`               | —           |
 | getRendition    | when epubjs has rendered the epub-file you can get access to the epubjs-rendition object here                                        | `function(rendition)`  | —           |
 
-## EpubView Events
+### EpubView Events
 
 | **Name**        | **Description**                                                                                                                                          | **type**                      |
 | --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------- |
@@ -125,3 +129,9 @@ export default {
 ## Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=jinhuan138/vue-reader&type=Date)](https://star-history.com/#jinhuan138/vue-reader&Date)
+
+<style>
+html:focus-within {
+  scroll-behavior: smooth;
+}
+</style>
