@@ -65,28 +65,27 @@ export default {
 |        CommonJS         | vue-reader.cjs.js     |
 | ES Module(for bundlers) | vue-reader.es.js      |
 
-## VueReader Attributes
+## VueReader API
 
-| **Name**         | **Description**           | **Type**               | **Default** |
-| -----------------| --------------------------| ---------------------- | ----------- |
-| url              | book url or arrayBuffer   | `string`/`ArrayBuffer` | —           |
-| title            | the title of the book     | `string`               | —           |
-| showToc          | whether to show the toc   | `boolean`              | true        |
+### VueReader Attributes
 
-## VueReader Events
-| **Name** | **Description**           | **Type**               |
-| -------- | -----------------------   | ---------------------- |
-| progress | book url request progress | function(percentage)   |
+| **Name** | **Description**                   | **Type**                              | **Default** |
+| -------- | --------------------------------- | ------------------------------------- | ----------- |
+| url      | book url or arrayBuffer           | `string`/`ArrayBuffer`                | —           |
+| title    | the title of the book             | `string`                              | —           |
+| showToc  | whether to show the toc           | `boolean`                             | true        |
+| [EpubView Attributes](#epubview-attributes) |  EpubView attributes all can be used. | -           |
 
-## VueReader Slots
+### VueReader Slots
 
-| **Name** | **Description**                                                                     |
-| -------- | ----------------------------------------------------------------------------------- |
-| title    | You have access to title by [slot](https://v3.vuejs.org/guide/component-slots.html) |
+| **Name**                          | **Description**                  |
+| --------------------------------- | -------------------------------- |
+| title                             | the title of the book            |
+| [EpubView slots](#epubview-slots) |  EpubView slots all can be used. |
 
-## VueReader props passed to inner EpubView
+## EpubView API
 
-## EpubView Attributes
+### EpubView Attributes
 
 | **Name**        | **Description**                                                                                                                      | **Type**               | **Default** |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------ | ---------------------- | ----------- |
@@ -97,15 +96,15 @@ export default {
 | epubOptions     | pass custom properties to the epub rendition, see [epub.js's book.renderTo function](http://epubjs.org/documentation/0.3/#rendition) | `object`               | —           |
 | getRendition    | when epubjs has rendered the epub-file you can get access to the epubjs-rendition object here                                        | `function(rendition)`  | —           |
 
-## EpubView Events
+### EpubView Events
 
-| **Name**        | **Description**                                                                                                                                          | **Type**                      |
+| **Name**        | **Description**                                                                                                                                          | **type**                      |
 | --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------- |
 | update:location | a function that receives the current location while user is reading. This function is called everytime the page changes, and also when it first renders. | `function(location)`          |
 | select          | when select text                                                                                                                                         | `function(cfirange,contents)` |
 | keyPress        | when press the key                                                                                                                                       | `function(keyboardEvent)`     |
 
-## EpubView  Slots
+## EpubView Slots
 
 | **Name**    | **Description**       |
 | ----------- | --------------------- |
@@ -114,8 +113,14 @@ export default {
 
 ## EpubView Exposes
 
-| **Name**    | **Description**        | **Type**         |
-| ----------- | ---------------------- | ---------------- |
-| nextPage    | display  next page     | `function`       |
-| prevPage    | display  previous page | `function`       |
-| setLocation | Set the page           | `function(href)` |
+| **Name**    | **Description**       | **Type**         |
+| ----------- | --------------------- | ---------------- |
+| nextPage    | display next page     | `function`       |
+| prevPage    | display previous page | `function`       |
+| setLocation | Set the page          | `function(href)` |
+
+<style>
+html:focus-within {
+  scroll-behavior: smooth;
+}
+</style>
