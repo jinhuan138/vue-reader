@@ -3,8 +3,8 @@
     <div class="viewHolder">
       <div ref="viewer" id="viewer" v-show="isLoaded"></div>
       <div v-if="!isLoaded">
-        <slot name="loadingView" v-if="!isError"> </slot>
-        <slot name="errorView" v-else> </slot>
+        <slot v-if="isError" name="errorView" > </slot>
+        <slot v-else name="loadingView"> </slot>
       </div>
     </div>
   </div>
