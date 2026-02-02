@@ -49,82 +49,36 @@ export default defineConfig({
                 apiKey: '28ce46c055168c5afcd85319ca19eb97',
             }
         },
-        sidebar: {
-            "/guide/": {
-                base: "/guide/",
+        sidebar: [
+            {
+                text: 'Guide',
                 items: [
-                    {
-                        text: "Guide",
-                        items: [
-                            {
-                                text: "Introduction",
-                                link: "introduction",
-                            }
-                        ],
-                    },
-                    {
-                        text: "Tips",
-                        items: [
-                            {
-                                text: "page number",
-                                link: "tips/page_number",
-                            },
-                            {
-                                text: "font size",
-                                link: "tips/font_size",
-                            },
-                            {
-                                text: "custom css",
-                                link: "tips/custom_css",
-                            },
-                            {
-                                text: "hightlight",
-                                link: "tips/hightlight",
-                            },
-                            {
-                                text: "missing mime-types",
-                                link: "tips/missing_mime_types",
-                            }, {
-                                text: "smooth scroll",
-                                link: "tips/smooth_scroll",
-                            }, {
-                                text: "scrolled",
-                                link: "tips/scrolled",
-                            }, {
-                                text: "opening links",
-                                link: "tips/opening_links",
-                            }, {
-                                text: "speak",
-                                link: "tips/speak",
-                            }, {
-                                text: "information",
-                                link: "tips/information",
-                            }, {
-                                text: "import file",
-                                link: "tips/import_file",
-                            },
-                            {
-                                text: "current progress",
-                                link: "tips/current_progress",
-                            },
-                            {
-                                text: "lightbox",
-                                link: "tips/lightbox",
-                            }, {
-                                text: "search",
-                                link: "tips/search",
-                            }, {
-                                text: "disable context menu",
-                                link: "tips/disable_context_menu",
-                            }, {
-                                text: "custom font",
-                                link: "tips/custom_font",
-                            },
-                        ],
-                    },
+                    { text: 'introduction', link: '/guide/introduction' },
                 ],
             },
-        },
+            {
+                text: 'Tips',
+                items:
+                    [
+                        { text: "page number", link: "tips/page_number" },
+                        { text: "font size", link: "tips/font_size" },
+                        { text: "custom css", link: "tips/custom_css" },
+                        { text: "hightlight", link: "tips/hightlight" },
+                        { text: "missing mime-types", link: "tips/missing_mime_types" },
+                        { text: "smooth scroll", link: "tips/smooth_scroll" },
+                        { text: "scrolled", link: "tips/scrolled" },
+                        { text: "opening links", link: "tips/opening_links" },
+                        { text: "speak", link: "tips/speak" },
+                        { text: "information", link: "tips/information" },
+                        { text: "import file", link: "tips/import_file" },
+                        { text: "current progress", link: "tips/current_progress" },
+                        { text: "lightbox", link: "tips/lightbox" },
+                        { text: "search", link: "tips/search" },
+                        { text: "disable context menu", link: "tips/disable_context_menu" },
+                        { text: "custom font", link: "tips/custom_font" },
+                    ],
+            }
+        ]
     },
     vite: {
         plugins: [demoblockVitePlugin()],
@@ -139,12 +93,12 @@ export default defineConfig({
         ssr: {
             noExternal: ['vue-reader']
         },
-            css: {
-        preprocessorOptions: {
-            scss: {
-                api: 'modern-compiler', // or 'modern'
+        css: {
+            preprocessorOptions: {
+                scss: {
+                    api: 'modern-compiler', // or 'modern'
+                },
             },
         },
-    },
     }
 })
