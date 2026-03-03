@@ -8,7 +8,7 @@ import { name } from './package.json'
 // https://cn.vitejs.dev/
 const outDir = 'lib'
 export default defineConfig({
-  base: '/',
+  base: '/' + name,
   publicDir: 'public',
   plugins: [
     vue(),
@@ -21,7 +21,7 @@ export default defineConfig({
       // bundleTypes: true,
       compilerOptions: {
         sourceMap: false,
-        declarationMap:false
+        declarationMap: false,
       },
     }),
   ],

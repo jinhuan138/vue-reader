@@ -5,13 +5,19 @@
 
 <p>
   <a href="https://www.npmjs.com/package/vue-reader" target="_blank">
-    <img src="https://img.shields.io/npm/v/vue-reader?style=flat-square" />
+    <img src="https://img.shields.io/npm/v/vue-reader?style=flat-square"/>
   </a>
-  <a href="https://www.npmjs.com/package/vue-reader" target="_blank" >
-    <img src="https://img.shields.io/npm/dw/vue-reader?style=flat-square" />
+  <a href="https://www.npmjs.com/package/vue-reader" target="_blank">
+    <img src="https://img.shields.io/npm/dm/vue-reader?style=flat-square"/>
+  </a>
+  <a href="https://www.npmjs.com/package/vue-reader" target="_blank">
+    <img src="https://packagephobia.com/badge?p=vue-reader" />
+  </a>
+  <a href="https://www.npmjs.com/package/vue-reader" target="_blank">
+    <img src="https://img.shields.io/github/stars/jinhuan138/vue-reader?color=white&label" />
   </a>
   <a href="./LICENSE">
-    <img src="https://img.shields.io/npm/l/vue-reader?style=flat-square" />
+    <img src="https://img.shields.io/npm/l/vue-reader?style=flat-square"/>
   </a>
 </p>
 
@@ -26,6 +32,7 @@ an easy way to embed a ePub into your webapp
 ## Installation
 
 > From v1.3.x, vue-reader no longer supports Vue 2. Please use v1.2.x for Vue 2 support.
+
 ```bash
 npm i vue-reader
 pnpm add vue-reader
@@ -72,24 +79,25 @@ export default {
 
 ### VueReader Attributes
 
-| **Name** | **Description**                   | **Type**                              | **Default** |
-| -------- | --------------------------------- | ------------------------------------- | ----------- |
-| url      | book url or arrayBuffer           | `string`/`ArrayBuffer`                | —           |
-| title    | the title of the book             | `string`                              | —           |
-| showToc  | whether to show the toc           | `boolean`                             | true        |
-| [EpubView Attributes](#epubView-attributes)  |  EpubView attributes all can be used. | -           |
+| **Name**                                    | **Description**                      | **Type**               | **Default** |
+| ------------------------------------------- | ------------------------------------ | ---------------------- | ----------- |
+| url                                         | book url or arrayBuffer              | `string`/`ArrayBuffer` | —           |
+| title                                       | the title of the book                | `string`               | —           |
+| showToc                                     | whether to show the toc              | `boolean`              | true        |
+| [EpubView Attributes](#epubView-attributes) | EpubView attributes all can be used. | -                      |
 
 ### VueReader Slots
 
-| **Name**                          | **Description**                  |
-| --------------------------------- | -------------------------------- |
-| title                             | the title of the book            |
-| [EpubView slots](#epubview-slots) |  EpubView slots all can be used. |
+| **Name**                          | **Description**                 |
+| --------------------------------- | ------------------------------- |
+| title                             | the title of the book           |
+| [EpubView slots](#epubview-slots) | EpubView slots all can be used. |
 
 ### VueReader Exposes
-| **Name**                              | **Description**                     |
-| ------------------------------------- | ----------------------------------- | 
-| [EpubView Exposes](#epubview-exposes) |  EpubView exposes all can be used.  |
+
+| **Name**                              | **Description**                   |
+| ------------------------------------- | --------------------------------- |
+| [EpubView Exposes](#epubview-exposes) | EpubView exposes all can be used. |
 
 ## EpubView API
 
