@@ -32,7 +32,7 @@
     "docs:preview": "npm -C docs run docs:preview",
     "reader": "npm -C reader run dev"
   },
-  "license": "ISC",
+  "license": "Apache",
   "bugs": {
     "url": "https://github.com/jinhuan138/vue-reader/issues"
   },

@@ -3,7 +3,7 @@
     <div class="viewHolder">
       <div ref="viewer" id="viewer" v-show="isLoaded"></div>
       <div v-if="!isLoaded">
-        <slot v-if="isError" name="errorView" > </slot>
+        <slot v-if="isError" name="errorView"> </slot>
         <slot v-else name="loadingView"> </slot>
       </div>
     </div>
@@ -64,6 +64,7 @@ const initBook = async () => {
   if (url.value) {
     book = Epub(unref(url), epubInitOptions)
     book.on('openFailed', (error: Error) => {
+      console.error(error)
       isError.value = true
     })
     book!.loaded.navigation.then(({ toc: _toc }) => {
