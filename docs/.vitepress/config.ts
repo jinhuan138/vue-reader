@@ -76,6 +76,7 @@ export default defineConfig({
                         { text: "search", link: "tips/search" },
                         { text: "disable context menu", link: "tips/disable_context_menu" },
                         { text: "custom font", link: "tips/custom_font" },
+                        { text: "spread", link: "tips/spread" },
                     ],
             }
         ]

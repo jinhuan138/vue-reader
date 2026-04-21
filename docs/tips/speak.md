@@ -7,7 +7,7 @@
   <div style="height: 100vh; position: relative">
     <vue-reader
       url="/vue-reader/files/啼笑因缘.epub"
-      :getRendition="getRendition"
+      :getRendition="(val) => (rendition = val)"
       @update:location="locationChange"
     />
     <div class="theme">
@@ -26,7 +26,6 @@ let isAudioOn = false,
   rendition
 let isReading = ref(false)
 
-const getRendition = (val) => (rendition = val)
 const locationChange = () => {
   const range = rendition.getRange(rendition.currentLocation().start.cfi)
   const endRange = rendition.getRange(rendition.currentLocation().end.cfi)
