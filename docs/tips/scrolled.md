@@ -9,16 +9,17 @@ Pass options for this into epubJS in the prop `epubOptions`
   <div style="height: 100vh">
     <vue-reader
       url="/vue-reader/files/啼笑因缘.epub"
-      :epubOptions="{
-        flow: 'scrolled',
-        manager: 'continuous',
-      }"
+     :getRendition="getRendition"
     >
     </vue-reader>
   </div>
 </template>
 <script setup>
 import { VueReader } from 'vue-reader'
+const getRendition = (rendition) => {
+  rendition.flow('scrolled-doc')
+  //rendition.flow('paginated')
+}
 </script>
 ```
 

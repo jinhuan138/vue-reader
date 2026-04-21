@@ -35,10 +35,14 @@ const setRenderSelection = (cfiRange, contents) => {
     text: rendition.getRange(cfiRange).toString(),
     cfiRange,
   })
-  rendition.annotations.add('highlight', cfiRange, {}, null, 'hl', {
+  rendition.annotations.add('highlight', cfiRange, {}, (e) => {
+      console.log(highlight click)
+    }, 'hl', {
     fill: 'red',
     'fill-opacity': '0.5',
     'mix-blend-mode': 'multiply',
+    cursor: "pointer",
+    "pointer-events": "all"
   })
   contents.window.getSelection().removeAllRanges()
 }

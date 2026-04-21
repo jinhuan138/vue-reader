@@ -39,7 +39,6 @@ const getRendition = (val) => {
   rendition = val
   rendition.hooks.content.register((contents) => {
     const document = contents.window.document
-    console.log('document', document)
     if (document) {
       const css = `
               @font-face {
