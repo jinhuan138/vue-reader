@@ -36,7 +36,7 @@ const setRenderSelection = (cfiRange, contents) => {
     cfiRange,
   })
   rendition.annotations.add('highlight', cfiRange, {}, (e) => {
-      console.log(highlight click)
+      console.log('highlight click')
     }, 'hl', {
     fill: 'red',
     'fill-opacity': '0.5',
