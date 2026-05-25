@@ -5,7 +5,6 @@ import Demo from 'vitepress-theme-demoblock/dist/client/components/Demo.vue'
 import DemoBlock from 'vitepress-theme-demoblock/dist/client/components/DemoBlock.vue'
 import reader from '../../../reader/src/components/index.vue'
 import { createPinia } from 'pinia'
-import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import '../styles/index.scss'
 const pinia = createPinia()
@@ -29,8 +28,13 @@ export default {
     const { app, siteData } = ctx
     app.component('Demo', Demo)
     app.component('DemoBlock', DemoBlock)
-    app.use(ElementPlus)
+   
     app.use(pinia)
     app.component('Reader', reader)
+    if (!import.meta.env.SSR) {
+      import('element-plus').then((ElementPlus) => {
+         app.use(ElementPlus)
+      })
+    }
   }
 }
