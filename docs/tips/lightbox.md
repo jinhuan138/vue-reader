@@ -6,9 +6,9 @@
 <template>
   <div style="height: 100vh">
     <vue-reader
-      url="/vue-reader/files/梵高手稿.epub"
+      url="/vue-reader/files/玫瑰圣经.epub"
       :getRendition="getRendition"
-      :location="0"
+      location="epubcfi(/6/16!/4/2/1:0)"
     >
     </vue-reader>
     <vue-easy-lightbox
