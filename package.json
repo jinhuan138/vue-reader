@@ -27,10 +27,10 @@
     "preview": "vite preview",
     "typecheck": "vue-tsc --noEmit -p tsconfig.json --composite false",
     "format": "prettier --write src/packages/**/*.{ts,vue}",
-    "docs:dev": "npm -C docs run docs:dev",
-    "docs:build": "npm -C docs run docs:build",
-    "docs:preview": "npm -C docs run docs:preview",
-    "reader": "npm -C reader run dev"
+    "docs:dev": "pnpm -F ./docs run docs:dev",
+    "docs:build": "pnpm -F ./docs run docs:build",
+    "docs:preview": "pnpm -F ./docs run docs:preview",
+    "reader": "pnpm -F ./reader run dev"
   },
   "license": "Apache",
   "bugs": {
