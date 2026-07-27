@@ -26,6 +26,7 @@ export default function swipListener(
   let startX: number
   let startY: number
   let startTime: number
+  let startTarget: EventTarget | null
 
   document.addEventListener(
     'touchstart',
@@ -33,9 +34,10 @@ export default function swipListener(
       if (e.ignore) return
       e.ignore = true
 
-      startX = e.changedTouches[0].pageX
-      startY = e.changedTouches[0].pageY
+      startX = e.changedTouches[0].clientX
+      startY = e.changedTouches[0].clientY
       startTime = Date.now()
+      startTarget = e.target
     },
     false
   )
@@ -47,8 +49,8 @@ export default function swipListener(
       e.ignore = true
 
       // Get distance traveled by finger while in contact with surface
-      const distX = e.changedTouches[0].pageX - startX
-      const distY = e.changedTouches[0].pageY - startY
+      const distX = e.changedTouches[0].clientX - startX
+      const distY = e.changedTouches[0].clientY - startY
 
       // Time elapsed since touchstart
       const elapsedTime = Date.now() - startTime
@@ -67,10 +69,16 @@ export default function swipListener(
           document?.defaultView?.getSelection()?.removeAllRanges()
 
           // Convert tap to click
-          document.dispatchEvent(
+          const target =
+            document.elementFromPoint(startX, startY) || startTarget || document
+
+          target.dispatchEvent(
             new MouseEvent('click', {
+              bubbles: true,
+              cancelable: true,
               clientX: startX,
               clientY: startY,
+              view: document.defaultView,
             })
           )
 

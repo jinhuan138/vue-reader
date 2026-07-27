@@ -47,7 +47,7 @@ catalogs:
       version: 1.19.0
     vue-reader:
       specifier: latest
-      version: 1.3.4
+      version: 1.3.5
     vue-router:
       specifier: ^4.2.5
       version: 4.6.4
@@ -92,7 +92,7 @@ importers:
         version: 3.5.31(typescript@5.9.3)
       vue-reader:
         specifier: 'catalog:'
-        version: 1.3.4
+        version: 1.3.5
       vue-tsc:
         specifier: ^3.2.6
         version: 3.2.6(typescript@5.9.3)
@@ -143,7 +143,7 @@ importers:
         version: 1.19.0(vue@3.5.31(typescript@5.9.3))
       vue-reader:
         specifier: 'catalog:'
-        version: 1.3.4
+        version: 1.3.5
       vue-router:
         specifier: 'catalog:'
         version: 4.6.4(vue@3.5.31(typescript@5.9.3))
@@ -158,7 +158,7 @@ importers:
         version: 3.5.31(typescript@5.9.3)
       vue-reader:
         specifier: 'catalog:'
-        version: 1.3.4
+        version: 1.3.5
     devDependencies:
       '@element-plus/icons-vue':
         specifier: 'catalog:'
@@ -1222,6 +1222,7 @@ packages:
 
   '@ungap/structured-clone@1.3.0':
     resolution: {integrity: sha512-WmoN8qaIAo7WTYWbAZuG8PYEhn5fkz7dZrqTBZ7dtt//lL2Gwms1IcnQ5yHqjDfX8Ft5j4YzDM23f87zBfDe9g==}
+    deprecated: Potential CWE-502 - Update to 1.3.1 or higher
 
   '@vibrant/color@4.0.4':
     resolution: {integrity: sha512-Fq2tAszz4QOPWfHZ+KuEAchXUD8i594BM2fOJt8dI/fvYbiVoBycBF/BlNH6F4IWBubxXoPqD4JmmAHvFYbNew==}
@@ -2982,8 +2983,8 @@ packages:
     peerDependencies:
       vue: ^3.0.0
 
-  vue-reader@1.3.4:
-    resolution: {integrity: sha512-QYTX9hlrV71gL/1vMejcBLLS9Ool29XMZcLQwvL0Ep1F//o0ymzYbKX2Lre+4BUBkVq49/GmmGCmAJACsJL9tw==}
+  vue-reader@1.3.5:
+    resolution: {integrity: sha512-zoU4eDl5zEJ9Don0D9FxHfalIaR+iXiXkTQEOwV+Lbh8TUAN18e99EH4facw1QVFD8ErOBJ4KSFMO6jNB5GELA==}
 
   vue-router@4.6.4:
     resolution: {integrity: sha512-Hz9q5sa33Yhduglwz6g9skT8OBPii+4bFn88w6J+J4MfEo4KRRpmiNG/hHHkdbRFlLBOqxN8y8gf2Fb0MTUgVg==}
@@ -6033,7 +6034,7 @@ snapshots:
     dependencies:
       vue: 3.5.31(typescript@5.9.3)
 
-  vue-reader@1.3.4:
+  vue-reader@1.3.5:
     dependencies:
       epubjs: 0.3.93
 
