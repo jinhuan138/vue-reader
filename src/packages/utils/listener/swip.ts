@@ -7,6 +7,7 @@
  * Listen for swipes convert them to actions.
  * @param {Document} document - The document to add event listeners to.
  * @param {function} fn - The listener function.
+ * @returns {function} cleanup - Call to remove the event listeners.
  */
 type epubEvent = TouchEvent & { ignore?: boolean }
 type Direction = 'next' | 'prev' | 'up' | 'down'
@@ -14,7 +15,7 @@ type Direction = 'next' | 'prev' | 'up' | 'down'
 export default function swipListener(
   document: Document,
   fn: (dire: Direction) => void
-) {
+): () => void {
   // Defaults: 100, 350, 100
   // Required min distance traveled to be considered swipe
   const threshold = 50
@@ -28,65 +29,69 @@ export default function swipListener(
   let startTime: number
   let startTarget: EventTarget | null
 
-  document.addEventListener(
-    'touchstart',
-    (e: epubEvent) => {
-      if (e.ignore) return
-      e.ignore = true
+  const touchStartHandler = (e: epubEvent) => {
+    if (e.ignore) return
+    e.ignore = true
 
-      startX = e.changedTouches[0].clientX
-      startY = e.changedTouches[0].clientY
-      startTime = Date.now()
-      startTarget = e.target
-    },
-    false
-  )
+    startX = e.changedTouches[0].clientX
+    startY = e.changedTouches[0].clientY
+    startTime = Date.now()
+    startTarget = e.target
+  }
 
-  document.addEventListener(
-    'touchend',
-    (e: epubEvent) => {
-      if (e.ignore) return
-      e.ignore = true
+  const touchEndHandler = (e: epubEvent) => {
+    if (e.ignore) return
+    e.ignore = true
 
-      // Get distance traveled by finger while in contact with surface
-      const distX = e.changedTouches[0].clientX - startX
-      const distY = e.changedTouches[0].clientY - startY
+    // Get distance traveled by finger while in contact with surface
+    const distX = e.changedTouches[0].clientX - startX
+    const distY = e.changedTouches[0].clientY - startY
 
-      // Time elapsed since touchstart
-      const elapsedTime = Date.now() - startTime
+    // Time elapsed since touchstart
+    const elapsedTime = Date.now() - startTime
 
-      if (elapsedTime <= allowedTime) {
-        // Horizontal swipe
-        if (Math.abs(distX) >= threshold && Math.abs(distY) <= restraint)
-          // If dist traveled is negative, it indicates right swipe
-          fn(distX < 0 ? 'next' : 'prev')
-        // Vertical swipe
-        else if (Math.abs(distY) >= threshold && Math.abs(distX) <= restraint)
-          // If dist traveled is negative, it indicates up swipe
-          fn(distY < 0 ? 'up' : 'down')
-        // Tap
-        else {
-          document?.defaultView?.getSelection()?.removeAllRanges()
+    if (elapsedTime <= allowedTime) {
+      // Horizontal swipe
+      if (Math.abs(distX) >= threshold && Math.abs(distY) <= restraint)
+        // If dist traveled is negative, it indicates right swipe
+        fn(distX < 0 ? 'next' : 'prev')
+      // Vertical swipe
+      else if (Math.abs(distY) >= threshold && Math.abs(distX) <= restraint)
+        // If dist traveled is negative, it indicates up swipe
+        fn(distY < 0 ? 'up' : 'down')
+      // Tap
+      else {
+        document?.defaultView?.getSelection()?.removeAllRanges()
 
-          // Convert tap to click
-          const target =
-            document.elementFromPoint(startX, startY) || startTarget || document
+        // Convert tap to click
+        const target =
+          document.elementFromPoint(startX, startY) || startTarget || document
 
-          target.dispatchEvent(
-            new MouseEvent('click', {
-              bubbles: true,
-              cancelable: true,
-              clientX: startX,
-              clientY: startY,
-              view: document.defaultView,
-            })
-          )
+        const MouseEventConstructor =
+          document.defaultView?.MouseEvent || MouseEvent
 
-          // !! Needed to prevent double 'clicks' in certain environments
-          e.preventDefault()
-        }
+        target.dispatchEvent(
+          new MouseEventConstructor('click', {
+            bubbles: true,
+            cancelable: true,
+            clientX: startX,
+            clientY: startY,
+            view: document.defaultView,
+          })
+        )
+
+        // !! Needed to prevent double 'clicks' in certain environments
+        if (e.cancelable) e.preventDefault()
       }
-    },
-    false
-  )
+    }
+  }
+
+  document.addEventListener('touchstart', touchStartHandler as EventListener, false)
+  document.addEventListener('touchend', touchEndHandler as EventListener, false)
+
+  return () => {
+    document.removeEventListener('touchstart', touchStartHandler as EventListener, false)
+    document.removeEventListener('touchend', touchEndHandler as EventListener, false)
+  }
 }
+

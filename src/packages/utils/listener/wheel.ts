@@ -1,15 +1,16 @@
 /**
  * Listen for wheel and convert them to next or prev action based on direction.
- * @param {HTMLElement} el - The element to add event listeners to.
+ * @param {Document | HTMLElement} el - The element to add event listeners to.
  * @param {function} fn - The listener function.
+ * @returns {function} cleanup - Call to remove the event listener.
  */
 type epubEvent = WheelEvent & { ignore?: boolean }
 type Direction = 'next' | 'prev'
 
 export default function wheelListener(
-  el: HTMLElement,
+  el: Document | HTMLElement,
   fn: (dire: Direction) => void
-) {
+): () => void {
   // Required min distance traveled to be considered swipe
   const threshold = 750
   // Maximum time allowed to travel that distance
@@ -18,7 +19,7 @@ export default function wheelListener(
   let dist: number = 0
   let isScrolling: number | undefined = undefined
 
-  el.addEventListener('wheel', (e: epubEvent) => {
+  const handler = (e: epubEvent) => {
     if (e.ignore) return
     e.ignore = true
 
@@ -36,5 +37,12 @@ export default function wheelListener(
 
       dist = 0
     }, allowedTime)
-  })
+  }
+
+  el.addEventListener('wheel', handler as EventListener)
+
+  return () => {
+    el.removeEventListener('wheel', handler as EventListener)
+    window.clearTimeout(isScrolling)
+  }
 }

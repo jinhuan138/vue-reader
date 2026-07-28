@@ -59,7 +59,18 @@ const isError = ref(false)
 let book: null | Book = null,
   rendition: null | Rendition = null
 
+// 存储 iframe 事件清理函数，防止内存泄漏
+const iframeCleanups: Array<() => void> = []
+// 记录已注册监听器的 document，防止同一 document 重复注册
+const registeredDocs = new WeakSet<Document>()
+
+const cleanupIframeListeners = () => {
+  iframeCleanups.forEach((fn) => fn())
+  iframeCleanups.length = 0
+}
+
 const initBook = async () => {
+  cleanupIframeListeners() // 切换书籍前清理旧的 iframe 事件监听器
   if (book) book.destroy()
   if (url.value) {
     book = Epub(unref(url), epubInitOptions)
@@ -86,8 +97,8 @@ const initReader = () => {
   getRendition && getRendition(rendition)
   if (typeof location.value === 'string') {
     rendition.display(location.value)
-  } else if (typeof location === 'number') {
-    rendition.display(location)
+  } else if (typeof location.value === 'number') {
+    rendition.display(location.value)
   } else if (toc.value.length > 0 && toc?.value[0]?.href) {
     rendition.display(toc.value[0].href)
   } else {
@@ -103,14 +114,20 @@ const flipPage = (direction: string) => {
 const registerEvents = () => {
   if (rendition) {
     rendition.on('rendered', (e: Event, iframe: any) => {
+      const doc = iframe?.document as Document | undefined
+      if (!doc) return
+
       iframe?.iframe?.contentWindow.focus()
-      // clickListener(iframe?.document, rendition as Rendition, flipPage);
-      // selectListener(iframe.document, rendition, toggleBuble);
-      if (!epubOptions?.flow?.includes('scrolled')) {
-        wheelListener(iframe.document, flipPage)
+
+      // 避免在同一 document 上重复注册监听器（每次翻页都会触发 rendered）
+      if (!registeredDocs.has(doc)) {
+        registeredDocs.add(doc)
+        if (!epubOptions?.flow?.includes('scrolled')) {
+          iframeCleanups.push(wheelListener(doc, flipPage))
+        }
+        iframeCleanups.push(swipListener(doc, flipPage))
+        iframeCleanups.push(keyListener(doc, flipPage))
       }
-      swipListener(iframe.document, flipPage)
-      keyListener(iframe.document, flipPage)
     })
     rendition.on('locationChanged', onLocationChange)
     rendition.on('displayError', () => console.error('error rendering book'))
@@ -118,7 +135,7 @@ const registerEvents = () => {
       rendition.on('selected', handleTextSelected)
     }
     if (handleKeyPress) {
-      rendition.on('selected', handleKeyPress)
+      rendition.on('keypress', handleKeyPress)
     }
   }
 }
@@ -151,6 +168,7 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
+  cleanupIframeListeners()
   book?.destroy()
 })
 

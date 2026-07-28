@@ -1,8 +1,5 @@
 <template>
-  <el-container
-    direction="vertical"
-    style="z-index: 999; background-color: #fff"
-  >
+  <el-container direction="vertical" style="z-index: 999; background-color: #fff">
     <titlebar :title="title">
       <el-button-group>
         <el-button size="small" :icon="Back" circle @click="onBackBtn" />
@@ -11,58 +8,30 @@
 
       <toc-menu :toc="currentBook.toc" @node-click="onNodeClick"></toc-menu>
 
-      <bookmark-menu
-        :bookmarks="currentBook.bookmarks"
-        @node-click="onNodeClick"
-        @add-bookmark="addBookmark"
-        @remove-bookmark="removeBookmark"
-      />
+      <bookmark-menu :bookmarks="currentBook.bookmarks" @node-click="onNodeClick" @add-bookmark="addBookmark"
+        @remove-bookmark="removeBookmark" />
 
-      <search-menu
-        :search-result="searchResult"
-        @node-click="onNodeClick"
-        @search="search"
-      />
+      <search-menu :search-result="searchResult" @node-click="onNodeClick" @search="search" />
 
-      <theme-menu
-        @theme-change="applytheme"
-        @flow-change="applyflow"
-        @style-change="updateStyle"
-      />
+      <theme-menu @theme-change="applytheme" @flow-change="applyflow" @style-change="updateStyle" />
     </titlebar>
 
     <el-main class="container">
-      <EpubView
-        id="reader"
-        :url="url"
-        :getRendition="getRendition"
-        :title="page"
-        v-loading="!isReady"
-        :epubOptions="{
-          allowPopups: true,
-          allowScriptedContent: true,
-        }"
-        @update:location="locationChange"
-      >
+      <EpubView id="reader" :url="url" :getRendition="getRendition" :title="page" v-loading="!isReady" :epubOptions="{
+        allowPopups: true,
+        allowScriptedContent: true,
+      }" @update:location="locationChange">
         <template #loadingView>
           <el-progress :percentage="loadProcess" />
         </template>
       </EpubView>
-      <vue-easy-lightbox
-        :visible="visibleRef"
-        :imgs="imgsRef"
-        :index="indexRef"
-        @hide="visibleRef = false"
-      ></vue-easy-lightbox>
+      <vue-easy-lightbox :visible="visibleRef" :imgs="imgsRef" :index="indexRef"
+        @hide="visibleRef = false"></vue-easy-lightbox>
     </el-main>
 
     <el-footer height="45">
-      <el-slider
-        v-model="sliderValue"
-        :step="0.01"
-        :format-tooltip="lableFromPercentage"
-        @change="onSliderValueChange"
-      ></el-slider>
+      <el-slider v-model="sliderValue" :step="0.01" :format-tooltip="lableFromPercentage"
+        @change="onSliderValueChange"></el-slider>
     </el-footer>
 
     <buble-menu ref="bubleMenu" @highlight-btn-click="highlightSelection" />
@@ -388,28 +357,32 @@ const addBookmark = () => {
    *  href:'' // href of location
    * }
    */
+  if (!rendition) return
 
-  const { location } = this.rendition
+  const { location } = rendition
   const { href, cfi, percentage } = location.start
 
   // TODO : find more minigful name for bookmark
-  const title = `${this.lableFromPercentage(percentage * 100)} : At ${
-    Math.floor(progress.value * 1000) / 10
-  }%`
+  const bookmarkTitle = `${lableFromPercentage(percentage * 100)} : At ${Math.floor(progress.value * 1000) / 10
+    }%`
 
   const bookmark = {
-    label: title,
+    label: bookmarkTitle,
     cfi,
     href,
   }
-  // this.info.bookmarks.push(bookmark);
+  currentBook.value.bookmarks?.push(bookmark)
   // this.$db.set(this.info.id, this.info);
 }
 const removeBookmark = (bookmark) => {
-  const index = this.info.bookmarks.findIndex(
+  const bookmarks = currentBook.value.bookmarks
+  if (!bookmarks) return
+  const index = bookmarks.findIndex(
     (item) => item.cfi === bookmark.cfi
   )
-  this.info.bookmarks.splice(index, 1)
+  if (index > -1) {
+    bookmarks.splice(index, 1)
+  }
   // this.$db.insert(this.info.id, this.info);
 }
 </script>
@@ -424,6 +397,7 @@ const removeBookmark = (bookmark) => {
   padding-right: 8px;
   margin: 5px;
 }
+
 #reader {
   user-select: none;
   height: 100%;

@@ -45,7 +45,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, toRefs, unref, onUnmounted } from 'vue'
+import { ref, toRefs, unref, onMounted, onUnmounted } from 'vue'
 import { Rendition, NavItem, Location } from 'epubjs'
 import EpubView from '../EpubView/EpubView.vue'
 import Toc from './Toc.vue'
@@ -105,22 +105,33 @@ const setLocation = (href: string | number, close: boolean = true) => {
 }
 
 //Request
-const originalOpen = XMLHttpRequest.prototype.open
+// 使用 null 初始化，在 onMounted 中赋值，避免模块加载时立即污染全局原型
+let originalOpen: typeof XMLHttpRequest.prototype.open | null = null
+
 const onProgress = (e: ProgressEvent) => {
   emit('progress', Math.floor((e.loaded / e.total) * 100))
 }
-XMLHttpRequest.prototype.open = function (
-  method: string,
-  requestUrl: string | URL
-) {
-  if (typeof unref(url) === 'string' && requestUrl === unref(url)) {
-    this.addEventListener('progress', onProgress)
+
+onMounted(() => {
+  // 在组件挂载时才修改原型，避免模块加载时的全局污染
+  originalOpen = XMLHttpRequest.prototype.open
+  XMLHttpRequest.prototype.open = function (
+    method: string,
+    requestUrl: string | URL
+  ) {
+    if (typeof unref(url) === 'string' && requestUrl === unref(url)) {
+      this.addEventListener('progress', onProgress)
+    }
+    originalOpen!.apply(this, arguments as any)
   }
-  originalOpen.apply(this, arguments as any)
-}
+})
 
 onUnmounted(() => {
-  XMLHttpRequest.prototype.open = originalOpen
+  // 恢复原始 open 方法，防止组件卸载后仍有副作用
+  if (originalOpen) {
+    XMLHttpRequest.prototype.open = originalOpen
+    originalOpen = null
+  }
 })
 
 const next = (): void => {
