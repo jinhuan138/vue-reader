@@ -1,34 +1,19 @@
 <template>
   <div v-for="(item, index) in bookToc" :key="index">
-    <button
-      class="tocAreaButton"
-      :class="{ active: item.href.split('#')[0] === current?.start.href }"
-      @click="handleClick(item)"
-    >
+    <button class="tocAreaButton" :class="{ active: item.href.split('#')[0] === current?.start.href }"
+      @click="handleClick(item)">
       {{ isSubmenu ? ' '.repeat(4) + item.label : item.label }}
-      <div
-        v-if="item.subitems && item.subitems.length > 0"
-        class="expansion"
-        :class="{ open: item.expansion }"
-      ></div>
+      <div v-if="item.subitems && item.subitems.length > 0" class="expansion" :class="{ open: item.expansion }"></div>
     </button>
-    <div
-      v-if="item.subitems && item.subitems.length > 0"
-      v-show="item.expansion"
-    >
+    <div v-if="item.subitems && item.subitems.length > 0" v-show="item.expansion">
       <!-- 子目录 -->
-      <Toc
-        :toc="item.subitems"
-        :current="current"
-        :setLocation="setLocation"
-        :isSubmenu="true"
-      />
+      <Toc :toc="item.subitems" :current="current" :setLocation="setLocation" :isSubmenu="true" />
     </div>
   </div>
 </template>
 <script setup lang="ts">
 import { NavItem, Location } from 'epubjs'
-import { ref, watchEffect, toRefs } from 'vue'
+import { ref, watch, toRefs } from 'vue'
 export interface Item extends NavItem {
   expansion: boolean
 }
@@ -52,12 +37,21 @@ const handleClick = (item: Item): void => {
     setLocation(item.href)
   }
 }
-watchEffect(() => {
-  bookToc.value = toc.value.map((item) => ({
-    ...item,
-    expansion: false,
-  }))
-})
+
+// - watch 只在 toc 数据本身变化时执行（切换书籍），更新时保留已有展开状态
+watch(
+  toc,
+  (newToc) => {
+    // 构建已有展开状态的 Map，按 href 索引
+    const expandMap = new Map(bookToc.value.map((item) => [item.href, item.expansion]))
+    bookToc.value = newToc.map((item) => ({
+      ...item,
+      // 已有状态则保留，新增的项默认 false
+      expansion: expandMap.get(item.href) ?? false,
+    }))
+  },
+  { immediate: true }
+)
 </script>
 <style scoped>
 /* ↓ */
