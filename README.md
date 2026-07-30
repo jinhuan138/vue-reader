@@ -3,6 +3,8 @@
   <h1>VueReader</h1>
 </div>
 
+[简体中文](./README.zh-CN.md)
+
 <p>
   <a href="https://www.npmjs.com/package/vue-reader" target="_blank">
     <img src="https://img.shields.io/npm/v/vue-reader?style=flat-square"/>
