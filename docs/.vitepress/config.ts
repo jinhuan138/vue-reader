@@ -9,7 +9,47 @@ export default defineConfig({
     base: '/vue-reader/',
     cleanUrls: true,
     locales: {
-        root: { label: 'English', lang: 'en-US' },
+        en: {
+            label: 'English',
+            lang: 'en-US',
+            link: '/en/',
+            description: 'epub component for Vue',
+            themeConfig: {
+                nav: [
+                    { text: 'Guide', link: '/en/guide/introduction' },
+                    { text: 'Reader', link: '/en/reader' },
+                ],
+                sidebar: [
+                    {
+                        text: 'Guide',
+                        items: [{ text: 'introduction', link: '/en/guide/introduction' }],
+                    },
+                    {
+                        text: 'Tips',
+                        items: [
+                            { text: 'page number', link: '/en/tips/page_number' },
+                            { text: 'font size', link: '/en/tips/font_size' },
+                            { text: 'custom css', link: '/en/tips/custom_css' },
+                            { text: 'hightlight', link: '/en/tips/hightlight' },
+                            { text: 'missing mime-types', link: '/en/tips/missing_mime_types' },
+                            { text: 'smooth scroll', link: '/en/tips/smooth_scroll' },
+                            { text: 'scrolled', link: '/en/tips/scrolled' },
+                            { text: 'opening links', link: '/en/tips/opening_links' },
+                            { text: 'speak', link: '/en/tips/speak' },
+                            { text: 'information', link: '/en/tips/information' },
+                            { text: 'import file', link: '/en/tips/import_file' },
+                            { text: 'current progress', link: '/en/tips/current_progress' },
+                            { text: 'lightbox', link: '/en/tips/lightbox' },
+                            { text: 'search', link: '/en/tips/search' },
+                            { text: 'disable context menu', link: '/en/tips/disable_context_menu' },
+                            { text: 'custom font', link: '/en/tips/custom_font' },
+                            { text: 'spread', link: '/en/tips/spread' },
+                            { text: 'save progress', link: '/en/tips/storage_progress' },
+                        ],
+                    },
+                ],
+            },
+        },
         zh: {
             label: '简体中文',
             lang: 'zh-CN',
@@ -75,7 +115,7 @@ export default defineConfig({
                 return language.toLowerCase().indexOf('zh') === 0
             })
 
-            if (prefersChinese) window.location.replace(base + 'zh/')
+            window.location.replace(base + (prefersChinese ? 'zh/' : 'en/'))
         })()`],
         ['script', {
             async: 'async',

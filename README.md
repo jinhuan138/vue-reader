@@ -24,7 +24,7 @@
 </p>
 
 <div align="center">
-  <h2><a href="https://jinhuan138.github.io/vue-reader/">📖Documentation</a></h2>
+  <h2><a href="https://jinhuan138.github.io/vue-reader/en/">📖Documentation</a></h2>
 </div>
 
 # Introduction
