@@ -1,7 +1,7 @@
-# Add / adjust custom css for the epub-html
+# Add Custom CSS to EPUB Content
 
-EpubJS render the epub-file inside a iframe so you will need to create a custom theme and apply it.  
-This is useful for when you want to set custom font families, custom background and text colors, and everything CSS related.
+epub.js renders EPUB content inside an iframe, so you need to create and apply a custom theme.
+Use this approach to customize fonts, text and background colors, or any other CSS styles.
 
 :::demo
 

@@ -1,4 +1,4 @@
-# Disable context menu
+# Disable the Context Menu
 
 :::demo
 

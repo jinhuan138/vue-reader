@@ -1,4 +1,4 @@
-# Custom font
+# Use a Custom Font
 
 :::demo
 
@@ -7,7 +7,7 @@
   <div style="height: 100vh; position: relative">
     <vue-reader url="/vue-reader/files/alice.epub" :getRendition="getRendition"/>
     <div class="theme">
-      <button class="button-example" @click="updateTheme">Toggle theme ({{ theme }})</button>
+      <button class="button-example" @click="updateTheme">Toggle font ({{ theme }})</button>
     </div>
   </div>
 </template>

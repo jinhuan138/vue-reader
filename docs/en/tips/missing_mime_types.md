@@ -1,6 +1,6 @@
-# Handling missing mime-types on server
+# Handle Missing or Incorrect MIME Types
 
-EpubJS will try to parse the epub-file you pass to it, but if the server send wrong mine-types or the file does not contain `.epub` you can use the epubInitOptions prop to force reading it right.
+epub.js attempts to parse the EPUB file you provide. If the server returns an incorrect MIME type or the filename does not include the `.epub` extension, use the `epubInitOptions` prop to specify the file format explicitly.
 
 ```vue
 <template>

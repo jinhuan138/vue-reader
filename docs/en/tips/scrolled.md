@@ -1,6 +1,6 @@
-# Display a scrolled epub-view
+# Use a Scrolled EPUB Layout
 
-Pass options for this into epubJS in the prop `epubOptions`
+Set the epub.js flow mode through the rendition object.
 
 :::demo
 

@@ -1,6 +1,6 @@
-# Hightlight selection in epub
+# Highlight Selected Text in an EPUB
 
-This shows how to hook into epubJS annotations object and let the user highlight selection and store this in a list where user can go to a selection or delete it.
+This example uses the epub.js annotations API to highlight selected text and save each highlight in a list, allowing users to return to or remove it.
 
 :::demo 
 
@@ -11,11 +11,11 @@ This shows how to hook into epubJS annotations object and let the user highlight
     </vue-reader>
   </div>
   <div :class="$style.selection">
-    Selection:
+    Highlights:
     <ul>
       <li v-for="({ text, cfiRange }, index) in selections" :key="index">
         {{ text || '' }}
-        <button class="button-example" @click="show(cfiRange)">show</button>
+        <button class="button-example" @click="show(cfiRange)">View</button>
         <button class="button-example" @click="remove(cfiRange, index)">
           x
         </button>

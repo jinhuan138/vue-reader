@@ -1,6 +1,6 @@
-# Save and retrieve progress from storage
+# Save and Restore Reading Progress
 
-Saving the current page on storage is pretty simple, but we need to keep in mind that `locationChanged` also gets called on the very first render of our app.
+Saving the current reading location to local storage is straightforward. Keep in mind that the `update:location` event is also emitted during the initial render.
 
 :::demo 
 ```vue

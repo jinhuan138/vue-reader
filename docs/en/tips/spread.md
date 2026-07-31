@@ -1,4 +1,4 @@
-# spread
+# Configure the Page Spread
 
 :::demo
 

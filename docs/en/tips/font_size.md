@@ -1,6 +1,6 @@
-# Change font-size
+# Adjust the Font Size
 
-Hooking into epubJS rendition object is the key for this also.
+Use the epub.js rendition object to adjust the font size of EPUB content.
 
 :::demo
 
