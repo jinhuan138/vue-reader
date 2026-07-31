@@ -1,6 +1,6 @@
-# Smooth Scroll
+# Enable Smooth Scrolling
 
-Sets css-property for epub-js manager to scroll-behavior: smooth
+Set the CSS `scroll-behavior` property of the epub.js manager container to `smooth`.
 
 :::demo
 

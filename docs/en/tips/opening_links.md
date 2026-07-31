@@ -1,6 +1,6 @@
-# Enable opening links / running scripts inside epubjs iframe
+# Open Links or Run Scripts Inside the epub.js iframe
 
-Epubjs is rendering the epub-content inside and iframe which defaults to `sandbox="allow-same-origin"`, to enable opening links or running javascript in an epub, you will need to pass some extra params in the `epubOptions` prop.
+epub.js renders EPUB content inside an iframe that uses `sandbox="allow-same-origin"` by default. To open links or run JavaScript inside an EPUB, pass the required options through the `epubOptions` prop.
 
 ```vue
 <vue-reader

@@ -24,12 +24,12 @@
 </p>
 
 <div align="center">
-  <h2><a href="https://jinhuan138.github.io/vue-reader/en/">📖Documentation</a></h2>
+  <h2><a href="https://jinhuan138.github.io/vue-reader/en/">📖 Documentation</a></h2>
 </div>
 
 # Introduction
 
-an easy way to embed a ePub into your webapp
+An easy way to embed an EPUB reader in your web app.
 
 ## Installation
 
@@ -79,63 +79,63 @@ export default {
 
 ## VueReader API
 
-### VueReader Attributes
+### VueReader Props
 
 | **Name**                                    | **Description**                      | **Type**               | **Default** |
 | ------------------------------------------- | ------------------------------------ | ---------------------- | ----------- |
-| url                                         | book url or arrayBuffer              | `string`/`ArrayBuffer` | —           |
-| title                                       | the title of the book                | `string`               | —           |
-| showToc                                     | whether to show the toc              | `boolean`              | true        |
-| [EpubView Attributes](#epubView-attributes) | EpubView attributes all can be used. | -                      |
+| url                                         | URL or `ArrayBuffer` of the book              | `string`/`ArrayBuffer` | —           |
+| title                                       | Title of the book                | `string`               | —           |
+| showToc                                     | Whether to show the table of contents              | `boolean`              | `true`      |
+| [EpubView Props](#epubview-props) | All EpubView props are supported. | -                      |
 
 ### VueReader Slots
 
 | **Name**                          | **Description**                 |
 | --------------------------------- | ------------------------------- |
-| title                             | the title of the book           |
-| [EpubView slots](#epubview-slots) | EpubView slots all can be used. |
+| title                             | Title of the book           |
+| [EpubView slots](#epubview-slots) | All EpubView slots are supported. |
 
-### VueReader Exposes
+### VueReader Exposed Methods
 
 | **Name**                              | **Description**                   |
 | ------------------------------------- | --------------------------------- |
-| [EpubView Exposes](#epubview-exposes) | EpubView exposes all can be used. |
+| [EpubView exposed methods](#epubview-exposed-methods) | All methods exposed by EpubView are available. |
 
 ## EpubView API
 
-### EpubView Attributes
+### EpubView Props
 
 | **Name**        | **Description**                                                                                                                      | **Type**               | **Default** |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------ | ---------------------- | ----------- |
-| url             | the path or arrayBuffer of the book                                                                                                  | `string`/`ArrayBuffer` | —           |
-| location        | set / update location of the epub                                                                                                    | `string`/`number`      | —           |
-| tocChanged      | when the reader has parsed the book you will receive an array of the chapters                                                        | `function(toc)`        | —           |
-| epubInitOptions | pass custom properties to the epub init function, see [epub.js](http://epubjs.org/documentation/0.3/#epub)                           | `object`               | —           |
-| epubOptions     | pass custom properties to the epub rendition, see [epub.js's book.renderTo function](http://epubjs.org/documentation/0.3/#rendition) | `object`               | —           |
-| getRendition    | when epubjs has rendered the epub-file you can get access to the epubjs-rendition object here                                        | `function(rendition)`  | —           |
+| url             | Path or `ArrayBuffer` of the book                                                                                                  | `string`/`ArrayBuffer` | —           |
+| location        | Sets or updates the reading location                                                                                                    | `string`/`number`      | —           |
+| tocChanged      | Called with the table of contents after the book has been parsed                                                        | `function(toc)`        | —           |
+| epubInitOptions | Custom options passed to the EPUB initialization function; see [epub.js](http://epubjs.org/documentation/0.3/#epub)                           | `object`               | —           |
+| epubOptions     | Custom options passed to the EPUB rendition; see [epub.js's `book.renderTo` function](http://epubjs.org/documentation/0.3/#rendition) | `object`               | —           |
+| getRendition    | Called with the epub.js rendition instance after the book has been rendered                                        | `function(rendition)`  | —           |
 
 ### EpubView Events
 
-| **Name**        | **Description**                                                                                                                                          | **type**                      |
+| **Name**        | **Description**                                                                                                                                          | **Type**                      |
 | --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------- |
-| update:location | a function that receives the current location while user is reading. This function is called everytime the page changes, and also when it first renders. | `function(location)`          |
-| select          | when select text                                                                                                                                         | `function(cfirange,contents)` |
-| keyPress        | when press the key                                                                                                                                       | `function(keyboardEvent)`     |
+| update:location | Emitted with the current reading location whenever the page changes and after the initial render. | `function(location)`          |
+| select          | Emitted when text is selected.                                                                                                                                         | `function(cfirange, contents)` |
+| keyPress        | Emitted when a key is pressed.                                                                                                                                       | `function(keyboardEvent)`     |
 
 ## EpubView Slots
 
 | **Name**    | **Description**       |
 | ----------- | --------------------- |
-| loadingView | epub view loadingView |
-| errorView   | epub view errorView   |
+| loadingView | Content displayed while the EPUB is loading |
+| errorView   | Content displayed when the EPUB fails to load   |
 
-## EpubView Exposes
+## EpubView Exposed Methods
 
 | **Name**    | **Description**       | **Type**         |
 | ----------- | --------------------- | ---------------- |
-| nextPage    | display next page     | `function`       |
-| prevPage    | display previous page | `function`       |
-| setLocation | Set the page          | `function(href)` |
+| nextPage    | Displays the next page     | `function`       |
+| prevPage    | Displays the previous page | `function`       |
+| setLocation | Navigates to the specified location          | `function(href)` |
 
 ## Related
 

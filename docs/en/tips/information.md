@@ -1,4 +1,4 @@
-# Get book information
+# Get Book Metadata
 
 :::demo
 

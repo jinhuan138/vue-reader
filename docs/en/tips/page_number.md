@@ -1,6 +1,6 @@
-# Display page number for current chapter
+# Display the Current Chapter Page Number
 
-We store the epubjs rendition in a ref, and get the page numbers in the callback when location is changed. Note that in this example we also find them name of the current chapter from the toc. Also see limitation for pagination for the whole book.
+First, store the epub.js rendition object. Then retrieve the page number when the reading location changes. This example also looks up the current chapter title in the table of contents. Note that pagination across an entire book is limited by the EPUB layout.
 
 :::demo
 ```vue

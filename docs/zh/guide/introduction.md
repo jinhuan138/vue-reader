@@ -106,15 +106,15 @@ export default {
 | **名称**        | **说明**                                                                                                                                          | **type**                      |
 | --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------- |
 | update:location | 接收当前阅读位置。页面变化以及首次渲染时都会触发。 | `function(location)`          |
-| select          | 选择文本时触发                                                                                                                                         | `function(cfirange,contents)` |
+| select          | 选中文本时触发                                                                                                                                         | `function(cfirange,contents)` |
 | keyPress        | 按下按键时触发                                                                                                                                       | `function(keyboardEvent)`     |
 
 ## EpubView 插槽
 
 | **名称**    | **说明**       |
 | ----------- | --------------------- |
-| loadingView | EPUB 视图加载状态 |
-| errorView   | EPUB 视图错误状态   |
+| loadingView | EPUB 加载时显示的内容 |
+| errorView   | EPUB 加载失败时显示的内容 |
 
 ## EpubView 暴露的方法
 
