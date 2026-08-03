@@ -8,8 +8,7 @@
     v-show="false"
     url="/vue-reader/files/啼笑因缘.epub"
     :getRendition="getRendition"
-  >
-  </vue-reader>
+  />
   <div v-if="information" style="color: #000">
     <img
       :src="information.cover"

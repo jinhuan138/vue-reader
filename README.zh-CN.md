@@ -64,7 +64,7 @@ import { VueReader } from 'vue-reader'
 ```vue
 <template>
   <div style="height: 100vh">
-    <vue-reader url="/files/啼笑因缘.epub"> </vue-reader>
+    <vue-reader url="/files/啼笑因缘.epub" />
   </div>
 </template>
 <script>

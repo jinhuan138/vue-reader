@@ -9,8 +9,7 @@
       url="/vue-reader/files/玫瑰圣经.epub"
       :getRendition="getRendition"
       location="epubcfi(/6/16!/4/2/1:0)"
-    >
-    </vue-reader>
+    />
     <vue-easy-lightbox
       :visible="visibleRef"
       :imgs="imgsRef"

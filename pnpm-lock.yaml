@@ -24,6 +24,9 @@ catalogs:
     file-saver:
       specifier: ^2.0.5
       version: 2.0.5
+    node-vibrant:
+      specifier: ^4.0.4
+      version: 4.0.4
     pinia:
       specifier: 2.0.23
       version: 2.0.23
@@ -63,18 +66,9 @@ importers:
       '@vitejs/plugin-vue':
         specifier: ^6.0.5
         version: 6.0.5(vite@8.1.2(esbuild@0.27.4)(sass-embedded@1.98.0)(sass@1.98.0)(yaml@2.8.3))(vue@3.5.31(typescript@5.9.3))
-      epub:
-        specifier: ^1.3.0
-        version: 1.3.0
-      node-vibrant:
-        specifier: ^4.0.4
-        version: 4.0.4
       prettier:
         specifier: ^2.8.8
         version: 2.8.8
-      sass-embedded:
-        specifier: ^1.98.0
-        version: 1.98.0
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
@@ -178,6 +172,9 @@ importers:
       file-saver:
         specifier: 'catalog:'
         version: 2.0.5
+      node-vibrant:
+        specifier: 'catalog:'
+        version: 4.0.4
       pinia:
         specifier: 'catalog:'
         version: 2.0.23(typescript@5.9.3)(vue@3.5.31(typescript@5.9.3))

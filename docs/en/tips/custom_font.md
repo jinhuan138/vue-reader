@@ -5,7 +5,7 @@
 ```vue
 <template>
   <div style="height: 100vh; position: relative">
-    <vue-reader url="/vue-reader/files/alice.epub" :getRendition="getRendition"/>
+    <vue-reader url="/vue-reader/files/alice.epub" :location="1" :getRendition="getRendition"/>
     <div class="theme">
       <button class="button-example" @click="updateTheme">Toggle font ({{ theme }})</button>
     </div>

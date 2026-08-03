@@ -9,6 +9,7 @@
   <div style="height: 100vh; position: relative">
     <vue-reader
       url="/vue-reader/files/啼笑因缘.epub"
+      :location="1"
       :getRendition="getRendition"
     />
     <div :class="$style.size">

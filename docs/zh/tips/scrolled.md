@@ -10,8 +10,7 @@
     <vue-reader
       url="/vue-reader/files/啼笑因缘.epub"
      :getRendition="getRendition"
-    >
-    </vue-reader>
+    />
   </div>
 </template>
 <script setup>
