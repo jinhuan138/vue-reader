@@ -48,7 +48,10 @@ const getRendition = (rendition) => {
         visibleRef.value = true
         indexRef.value = index
       })
-      imgsRef.value.push(img.src || img.getAttribute('xlink:href'))
+      imgsRef.value.push(img.src ||
+          img.href?.baseVal ||
+          img.getAttribute('href') ||
+          img.getAttribute('xlink:href'))
     })
   })
 }
