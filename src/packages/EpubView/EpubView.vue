@@ -95,12 +95,10 @@ const initReader = () => {
   })
   registerEvents()
   getRendition && getRendition(rendition)
-  if (typeof location.value === 'string') {
+  if (typeof location.value === 'string' && location.value) {
     rendition.display(location.value)
   } else if (typeof location.value === 'number') {
     rendition.display(location.value)
-  } else if (toc.value.length > 0 && toc?.value[0]?.href) {
-    rendition.display(toc.value[0].href)
   } else {
     rendition.display()
   }
