@@ -13,7 +13,7 @@ epub.js 会在 iframe 中渲染 EPUB 文件，因此需要创建并应用自定�
     '--book-color': theme.color,
     '--book-background': theme.background,
   }">
-    <vue-reader url="/vue-reader/files/啼笑因缘.epub" :getRendition="getRendition"/>
+    <vue-reader url="/vue-reader/files/啼笑因缘.epub" :location="1" :getRendition="getRendition"/>
     <div class="theme-demo">
       <div :style="item" v-for="item in themeChips" @click="theme = item">A</div>
     </div>

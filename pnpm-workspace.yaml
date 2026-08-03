@@ -7,6 +7,7 @@ catalog:
   dexie: ^3.2.3
   element-plus: ^2.3.1
   epub: ^1.2.1
+  node-vibrant: ^4.0.4
   file-saver: ^2.0.5
   pinia: 2.0.23
   pinia-plugin-persistedstate: ^3.2.0

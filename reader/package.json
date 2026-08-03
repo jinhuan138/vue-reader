@@ -20,6 +20,7 @@
     "dexie": "catalog:",
     "element-plus": "catalog:",
     "epub": "catalog:",
+    "node-vibrant": "catalog:",
     "file-saver": "catalog:",
     "pinia": "catalog:",
     "pinia-plugin-persistedstate": "catalog:",

@@ -13,7 +13,7 @@ Use this approach to customize fonts, text and background colors, or any other C
     '--book-color': theme.color,
     '--book-background': theme.background,
   }">
-    <vue-reader url="/vue-reader/files/啼笑因缘.epub" :getRendition="getRendition"/>
+    <vue-reader url="/vue-reader/files/啼笑因缘.epub" :location="1" :getRendition="getRendition"/>
     <div class="theme-demo">
       <div :style="item" v-for="item in themeChips" @click="theme = item">A</div>
     </div>

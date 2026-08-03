@@ -9,6 +9,7 @@ Use the epub.js rendition object to adjust the font size of EPUB content.
   <div style="height: 100vh; position: relative">
     <vue-reader
       url="/vue-reader/files/啼笑因缘.epub"
+      :location="1"
       :getRendition="getRendition"
     />
     <div :class="$style.size">

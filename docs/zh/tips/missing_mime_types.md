@@ -5,8 +5,7 @@ epub.js 会尝试解析传入的 EPUB 文件。如果服务器返回了错误的
 ```vue
 <template>
   <div style="height: 100vh">
-    <vue-reader url="/my-epub-service" :epubInitOptions="{ openAs: 'epub' }">
-    </vue-reader>
+    <vue-reader url="/my-epub-service" :epubInitOptions="{ openAs: 'epub' }"/>
   </div>
 </template>
 <script setup>

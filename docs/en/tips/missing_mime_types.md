@@ -5,8 +5,7 @@ epub.js attempts to parse the EPUB file you provide. If the server returns an in
 ```vue
 <template>
   <div style="height: 100vh">
-    <vue-reader url="/my-epub-service" :epubInitOptions="{ openAs: 'epub' }">
-    </vue-reader>
+    <vue-reader url="/my-epub-service" :epubInitOptions="{ openAs: 'epub' }"/>
   </div>
 </template>
 <script setup>

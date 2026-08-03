@@ -7,8 +7,7 @@
 ```vue
 <template>
   <div style="height: 100vh">
-    <vue-reader url="/vue-reader/files/啼笑因缘.epub" :getRendition="getRendition">
-    </vue-reader>
+    <vue-reader url="/vue-reader/files/啼笑因缘.epub" :location="1" :getRendition="getRendition"/>
   </div>
   <div :class="$style.selection">
     已选内容：

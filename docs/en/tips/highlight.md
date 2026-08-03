@@ -7,8 +7,7 @@ This example uses the epub.js annotations API to highlight selected text and sav
 ```vue
 <template>
   <div style="height: 100vh">
-    <vue-reader url="/vue-reader/files/啼笑因缘.epub" :getRendition="getRendition">
-    </vue-reader>
+    <vue-reader url="/vue-reader/files/啼笑因缘.epub" :location="1" :getRendition="getRendition"/>
   </div>
   <div :class="$style.selection">
     Highlights:
