@@ -14,7 +14,7 @@
 <script setup>
 import VueReader from 'vue-reader'
 import { ref } from 'vue'
-    
+  
 const theme = ref('custom')
 let rendition = null
 
