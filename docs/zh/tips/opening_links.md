@@ -9,6 +9,7 @@ epub.js 会在 iframe 中渲染 EPUB 内容，默认使用 `sandbox="allow-same-
     <vue-reader
       url='/vue-reader/files/Newton’s Apple.epub'
       :location="1"
+      :enableSwipe="false"
       :epubOptions='{
         allowPopups: true, // Adds `allow-popups` to sandbox-attribute
         allowScriptedContent: true, // Adds `allow-scripts` to sandbox-attribute

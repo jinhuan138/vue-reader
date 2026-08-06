@@ -9,6 +9,7 @@ epub.js renders EPUB content inside an iframe that uses `sandbox="allow-same-ori
     <vue-reader
       url='/vue-reader/files/Newton’s Apple.epub'
       :location="1"
+      :enableSwipe="false"
       :epubOptions='{
         allowPopups: true, // Adds `allow-popups` to sandbox-attribute
         allowScriptedContent: true, // Adds `allow-scripts` to sandbox-attribute

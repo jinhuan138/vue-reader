@@ -31,6 +31,9 @@ export interface EpubViewProps {
   getRendition?: (rendition: Rendition) => void
   handleTextSelected?: (cfiRange: string, contents: Contents) => void
   handleKeyPress?: () => void
+  enableSwipe?: boolean
+  enableKey?: boolean
+  enableWheel?: boolean
   epubInitOptions?: BookOptions
   epubOptions?: RenditionOptions
 }
@@ -44,6 +47,9 @@ const {
   handleTextSelected,
   getRendition,
   tocChanged,
+  enableSwipe = true,
+  enableKey = true,
+  enableWheel = true,
 } = props
 
 const { url, location } = toRefs(props)
@@ -120,11 +126,15 @@ const registerEvents = () => {
       // 避免在同一 document 上重复注册监听器（每次翻页都会触发 rendered）
       if (!registeredDocs.has(doc)) {
         registeredDocs.add(doc)
-        if (!epubOptions?.flow?.includes('scrolled')) {
+        if (!epubOptions?.flow?.includes('scrolled') && enableWheel) {
           iframeCleanups.push(wheelListener(doc, flipPage))
         }
-        iframeCleanups.push(swipListener(doc, flipPage))
-        iframeCleanups.push(keyListener(doc, flipPage))
+        if (enableSwipe) {
+          iframeCleanups.push(swipListener(doc, flipPage))
+        }
+        if (enableKey) {
+          iframeCleanups.push(keyListener(doc, flipPage))
+        }
       }
     })
     rendition.on('locationChanged', onLocationChange)
