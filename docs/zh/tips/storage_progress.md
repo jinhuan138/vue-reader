@@ -2,7 +2,8 @@
 
 将当前阅读位置保存到本地存储很简单，但需要注意：应用首次渲染时也会触发 `update:location` 事件。
 
-:::demo 
+:::demo
+
 ```vue
 <template>
   <div style="height: 100vh">
@@ -17,12 +18,7 @@
 import { VueReader } from 'vue-reader'
 import { useStorage } from '@vueuse/core'
 
-const location = useStorage('book-progress', 0, undefined, {
-  serializer: {
-    read: (v) => JSON.parse(v),
-    write: (v) => JSON.stringify(v),
-  },
-})
+const location = useStorage('book-progress', '0')
 
 const locationChange = (epubcifi) => {
   location.value = epubcifi

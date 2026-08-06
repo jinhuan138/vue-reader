@@ -2,7 +2,8 @@
 
 Saving the current reading location to local storage is straightforward. Keep in mind that the `update:location` event is also emitted during the initial render.
 
-:::demo 
+:::demo
+
 ```vue
 <template>
   <div style="height: 100vh">
@@ -17,12 +18,7 @@ Saving the current reading location to local storage is straightforward. Keep in
 import { VueReader } from 'vue-reader'
 import { useStorage } from '@vueuse/core'
 
-const location = useStorage('book-progress', 0, undefined, {
-  serializer: {
-    read: (v) => JSON.parse(v),
-    write: (v) => JSON.stringify(v),
-  },
-})
+const location = useStorage('book-progress', '0')
 
 const locationChange = (epubcifi) => {
   location.value = epubcifi
