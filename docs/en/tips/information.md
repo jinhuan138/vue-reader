@@ -15,13 +15,13 @@
       :alt="information.title"
       style="width: 100px"
     />
-    <p>标题:{{ information.title }}</p>
-    <p>作者:{{ information.creator }}</p>
-    <p>出版社:{{ information.publisher }}</p>
-    <p>语言:{{ information.language }}</p>
-    <p>出版日期:{{ information.pubdate }}</p>
-    <p>修改日期:{{ information.modified_date }}</p>
-    <p>介绍:{{ information.description }}</p>
+    <p>Title:{{ information.title }}</p>
+    <p>Author:{{ information.creator }}</p>
+    <p>Publisher:{{ information.publisher }}</p>
+    <p>Language:{{ information.language }}</p>
+    <p>Publication Date:{{ information.pubdate }}</p>
+    <p>Modified Date:{{ information.modified_date }}</p>
+    <p>Description:{{ information.description }}</p>
   </div>
 </template>
 <script setup>
