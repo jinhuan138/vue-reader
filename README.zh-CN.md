@@ -143,8 +143,13 @@ export default {
 
 ## Star 历史
 
-[![Star History Chart](https://api.star-history.com/svg?repos=jinhuan138/vue-reader&type=Date)](https://star-history.com/#jinhuan138/vue-reader&Date)
-
+<a href="https://www.star-history.com/?repos=jinhuan138%2Fvue-reader&type=date&legend=top-left">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=jinhuan138/vue-reader&type=date&theme=dark&legend=top-left&sealed_token=oPZqZ3j2b3otLfasNB629tk7A5APd2Aq2KwsK88HFR5Ijp_2u8U0CiEDFHyJU1AxBVKY4s2uX5Hw3678wCUJ0-Z3Wu0aZ5hJP2YVcJC0JnMbLzlD-qzf-wkQC6rn-rwApBxjpsTRaUffxbsfkLbkWkxzwDLYY86mHblFouAWoijgXJauYWUTswkmwO4O" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=jinhuan138/vue-reader&type=date&legend=top-left&sealed_token=oPZqZ3j2b3otLfasNB629tk7A5APd2Aq2KwsK88HFR5Ijp_2u8U0CiEDFHyJU1AxBVKY4s2uX5Hw3678wCUJ0-Z3Wu0aZ5hJP2YVcJC0JnMbLzlD-qzf-wkQC6rn-rwApBxjpsTRaUffxbsfkLbkWkxzwDLYY86mHblFouAWoijgXJauYWUTswkmwO4O" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=jinhuan138/vue-reader&type=date&legend=top-left&sealed_token=oPZqZ3j2b3otLfasNB629tk7A5APd2Aq2KwsK88HFR5Ijp_2u8U0CiEDFHyJU1AxBVKY4s2uX5Hw3678wCUJ0-Z3Wu0aZ5hJP2YVcJC0JnMbLzlD-qzf-wkQC6rn-rwApBxjpsTRaUffxbsfkLbkWkxzwDLYY86mHblFouAWoijgXJauYWUTswkmwO4O" />
+ </picture>
+</a>
 <style>
 html:focus-within {
   scroll-behavior: smooth;
