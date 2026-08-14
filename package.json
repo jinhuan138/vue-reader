@@ -44,7 +44,7 @@
     "prettier": "^2.8.8",
     "typescript": "^5.9.3",
     "unplugin-dts": "1.0.3",
-    "vite": "^8.1.2",
+    "vite": "catalog:",
     "vite-plugin-lib-inject-css": "^2.2.2",
     "vue": "^3.5.31",
     "vue-reader": "catalog:",

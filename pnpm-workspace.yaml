@@ -3,7 +3,7 @@ packages:
   - reader
 catalog:
   '@element-plus/icons-vue': ^2.1.0
-  '@vitejs/plugin-vue': ^5.2.1
+  '@vitejs/plugin-vue': ^6.0.5
   dexie: ^3.2.3
   element-plus: ^2.3.1
   epub: ^1.2.1
@@ -17,4 +17,4 @@ catalog:
   vue-easy-lightbox: ^1.19.0
   vue-router: ^4.2.5
   vue-reader: latest
-  vite: ^7.1.12
+  vite: ^8.1.2

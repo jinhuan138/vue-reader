@@ -10,8 +10,8 @@ catalogs:
       specifier: ^2.1.0
       version: 2.3.2
     '@vitejs/plugin-vue':
-      specifier: ^5.2.1
-      version: 5.2.4
+      specifier: ^6.0.5
+      version: 6.0.5
     dexie:
       specifier: ^3.2.3
       version: 3.2.7
@@ -43,8 +43,8 @@ catalogs:
       specifier: ^0.24.1
       version: 0.24.1
     vite:
-      specifier: ^7.1.12
-      version: 7.3.1
+      specifier: ^8.1.2
+      version: 8.1.2
     vue-easy-lightbox:
       specifier: ^1.19.0
       version: 1.19.0
@@ -76,7 +76,7 @@ importers:
         specifier: 1.0.3
         version: 1.0.3(@vue/language-core@3.2.6)(esbuild@0.27.4)(rolldown@1.1.3)(rollup@4.60.0)(typescript@5.9.3)(vite@8.1.2(esbuild@0.27.4)(sass-embedded@1.98.0)(sass@1.98.0)(yaml@2.8.3))
       vite:
-        specifier: ^8.1.2
+        specifier: 'catalog:'
         version: 8.1.2(esbuild@0.27.4)(sass-embedded@1.98.0)(sass@1.98.0)(yaml@2.8.3)
       vite-plugin-lib-inject-css:
         specifier: ^2.2.2
@@ -98,7 +98,7 @@ importers:
         version: 2.3.2(vue@3.5.31(typescript@5.9.3))
       '@vitejs/plugin-vue':
         specifier: 'catalog:'
-        version: 5.2.4(vite@5.4.21(lightningcss@1.32.0)(sass-embedded@1.98.0)(sass@1.98.0))(vue@3.5.31(typescript@5.9.3))
+        version: 6.0.5(vite@5.4.21(lightningcss@1.32.0)(sass-embedded@1.98.0)(sass@1.98.0))(vue@3.5.31(typescript@5.9.3))
       '@vueuse/core':
         specifier: ^10.9.0
         version: 10.11.1(vue@3.5.31(typescript@5.9.3))
@@ -159,7 +159,7 @@ importers:
         version: 2.3.2(vue@3.5.31(typescript@5.9.3))
       '@vitejs/plugin-vue':
         specifier: 'catalog:'
-        version: 5.2.4(vite@7.3.1(lightningcss@1.32.0)(sass-embedded@1.98.0)(sass@1.98.0)(yaml@2.8.3))(vue@3.5.31(typescript@5.9.3))
+        version: 6.0.5(vite@8.1.2(esbuild@0.27.4)(sass-embedded@1.98.0)(sass@1.98.0)(yaml@2.8.3))(vue@3.5.31(typescript@5.9.3))
       dexie:
         specifier: 'catalog:'
         version: 3.2.7
@@ -192,7 +192,7 @@ importers:
         version: 0.24.1(@babel/parser@7.29.2)(rollup@4.60.0)(vue@3.5.31(typescript@5.9.3))
       vite:
         specifier: 'catalog:'
-        version: 7.3.1(lightningcss@1.32.0)(sass-embedded@1.98.0)(sass@1.98.0)(yaml@2.8.3)
+        version: 8.1.2(esbuild@0.27.4)(sass-embedded@1.98.0)(sass@1.98.0)(yaml@2.8.3)
       vue-easy-lightbox:
         specifier: 'catalog:'
         version: 1.19.0(vue@3.5.31(typescript@5.9.3))
@@ -2673,10 +2673,6 @@ packages:
   tinycolor2@1.6.0:
     resolution: {integrity: sha512-XPaBkWQJdsf3pLKJV9p4qN/S+fm2Oj8AIPo1BTUhg5oxkvm9+SVEGFdhyOz7tTdUTfvxMiAs4sp6/eZO2Ew+pw==}
 
-  tinyglobby@0.2.15:
-    resolution: {integrity: sha512-j2Zq4NyQYG5XMST4cbs02Ak8iJUdxRM0XI5QyxXuZOzKOINmWurp3smXu3y5wDcJrptwpSjgXHzIQxR0omXljQ==}
-    engines: {node: '>=12.0.0'}
-
   tinyglobby@0.2.17:
     resolution: {integrity: sha512-wXR/dYpcqKmfWpEdZjiKJOwCNFndD0DMnrW/cYjVGttEkBfVgcLFHoNrlj47mjOVic9yyNu65alsgF4NQyTa2g==}
     engines: {node: '>=12.0.0'}
@@ -2855,46 +2851,6 @@ packages:
       sugarss:
         optional: true
       terser:
-        optional: true
-
-  vite@7.3.1:
-    resolution: {integrity: sha512-w+N7Hifpc3gRjZ63vYBXA56dvvRlNWRczTdmCBBa+CotUzAPf5b7YMdMR/8CQoeYE5LX3W4wj6RYTgonm1b9DA==}
-    engines: {node: ^20.19.0 || >=22.12.0}
-    hasBin: true
-    peerDependencies:
-      '@types/node': ^20.19.0 || >=22.12.0
-      jiti: '>=1.21.0'
-      less: ^4.0.0
-      lightningcss: ^1.21.0
-      sass: ^1.70.0
-      sass-embedded: ^1.70.0
-      stylus: '>=0.54.8'
-      sugarss: ^5.0.0
-      terser: ^5.16.0
-      tsx: ^4.8.1
-      yaml: ^2.4.2
-    peerDependenciesMeta:
-      '@types/node':
-        optional: true
-      jiti:
-        optional: true
-      less:
-        optional: true
-      lightningcss:
-        optional: true
-      sass:
-        optional: true
-      sass-embedded:
-        optional: true
-      stylus:
-        optional: true
-      sugarss:
-        optional: true
-      terser:
-        optional: true
-      tsx:
-        optional: true
-      yaml:
         optional: true
 
   vite@8.1.2:
@@ -3940,9 +3896,10 @@ snapshots:
       vite: 5.4.21(lightningcss@1.32.0)(sass-embedded@1.98.0)(sass@1.98.0)
       vue: 3.5.31(typescript@5.9.3)
 
-  '@vitejs/plugin-vue@5.2.4(vite@7.3.1(lightningcss@1.32.0)(sass-embedded@1.98.0)(sass@1.98.0)(yaml@2.8.3))(vue@3.5.31(typescript@5.9.3))':
+  '@vitejs/plugin-vue@6.0.5(vite@5.4.21(lightningcss@1.32.0)(sass-embedded@1.98.0)(sass@1.98.0))(vue@3.5.31(typescript@5.9.3))':
     dependencies:
-      vite: 7.3.1(lightningcss@1.32.0)(sass-embedded@1.98.0)(sass@1.98.0)(yaml@2.8.3)
+      '@rolldown/pluginutils': 1.0.0-rc.2
+      vite: 5.4.21(lightningcss@1.32.0)(sass-embedded@1.98.0)(sass@1.98.0)
       vue: 3.5.31(typescript@5.9.3)
 
   '@vitejs/plugin-vue@6.0.5(vite@8.1.2(esbuild@0.27.4)(sass-embedded@1.98.0)(sass@1.98.0)(yaml@2.8.3))(vue@3.5.31(typescript@5.9.3))':
@@ -4422,6 +4379,7 @@ snapshots:
       '@esbuild/win32-arm64': 0.27.4
       '@esbuild/win32-ia32': 0.27.4
       '@esbuild/win32-x64': 0.27.4
+    optional: true
 
   escape-string-regexp@5.0.0: {}
 
@@ -5677,11 +5635,6 @@ snapshots:
 
   tinycolor2@1.6.0: {}
 
-  tinyglobby@0.2.15:
-    dependencies:
-      fdir: 6.5.0(picomatch@4.0.4)
-      picomatch: 4.0.4
-
   tinyglobby@0.2.17:
     dependencies:
       fdir: 6.5.0(picomatch@4.0.4)
@@ -5884,21 +5837,6 @@ snapshots:
       lightningcss: 1.32.0
       sass: 1.98.0
       sass-embedded: 1.98.0
-
-  vite@7.3.1(lightningcss@1.32.0)(sass-embedded@1.98.0)(sass@1.98.0)(yaml@2.8.3):
-    dependencies:
-      esbuild: 0.27.4
-      fdir: 6.5.0(picomatch@4.0.4)
-      picomatch: 4.0.4
-      postcss: 8.5.8
-      rollup: 4.60.0
-      tinyglobby: 0.2.15
-    optionalDependencies:
-      fsevents: 2.3.3
-      lightningcss: 1.32.0
-      sass: 1.98.0
-      sass-embedded: 1.98.0
-      yaml: 2.8.3
 
   vite@8.1.2(esbuild@0.27.4)(sass-embedded@1.98.0)(sass@1.98.0)(yaml@2.8.3):
     dependencies:
