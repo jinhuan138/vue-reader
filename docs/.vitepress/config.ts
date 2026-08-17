@@ -17,7 +17,7 @@ export default defineConfig({
             themeConfig: {
                 nav: [
                     { text: 'Guide', link: '/en/guide/introduction' },
-                    { text: 'Reader', link: '/en/reader' },
+                    { text: 'Reader', link: '/reader/home' },
                 ],
                 sidebar: [
                     {
@@ -58,7 +58,7 @@ export default defineConfig({
             themeConfig: {
                 nav: [
                     { text: '指南', link: '/zh/guide/introduction' },
-                    { text: '阅读器', link: '/zh/reader' },
+                    { text: '阅读器', link: '/reader/home' },
                 ],
                 sidebar: [
                     { text: '指南', items: [{ text: '介绍', link: '/zh/guide/introduction' }] },
@@ -128,7 +128,7 @@ export default defineConfig({
         nav: [{
             text: "Guide", link: "/guide/introduction"
         },
-        { text: "Reader", link: "/reader" }],
+        { text: "Reader", link: "/reader/home" }],
         socialLinks: [
             { icon: 'github', link: 'https://github.com/jinhuan138/vue-reader' }
         ],

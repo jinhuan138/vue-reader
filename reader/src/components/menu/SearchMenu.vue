@@ -32,7 +32,7 @@
 <script setup>
 import { useReaderStore } from '../utils/stores'
 import { Search } from '@element-plus/icons-vue'
-import { ref, watch, toRefs } from 'vue'
+import { ref, watch, toRefs, onBeforeUnmount } from 'vue'
 
 const reader = useReaderStore()
 const props = defineProps({
@@ -57,15 +57,19 @@ const onNodeClick = (data) => {
 }
 let _searcTimer = null
 watch(searchText, (text) => {
+  clearTimeout(_searcTimer)
   if (text.length === 0) {
+    emit('search', '')
     return
   }
-  clearTimeout(_searcTimer)
   _searcTimer = setTimeout(() => {
     emit('search', text)
   }, 1000)
 })
 watch(searchResult, () => {
   startSearch()
+})
+onBeforeUnmount(() => {
+  clearTimeout(_searcTimer)
 })
 </script>

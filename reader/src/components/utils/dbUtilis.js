@@ -125,7 +125,7 @@ const getInfo = async (url, book, callback) => {
   // file load on file protocol
   // const uri = fileUrl(filePath);
 
-  book.ready
+  return book.ready
     .then(() => {
       return book.locations.generate()
     })
@@ -146,8 +146,10 @@ const getInfo = async (url, book, callback) => {
       }
 
       if (callback) {
-        callback(info, book)
+        return callback(info, book)
       }
+
+      return info
     })
 }
 

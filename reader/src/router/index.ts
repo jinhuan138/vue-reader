@@ -1,12 +1,26 @@
-//https://router.vuejs.org/zh/
-import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
+// https://router.vuejs.org/zh/
+import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 
 const routes: Array<RouteRecordRaw> = [
-  { path: '/', redirect: '/reader' },
   {
-    name: 'reader',
-    path: '/reader',
+    path: '/',
     component: () => import('../components/index.vue'),
+    children: [
+      {
+        path: '',
+        redirect: { name: 'home' },
+      },
+      {
+        name: 'home',
+        path: 'home',
+        component: () => import('../components/Home.vue'),
+      },
+      {
+        name: 'view',
+        path: 'view',
+        component: () => import('../components/Reader.vue'),
+      },
+    ],
   },
 ]
 

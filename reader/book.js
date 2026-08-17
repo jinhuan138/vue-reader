@@ -38,16 +38,10 @@ const parseBook = (name) => {
         if (error) return console.log(error)
         if (mimeType.includes('image')) {
           const coverBase64 = img.toString('base64').replace(/\s/g, '')
-          fs.writeFileSync(
-            join(libraryPath, `/cover/${name.replace('.epub', '')}.jpg`),
-            img
-          )
           // 获取图书封面主题颜色,node-vibrant不支持webp直接使用buffer
           const palette = await Vibrant.from(img).getPalette()
           booksJson.push({
             ...book.metadata,
-            id: md5,
-            coverPath: `/files/cover/${name.replace('.epub', '')}.jpg`,
             url: name,
             bgColorFromCover: palette.DarkVibrant.hex,
             size,

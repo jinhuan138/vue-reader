@@ -26,7 +26,7 @@
             ref="card"
             shadow="hover"
             class="box-card"
-            :body-style="{ padding: '0px' }"
+            :body-style="{ padding: '0px', height: '100%', overflow: 'hidden' }"
           >
             <el-image
               :lazy="true"
@@ -126,6 +126,7 @@ console.log(bookList)
 const { saveAs } = fileSaver
 const grid = ref(null)
 const main = ref(null)
+let resizeTimer = null
 const data = reactive({
   maxColWidth: 280,
   gap: 32,
@@ -153,6 +154,7 @@ onMounted(async () => {
 })
 onBeforeUnmount(() => {
   window.removeEventListener('resize', resize)
+  clearTimeout(resizeTimer)
 })
 const trunc = (str, n) => {
   return str.length > n ? `${str.substr(0, n - 3)}...` : str
@@ -165,10 +167,15 @@ const publishDate = (val) => {
   return `${year}-${month}-${day}`
 }
 //style
+const getMainElement = () => main.value?.$el || main.value
+
 const initStyle = () => {
+  const mainElement = getMainElement()
+  if (!mainElement || !grid.value) return
+
   items = grid.value.children
   if (items.length === 0) return
-  main.value.$el.style.position = 'relative'
+  mainElement.style.position = 'relative'
   Array.prototype.forEach.call(items, (item) => {
     item.style.position = 'absolute'
     item.style.maxWidth = `${maxColWidth.value}px`
@@ -177,7 +184,8 @@ const initStyle = () => {
   })
 }
 const positionItems = () => {
-  if (items.length === 0) return
+  const mainElement = getMainElement()
+  if (!mainElement || items.length === 0) return
 
   let { cols, wSpace } = setup()
 
@@ -194,7 +202,7 @@ const positionItems = () => {
     min.height += min.top + item.getBoundingClientRect().height
     min.top = gap.value
   })
-  main.value.$el.style.height = `${getMax(cols).height}px`
+  mainElement.style.height = `${getMax(cols).height}px`
 }
 const nextCol = (cols, i) => {
   if (useMin) return getMin(cols)
@@ -219,7 +227,7 @@ const getMax = (cols) => {
   return max
 }
 const setup = () => {
-  const { width } = main.value.$el.getBoundingClientRect()
+  const { width } = getMainElement().getBoundingClientRect()
   let numCols = Math.floor(width / colWidth()) || 1
   const cols = []
 
@@ -243,7 +251,8 @@ const setup = () => {
   }
 }
 const resize = () => {
-  setTimeout(positionItems(), 200)
+  clearTimeout(resizeTimer)
+  resizeTimer = setTimeout(positionItems, 200)
 }
 //books info
 const formatSize = (size) => {
@@ -296,6 +305,7 @@ const delFile = (id) => {
     .box-card {
       width: 170px;
       height: 250px;
+      overflow: hidden;
       user-select: none;
       cursor: pointer;
 
@@ -318,6 +328,7 @@ const delFile = (id) => {
       .title {
         top: -3px;
         width: 100%;
+        box-sizing: border-box;
         padding: 0 10px;
         height: 50px;
         font-size: 14px;

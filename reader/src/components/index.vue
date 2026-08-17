@@ -1,37 +1,67 @@
 <template>
-  <div id="index" ref="app" :class="'reader-' + reader.theme">
-    <!-- Home -->
-    <transition name="el-fade-in-linear">
-      <Home
-        @update:currentBook="updateBook"
-        v-model:showReader="showReader"
-        v-if="!showReader"
-      />
-    </transition>
-    <!-- Reader -->
-    <transition name="el-fade-in-linear">
-      <Reader
-        :bookInfo="currentBook"
-        v-if="showReader"
-        @update:showReader="(val) => (showReader = val)"
-      />
-    </transition>
+  <div id="index" :class="'reader-' + reader.theme">
+    <RouterView v-slot="{ Component }">
+      <transition name="el-fade-in-linear" mode="out-in">
+        <component
+          :is="Component"
+          :book-info="currentBook"
+          @update:current-book="openBook"
+          @update:show-reader="closeReader"
+        />
+      </transition>
+    </RouterView>
   </div>
 </template>
 <script setup>
-import Home from './Home.vue'
-import Reader from './Reader.vue'
+import { ref, watch } from 'vue'
+import { RouterView, useRoute, useRouter } from 'vue-router'
 import { useReaderStore } from './utils/stores'
-import { ref } from 'vue'
 
 const reader = useReaderStore()
-const showReader = ref(false)
+const route = useRoute()
+const router = useRouter()
 const currentBook = ref({})
+const hasLocalBookSession = ref(false)
 
-const updateBook = (info) => {
-  currentBook.value = info
-  showReader.value = true
+const restoreBookFromRoute = () => {
+  const bookId = route.query.bookId
+  if (!bookId) {
+    currentBook.value = {}
+    hasLocalBookSession.value = false
+    if (route.name === 'view') router.replace({ name: 'home' })
+    return
+  }
+
+  if (bookId === 'local') {
+    if (!hasLocalBookSession.value) router.replace({ name: 'home' })
+    return
+  }
+
+  const book = reader.bookList.find((item) => String(item.id) === bookId)
+  if (!book) {
+    router.replace({ name: 'home' })
+    return
+  }
+
+  currentBook.value = book
 }
+
+const openBook = (bookInfo) => {
+  currentBook.value = bookInfo
+  hasLocalBookSession.value = !bookInfo?.id
+  router.push({ name: 'view', query: { bookId: bookInfo?.id || 'local' } })
+}
+
+const closeReader = () => {
+  hasLocalBookSession.value = false
+  router.push({ name: 'home' })
+}
+
+watch(
+  () => [route.name, route.query.bookId],
+  restoreBookFromRoute,
+  { immediate: true }
+)
 </script>
 <style lang="scss" scoped>
 $border-radius: 4px;
@@ -85,19 +115,19 @@ body {
 }
 
 .reader-default {
-  width: 260px;
+  width: 100%;
   background: #fff !important;
   color: #555 !important;
 }
 
 .reader-dark {
-  width: 260px !important;
+  width: 100% !important;
   background: #444 !important;
   color: #eee !important;
 }
 
 .reader-tan {
-  width: 260px !important;
+  width: 100% !important;
   background: #fdf6e3 !important;
   color: #002b36 !important;
 }

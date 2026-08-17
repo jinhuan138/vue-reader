@@ -1,5 +1,9 @@
 <template>
-  <el-container direction="vertical" style="z-index: 999; background-color: #fff">
+  <el-container
+    class="reader-container"
+    direction="vertical"
+    style="z-index: 999; background-color: #fff"
+  >
     <titlebar :title="title">
       <el-button-group>
         <el-button size="small" :icon="Back" circle @click="onBackBtn" />
@@ -8,30 +12,58 @@
 
       <toc-menu :toc="currentBook.toc" @node-click="onNodeClick"></toc-menu>
 
-      <bookmark-menu :bookmarks="currentBook.bookmarks" @node-click="onNodeClick" @add-bookmark="addBookmark"
-        @remove-bookmark="removeBookmark" />
+      <bookmark-menu
+        :bookmarks="currentBook.bookmarks"
+        @node-click="onNodeClick"
+        @add-bookmark="addBookmark"
+        @remove-bookmark="removeBookmark"
+      />
 
-      <search-menu :search-result="searchResult" @node-click="onNodeClick" @search="search" />
+      <search-menu
+        :search-result="searchResult"
+        @node-click="onNodeClick"
+        @search="search"
+      />
 
-      <theme-menu @theme-change="applytheme" @flow-change="applyflow" @style-change="updateStyle" />
+      <theme-menu
+        @theme-change="applytheme"
+        @flow-change="applyflow"
+        @style-change="updateStyle"
+      />
     </titlebar>
 
     <el-main class="container">
-      <EpubView id="reader" :url="url" :getRendition="getRendition" :title="page" v-loading="!isReady" :epubOptions="{
-        allowPopups: true,
-        allowScriptedContent: true,
-      }" @update:location="locationChange">
+      <EpubView
+        id="reader"
+        :url="url"
+        :getRendition="getRendition"
+        :title="page"
+        v-loading="!isReady"
+        :epubOptions="{
+          allowPopups: true,
+          allowScriptedContent: true,
+        }"
+        @update:location="locationChange"
+      >
         <template #loadingView>
           <el-progress :percentage="loadProcess" />
         </template>
       </EpubView>
-      <vue-easy-lightbox :visible="visibleRef" :imgs="imgsRef" :index="indexRef"
-        @hide="visibleRef = false"></vue-easy-lightbox>
+      <vue-easy-lightbox
+        :visible="visibleRef"
+        :imgs="imgsRef"
+        :index="indexRef"
+        @hide="visibleRef = false"
+      ></vue-easy-lightbox>
     </el-main>
 
     <el-footer height="45">
-      <el-slider v-model="sliderValue" :step="0.01" :format-tooltip="lableFromPercentage"
-        @change="onSliderValueChange"></el-slider>
+      <el-slider
+        v-model="sliderValue"
+        :step="0.01"
+        :format-tooltip="labelFromPercentage"
+        @change="onSliderValueChange"
+      ></el-slider>
     </el-footer>
 
     <buble-menu ref="bubleMenu" @highlight-btn-click="highlightSelection" />
@@ -53,7 +85,7 @@ import BubleMenu from './menu/BubleMenu.vue'
 import { getInfo } from './utils/dbUtilis'
 import { dark, tan } from './utils/themes'
 import { useReaderStore } from './utils/stores'
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import VueEasyLightbox from 'vue-easy-lightbox'
 
 const reader = useReaderStore()
@@ -76,6 +108,7 @@ const url = computed(() => {
 })
 let rendition = null,
   flattenedToc = null
+let relocatedHandler = null
 
 const imgsRef = ref([])
 const indexRef = ref(0)
@@ -88,12 +121,21 @@ const getRendition = (val) => {
   rendition.on('rendered', (e, iframe) => {
     // selectListener(iframe.document, rendition, toggleBuble)
   })
-  rendition.on('relocated', (location) => {
-    // info.lastCfi = location.start.cfi;
-    history.value.push(location.start.cfi)
-    progress.value = book.locations.percentageFromCfi(location.start.cfi)
-    // sliderValue.value = Math.floor(progress.value * 10000) / 100;
-  })
+  relocatedHandler = (location) => {
+    if (!book.locations.length()) return
+    const percentage = book.locations.percentageFromCfi(location.start.cfi)
+    if (!Number.isFinite(percentage) || percentage < 0) return
+
+    progress.value = percentage
+    sliderValue.value = Math.round(percentage * 10000) / 100
+
+    if (currentBook.value?.id) {
+      currentBook.value.lastCfi = location.start.cfi
+      currentBook.value.progress = percentage
+      reader.setBook(currentBook.value.id, currentBook.value)
+    }
+  }
+  rendition.on('relocated', relocatedHandler)
   rendition.hooks.content.register(applyStyle)
 
   rendition.hooks.content.register(({ document }) => {
@@ -127,14 +169,10 @@ const getRendition = (val) => {
   })
 
   book.ready
-    .then(() => {
+    .then(async () => {
       const meta = book.package.metadata
       console.log(book.package.metadata)
       title.value = meta.title
-      return book.locations.generate()
-    })
-    .then(async (locations) => {
-      // rendition.display(this.info.lastCfi || 1);
       rendition.themes.registerRules('dark', dark)
       rendition.themes.registerRules('tan', tan)
       rendition.ready = true
@@ -143,7 +181,15 @@ const getRendition = (val) => {
       applytheme(theme)
       applyflow(flow)
       await getInfo(url.value, book, (info) => {
-        currentBook.value = info
+        const sourceBook = props.bookInfo?.url ? props.bookInfo : {}
+        currentBook.value = {
+          ...sourceBook,
+          ...info,
+          id: sourceBook.id,
+          url: sourceBook.url,
+          bookmarks: sourceBook.bookmarks || [],
+          highlights: sourceBook.highlights || [],
+        }
         flattenedToc = (function flatten(items) {
           return [].concat(
             ...items.map((item) => [item].concat(...flatten(item.children)))
@@ -153,6 +199,16 @@ const getRendition = (val) => {
           return a.percentage - b.percentage
         })
       })
+
+      if (currentBook.value.lastCfi) {
+        await rendition.display(currentBook.value.lastCfi)
+      }
+
+      const currentLocation = rendition.currentLocation()
+      if (currentLocation?.start) {
+        relocatedHandler(currentLocation)
+        locationChange(currentLocation.start.cfi)
+      }
     })
     .then(() => {
       isReady.value = true
@@ -160,36 +216,17 @@ const getRendition = (val) => {
       //     rendition.annotations.highlight(cfiRange);
       // });
     })
-    .then(() => {
-      isReady.value = true
-    })
 }
-const toc = ref([])
 const page = ref('')
-const getLabel = (toc, href) => {
-  let label = 'n/a'
-  toc.some((item) => {
-    if (item.subitems.length > 0) {
-      const subChapter = getLabel(item.subitems, href)
-      if (subChapter !== 'n/a') {
-        label = subChapter
-        return true
-      }
-    } else if (item.href.includes(href)) {
-      label = item.label
-      return true
-    }
-  })
-  return label
-}
 const locationChange = (epubcifi) => {
   //翻页
   if (epubcifi) {
     const { displayed, href } = rendition.location.start
-    const { cfi } = rendition.location.end
     if (href !== 'titlepage.xhtml') {
-      const label = getLabel(toc.value, href)
-      page.value = `${displayed.page}/${displayed.total} ${label}`
+      const label = labelFromPercentage(progress.value * 100)
+      page.value = `${displayed.page}/${displayed.total}${
+        label ? ` ${label}` : ''
+      }`
     }
   }
   //存储
@@ -206,35 +243,46 @@ onMounted(() => {
   // info.value.lastOpen = new Date().getTime();
   // reader.setBook(info.id, info)
 })
+onBeforeUnmount(() => {
+  if (rendition && relocatedHandler) {
+    rendition.off('relocated', relocatedHandler)
+  }
+  stopTrackingDownloads?.()
+})
 
 //阅读进度
 const sliderValue = ref(0)
 const progress = ref(0)
-const lableFromPercentage = (percent) => {
-  let toc = tocFromPercentage(percent)
-  if (toc) return toc.label
-  return ''
+const labelFromPercentage = (percent) => {
+  return tocFromPercentage(percent)?.label ?? ''
 }
 
 const tocFromPercentage = (percent) => {
-  if (!flattenedToc) return {}
-  percent /= 100
-  for (let i = 0; i < flattenedToc.length; i += 1) {
-    if (flattenedToc[i].percentage > percent) {
-      return flattenedToc[i - 1]
-    }
+  if (!flattenedToc?.length) return null
+
+  const target = Math.max(0, Math.min(100, Number(percent) || 0)) / 100
+  let current = flattenedToc[0]
+
+  for (const item of flattenedToc) {
+    if (item.percentage > target) break
+    current = item
   }
-  return null
+
+  return current
 }
 const onSliderValueChange = (val) => {
-  let cfi = rendition.book.locations.cfiFromPercentage(val / 100)
+  if (!rendition || !Number.isFinite(Number(val))) return
+  const cfi = rendition.book.locations.cfiFromPercentage(Number(val) / 100)
+  if (!cfi) return
   rendition.display(cfi)
 }
 //加载进度
 const loadProcess = ref(0)
 const trackAllDownloads = (onProgress) => {
-  var open = XMLHttpRequest.prototype.open
-  XMLHttpRequest.prototype.open = function () {
+  if (typeof XMLHttpRequest === 'undefined') return null
+
+  const open = XMLHttpRequest.prototype.open
+  const trackedOpen = function () {
     this.addEventListener(
       'progress',
       function (event) {
@@ -246,33 +294,32 @@ const trackAllDownloads = (onProgress) => {
     )
     open.apply(this, arguments)
   }
+
+  XMLHttpRequest.prototype.open = trackedOpen
+
+  return () => {
+    if (XMLHttpRequest.prototype.open === trackedOpen) {
+      XMLHttpRequest.prototype.open = open
+    }
+  }
 }
 // 监听所有下载进度并显示进度条
-trackAllDownloads((_progress) => {
+const stopTrackingDownloads = trackAllDownloads((_progress) => {
   loadProcess.value = Math.round(_progress * 100)
 })
 //header
-const history = ref([])
-const onBackBtn = () => {
-  // remove current location
-  history.value.pop()
-  let lastLocation = history.value.pop()
-  if (lastLocation) {
-    rendition.display(lastLocation)
-  } else {
-    // go to homepage
-    emit('update:showReader', false)
-  }
-}
 const emit = defineEmits(['update:showReader', 'theme-change'])
 
-const onLibraryBtn = () => {
+const goHome = () => {
   emit('update:showReader', false)
 }
 
+const onBackBtn = goHome
+const onLibraryBtn = goHome
+
 const onNodeClick = (item) => {
-  console.log(item.cfi, item.href)
-  rendition.display(item.cfi || item.href)
+  const target = item?.cfi || item?.href
+  if (rendition && target) rendition.display(target)
 }
 //theme
 const styleRules = ref({})
@@ -307,6 +354,10 @@ const applyStyle = () => {
 //search
 const searchResult = ref([])
 const search = (text) => {
+  if (!text) {
+    searchResult.value = []
+    return Promise.resolve([])
+  }
   const book = rendition.book
   return Promise.all(
     book.spine.spineItems.map((item) =>
@@ -360,34 +411,56 @@ const addBookmark = () => {
   if (!rendition) return
 
   const { location } = rendition
+  if (!location?.start) return
   const { href, cfi, percentage } = location.start
 
   // TODO : find more minigful name for bookmark
-  const bookmarkTitle = `${lableFromPercentage(percentage * 100)} : At ${Math.floor(progress.value * 1000) / 10
-    }%`
+  const bookmarkTitle = `${labelFromPercentage(percentage * 100)} : At ${
+    Math.floor(progress.value * 1000) / 10
+  }%`
 
   const bookmark = {
     label: bookmarkTitle,
     cfi,
     href,
   }
-  currentBook.value.bookmarks?.push(bookmark)
+  const bookmarks =
+    currentBook.value.bookmarks || (currentBook.value.bookmarks = [])
+  if (!bookmarks.some((item) => item.cfi === bookmark.cfi)) {
+    bookmarks.push(bookmark)
+    if (currentBook.value.id)
+      reader.setBook(currentBook.value.id, currentBook.value)
+  }
   // this.$db.set(this.info.id, this.info);
 }
 const removeBookmark = (bookmark) => {
   const bookmarks = currentBook.value.bookmarks
   if (!bookmarks) return
-  const index = bookmarks.findIndex(
-    (item) => item.cfi === bookmark.cfi
-  )
+  const index = bookmarks.findIndex((item) => item.cfi === bookmark.cfi)
   if (index > -1) {
     bookmarks.splice(index, 1)
+    if (currentBook.value.id)
+      reader.setBook(currentBook.value.id, currentBook.value)
   }
   // this.$db.insert(this.info.id, this.info);
 }
 </script>
 
 <style scoped lang="scss">
+.reader-container {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+}
+
+.container {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
 .custom-tree-node {
   flex: 1;
   display: flex;
