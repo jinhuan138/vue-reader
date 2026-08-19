@@ -58,12 +58,28 @@
     </el-main>
 
     <el-footer height="45">
-      <el-slider
-        v-model="sliderValue"
-        :step="0.01"
-        :format-tooltip="labelFromPercentage"
-        @change="onSliderValueChange"
-      ></el-slider>
+      <div class="page-controls">
+        <el-button
+          :icon="ArrowLeft"
+          circle
+          title="上一页"
+          :disabled="atStart"
+          @click="prevPage"
+        />
+        <el-slider
+          v-model="sliderValue"
+          :step="0.01"
+          :format-tooltip="labelFromPercentage"
+          @change="onSliderValueChange"
+        />
+        <el-button
+          :icon="ArrowRight"
+          circle
+          title="下一页"
+          :disabled="atEnd"
+          @click="nextPage"
+        />
+      </div>
     </el-footer>
 
     <buble-menu ref="bubleMenu" @highlight-btn-click="highlightSelection" />
@@ -73,7 +89,7 @@
 //https://github.com/code-farmer-i/vue-markdown-editor.git
 //https://github.com/hepengwei/visualization-collection
 import { db } from './utils/db'
-import { Back, Grid } from '@element-plus/icons-vue'
+import { ArrowLeft, ArrowRight, Back, Grid } from '@element-plus/icons-vue'
 import { EpubView } from 'vue-reader'
 import titlebar from './Titlebar.vue'
 import TocMenu from './menu/TocMenu.vue'
@@ -96,6 +112,8 @@ const props = defineProps({
   },
 })
 const isReady = ref(false)
+const atStart = ref(false)
+const atEnd = ref(false)
 const currentBook = ref({})
 const title = ref('')
 const url = computed(() => {
@@ -122,6 +140,9 @@ const getRendition = (val) => {
     // selectListener(iframe.document, rendition, toggleBuble)
   })
   relocatedHandler = (location) => {
+    atStart.value = Boolean(location.atStart)
+    atEnd.value = Boolean(location.atEnd)
+
     if (!book.locations.length()) return
     const percentage = book.locations.percentageFromCfi(location.start.cfi)
     if (!Number.isFinite(percentage) || percentage < 0) return
@@ -276,6 +297,8 @@ const onSliderValueChange = (val) => {
   if (!cfi) return
   rendition.display(cfi)
 }
+const prevPage = () => rendition?.prev()
+const nextPage = () => rendition?.next()
 //加载进度
 const loadProcess = ref(0)
 const trackAllDownloads = (onProgress) => {
@@ -459,6 +482,18 @@ const removeBookmark = (bookmark) => {
   min-width: 0;
   padding: 0;
   overflow: hidden;
+}
+
+.page-controls {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  gap: 12px;
+}
+
+.page-controls .el-slider {
+  min-width: 0;
+  flex: 1;
 }
 
 .custom-tree-node {
