@@ -10,6 +10,8 @@ Use an Element Plus slider to control reading progress and show the chapter at t
     <vue-reader
       url="/vue-reader/files/alice.epub"
       :getRendition="getRendition"
+      :tocChanged="tocChanged"
+      @update:location="locationChange"
     />
     <div :class="$style.progress">
       <el-slider
@@ -27,92 +29,54 @@ import { ElSlider } from 'element-plus'
 import { ref } from 'vue'
 
 const current = ref(0)
-let rendition, book, displayed
-let flattenedToc = []
+let rendition, book
+let toc = []
 
-const loadToc = async () => {
-  const items = []
-
-  const walk = async (toc = []) => {
-    for (const item of toc) {
-      const href = item.href.replace(/^\.\.\//, '').replace(/^\//, '')
-      const [spineHref, id] = href.split('#')
-      const spineItem = book.spine.get(spineHref)
-
-      if (spineItem) {
-        await spineItem.load(book.load.bind(book))
-        const element = id
-          ? spineItem.document.getElementById(id)
-          : spineItem.document.body
-
-        if (element) {
-          const cfi = spineItem.cfiFromElement(element)
-          const percentage = book.locations.percentageFromCfi(cfi)
-          if (Number.isFinite(percentage)) {
-            items.push({ label: item.label.trim(), percentage })
-          }
-        }
-
-        spineItem.unload()
-      }
-
-      await walk(item.subitems)
-    }
-  }
-
-  await walk(book.navigation.toc)
-  flattenedToc = items.sort((a, b) => a.percentage - b.percentage)
-}
-
-const labelFromPercentage = (percent) => {
-  if (!flattenedToc.length) return ''
-
-  const target = Math.max(0, Math.min(100, Number(percent) || 0)) / 100
-  let currentToc = flattenedToc[0]
-
-  for (const item of flattenedToc) {
-    if (item.percentage > target) break
-    currentToc = item
-  }
-
-  return currentToc.label
-}
+const tocChanged = (val) => (toc = val)
 
 const getRendition = (val) => {
   rendition = val
-  book = rendition.book
-  displayed = rendition.display()
+  book = val.book
+  // Percentages are only available once locations are generated
   book.ready
     .then(() => book.locations.generate(1600))
-    .then(async () => {
-      await loadToc()
-      // Get the current reading percentage after the book is rendered
-      displayed.then(() => {
-        const currentLocation = rendition.currentLocation()
-        const currentPage = book.locations.percentageFromCfi(
-          currentLocation.start.cfi
-        )
-        current.value = Math.round(currentPage * 10000) / 100
-      })
-      rendition.on('relocated', (location) => {
-        const percent = book.locations.percentageFromCfi(location.start.cfi)
-        current.value = Math.round(percent * 10000) / 100
-      })
-    })
+    .then(() => locationChange(rendition.currentLocation()?.start))
 }
 
+// Keep the slider in sync while reading
+const locationChange = (location) => {
+  if (!location?.cfi || !book?.locations.length()) return
+  const percent = book.locations.percentageFromCfi(location.cfi)
+  current.value = Math.round(percent * 10000) / 100
+}
+
+// Jump to the position after dragging
 const change = (value) => {
-  current.value = value
-  const cfi = book.locations.cfiFromPercentage(value / 100)
-  rendition.display(cfi)
+  rendition.display(book.locations.cfiFromPercentage(value / 100))
+}
+
+// Look up the chapter title of the given href in the table of contents
+const getLabel = (items, href) => {
+  for (const item of items) {
+    if (item.href.includes(href)) return item.label.trim()
+    const label = getLabel(item.subitems || [], href)
+    if (label) return label
+  }
+  return ''
+}
+
+// Show the chapter of the hovered position in the tooltip
+const labelFromPercentage = (percent) => {
+  const href = book?.locations.length()
+    ? book.spine.get(book.locations.cfiFromPercentage(percent / 100))?.href
+    : ''
+  return (href && getLabel(toc, href)) || `${percent}%`
 }
 </script>
 <style module>
 .progress {
   position: absolute;
-  bottom: 1rem;
-  right: 1rem;
-  left: 1rem;
+  inset: auto 1rem 1rem;
   z-index: 2;
 }
 </style>

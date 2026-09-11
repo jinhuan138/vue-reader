@@ -10,6 +10,8 @@
     <vue-reader
       url="/vue-reader/files/啼笑因缘.epub"
       :getRendition="getRendition"
+      :tocChanged="tocChanged"
+      @update:location="locationChange"
     />
     <div :class="$style.progress">
       <el-slider
@@ -27,92 +29,54 @@ import { ElSlider } from 'element-plus'
 import { ref } from 'vue'
 
 const current = ref(0)
-let rendition, book, displayed
-let flattenedToc = []
+let rendition, book
+let toc = []
 
-const loadToc = async () => {
-  const items = []
-
-  const walk = async (toc = []) => {
-    for (const item of toc) {
-      const href = item.href.replace(/^\.\.\//, '').replace(/^\//, '')
-      const [spineHref, id] = href.split('#')
-      const spineItem = book.spine.get(spineHref)
-
-      if (spineItem) {
-        await spineItem.load(book.load.bind(book))
-        const element = id
-          ? spineItem.document.getElementById(id)
-          : spineItem.document.body
-
-        if (element) {
-          const cfi = spineItem.cfiFromElement(element)
-          const percentage = book.locations.percentageFromCfi(cfi)
-          if (Number.isFinite(percentage)) {
-            items.push({ label: item.label.trim(), percentage })
-          }
-        }
-
-        spineItem.unload()
-      }
-
-      await walk(item.subitems)
-    }
-  }
-
-  await walk(book.navigation.toc)
-  flattenedToc = items.sort((a, b) => a.percentage - b.percentage)
-}
-
-const labelFromPercentage = (percent) => {
-  if (!flattenedToc.length) return ''
-
-  const target = Math.max(0, Math.min(100, Number(percent) || 0)) / 100
-  let currentToc = flattenedToc[0]
-
-  for (const item of flattenedToc) {
-    if (item.percentage > target) break
-    currentToc = item
-  }
-
-  return currentToc.label
-}
+const tocChanged = (val) => (toc = val)
 
 const getRendition = (val) => {
   rendition = val
-  book = rendition.book
-  displayed = rendition.display()
+  book = val.book
+  // 生成 locations 后才能计算百分比
   book.ready
     .then(() => book.locations.generate(1600))
-    .then(async () => {
-      await loadToc()
-      // 图书渲染完成后获取当前阅读百分比
-      displayed.then(() => {
-        const currentLocation = rendition.currentLocation()
-        const currentPage = book.locations.percentageFromCfi(
-          currentLocation.start.cfi
-        )
-        current.value = Math.round(currentPage * 10000) / 100
-      })
-      rendition.on('relocated', (location) => {
-        const percent = book.locations.percentageFromCfi(location.start.cfi)
-        current.value = Math.round(percent * 10000) / 100
-      })
-    })
+    .then(() => locationChange(rendition.currentLocation()?.start))
 }
 
+// 翻页时同步滑块位置
+const locationChange = (location) => {
+  if (!location?.cfi || !book?.locations.length()) return
+  const percent = book.locations.percentageFromCfi(location.cfi)
+  current.value = Math.round(percent * 10000) / 100
+}
+
+// 拖动结束后跳转到对应位置
 const change = (value) => {
-  current.value = value
-  const cfi = book.locations.cfiFromPercentage(value / 100)
-  rendition.display(cfi)
+  rendition.display(book.locations.cfiFromPercentage(value / 100))
+}
+
+// 从目录中查找 href 对应的章节名
+const getLabel = (items, href) => {
+  for (const item of items) {
+    if (item.href.includes(href)) return item.label.trim()
+    const label = getLabel(item.subitems || [], href)
+    if (label) return label
+  }
+  return ''
+}
+
+// 悬浮提示显示所在章节
+const labelFromPercentage = (percent) => {
+  const href = book?.locations.length()
+    ? book.spine.get(book.locations.cfiFromPercentage(percent / 100))?.href
+    : ''
+  return (href && getLabel(toc, href)) || `${percent}%`
 }
 </script>
 <style module>
 .progress {
   position: absolute;
-  bottom: 1rem;
-  right: 1rem;
-  left: 1rem;
+  inset: auto 1rem 1rem;
   z-index: 2;
 }
 </style>

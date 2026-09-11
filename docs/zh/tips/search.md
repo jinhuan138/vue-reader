@@ -7,128 +7,69 @@
   <div style="height: 100vh; position: relative">
     <vue-reader url="/vue-reader/files/啼笑因缘.epub" :getRendition="getRendition" />
     <div class="search">
-      <input
-        v-model.trim="searchText"
-        placeholder="搜索"
-        @keyup.enter="search"
-      />
+      <input v-model.trim="searchText" placeholder="搜索" @keyup.enter="search" />
       <div class="searchResults">
         <div v-if="!searchResults.length">暂无结果</div>
-        <div
-          class="item"
-          v-for="(item, index) in searchResults"
-          :key="index"
-          @click="go(item.cfi, $event)"
-        >
-          <span
-            v-html="
-              item.excerpt
-                .trim()
-                .replace(
-                  searchText,
-                  `<span style='color: orange;'>${searchText}</span>`
-                )
-            "
-          >
-          </span>
+        <div class="item" v-for="item in searchResults" :key="item.cfi" @click="go(item.cfi)">
+          <span>{{ item.excerpt }}</span>
         </div>
       </div>
     </div>
   </div>
 </template>
-<script setup lang="ts">
+<script setup>
 import { VueReader } from 'vue-reader'
-import { Rendition } from 'epubjs'
 import { ref } from 'vue'
 
-let rendition: null | Rendition = null
-interface SearchResultItem {
-  cfi: string
-  excerpt: string
-}
-const searchText = ref<string>('只在捻花一笑中')
-const searchResults = ref<SearchResultItem[]>([])
+let rendition
+let highlights = []
+const searchText = ref('只在捻花一笑中')
+const searchResults = ref([])
 
-const getRendition = (val: Rendition): void => {
-  rendition = val
-}
+const getRendition = (val) => (rendition = val)
 
-const highlightSearchResults = (results: SearchResultItem[]) => {
-  if (!rendition) return
-  results.forEach((result) => {
-    rendition?.annotations.add('highlight', result.cfi)
-  })
-}
-const search = async (): Promise<void> => {
-  if (!searchText.value) {
-    searchResults.value = []
-  } else {
-    const res = await doSearch(searchText.value)
-    searchResults.value = res.slice(0, 5)
-    highlightSearchResults(searchResults.value)
-  }
-}
+// epub.js 没有内置搜索，需要逐个加载篇目再查找
+const search = async () => {
+  const q = searchText.value
+  highlights.forEach((cfi) => rendition?.annotations.remove(cfi, 'highlight'))
+  highlights = []
+  searchResults.value = []
+  if (!q || !rendition) return
 
-// 搜索整本图书
-const doSearch = (q) => {
-  const { book } = rendition!
-  return Promise.all(
+  const { book } = rendition
+  searchResults.value = (await Promise.all(
     book.spine.spineItems.map((item) =>
-      item
-        .load(book.load.bind(book))
-        .then(item.find.bind(item, q))
-        .finally(item.unload.bind(item))
+      item.load(book.load.bind(book)).then(() => item.find(q)).finally(() => item.unload())
     )
-  ).then((results) => Promise.resolve([].concat.apply([], results)))
+  )).flat()
+  highlights = searchResults.value.map(({ cfi }) => cfi)
+  highlights.forEach((cfi) => rendition.annotations.add('highlight', cfi))
 }
 
-// 搜索当前章节
-const doChapterSearch = (q) => {
-  const { book } = rendition!
-  let item = book.spine.get(rendition!.location.start.cfi)
-  return item
-    .load(book.load.bind(book))
-    .then(item.find.bind(item, q))
-    .finally(item.unload.bind(item))
-}
-
-const go = (href, e) => {
-  rendition?.display(href)
-  e.stopPropagation()
-  e.preventDefault()
-}
+const go = (cfi) => rendition.display(cfi)
 </script>
 <style scoped>
 .search {
   position: absolute;
-  bottom: 1rem;
-  right: 1rem;
-  left: 1rem;
-  text-align: center;
+  inset: auto 1rem 1rem;
   z-index: 1;
-  color: #000;
-  background: #fff;
   display: flex;
-  align-items: center;
   justify-content: center;
+  background: #fff;
 }
 
-.search .searchResults {
+.searchResults {
   width: 200px;
 }
 
-.search .searchResults .item {
+.item {
   cursor: pointer;
-  border-radius: 4px;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  border-bottom: 1px solid #000;
+  border-bottom: 1px solid;
 }
 
-.search .searchResults .item:hover {
-  background: rgba(0, 0, 0, 0.05);
-}
 </style>
 ```
 
