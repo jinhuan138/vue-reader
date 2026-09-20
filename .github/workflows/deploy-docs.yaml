@@ -6,6 +6,11 @@ on:
     branches: [master]
     paths:
       - 'docs/**'
+      - 'src/**'
+      - 'types/**'
+      - 'package.json'
+      - 'vite.config.ts'
+      - 'tsconfig.json'
       - 'pnpm-lock.yaml'
       - 'pnpm-workspace.yaml'
       - '.github/workflows/deploy-docs.yaml'  # 工作流文件变更时触发
@@ -45,6 +50,8 @@ jobs:
         uses: actions/configure-pages@v4
       - name: Install dependencies
         run: pnpm install # 使用 pnpm 安装依赖
+      - name: Build local vue-reader
+        run: pnpm run build
       - name: Build with VitePress
         run: pnpm run docs:build # 使用 pnpm 运行构建
       - name: Upload artifact
