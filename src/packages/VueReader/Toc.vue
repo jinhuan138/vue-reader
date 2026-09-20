@@ -1,6 +1,6 @@
 <template>
   <div v-for="(item, index) in bookToc" :key="index">
-    <button class="tocAreaButton" :class="{ active: item.href.split('#')[0] === current?.start.href }"
+    <button class="tocAreaButton" :class="{ active: item.id === current }"
       @click="handleClick(item)">
       {{ isSubmenu ? ' '.repeat(4) + item.label : item.label }}
       <div v-if="item.subitems && item.subitems.length > 0" class="expansion" :class="{ open: item.expansion }"></div>
@@ -12,23 +12,57 @@
   </div>
 </template>
 <script setup lang="ts">
-import { NavItem, Location } from 'epubjs'
-import { ref, watch, toRefs } from 'vue'
+import { EpubCFI } from 'epubjs'
+import type { Book, Location, NavItem } from 'epubjs'
+import { computed, ref, watch, toRefs } from 'vue'
 export interface Item extends NavItem {
   expansion: boolean
 }
 export interface TocProps {
   toc: Array<NavItem>
-  current: Location | null
+  book?: Book | null
+  currentLocation?: Location | null
+  current?: string
   setLocation: (href: string | number, close?: boolean) => void
   isSubmenu?: boolean
 }
 const bookToc = ref<Item[]>([])
+interface TocLocation {
+  id: string
+  cfi: string
+}
+
+const tocLocations = ref<TocLocation[]>([])
+let tocLocationRequest = 0
 const props = withDefaults(defineProps<TocProps>(), {
   isSubmenu: false,
 })
 const { setLocation } = props
-const { toc, current, isSubmenu } = toRefs(props)
+const { toc, book, currentLocation, isSubmenu } = toRefs(props)
+const current = computed(() => {
+  if (isSubmenu.value) return props.current
+
+  const currentCfi = currentLocation.value?.start.cfi
+  if (!currentCfi || tocLocations.value.length === 0) return undefined
+
+  const epubCfi = new EpubCFI()
+  let active: TocLocation | undefined
+
+  tocLocations.value.forEach((location) => {
+    try {
+      if (
+        epubCfi.compare(location.cfi, currentCfi) <= 0 &&
+        (!active || epubCfi.compare(active.cfi, location.cfi) <= 0)
+      ) {
+        active = location
+      }
+    } catch {
+      // 跳过无法解析 CFI 的目录项，避免单个异常目录影响阅读器。
+    }
+  })
+
+  return active?.id
+})
 const handleClick = (item: Item): void => {
   if (item.subitems && item?.subitems?.length > 0) {
     item.expansion = !item.expansion
@@ -38,7 +72,6 @@ const handleClick = (item: Item): void => {
   }
 }
 
-// - watch 只在 toc 数据本身变化时执行（切换书籍），更新时保留已有展开状态
 watch(
   toc,
   (newToc) => {
@@ -49,6 +82,68 @@ watch(
       // 已有状态则保留，新增的项默认 false
       expansion: expandMap.get(item.href) ?? false,
     }))
+  },
+  { immediate: true }
+)
+
+const loadTocLocations = async (currentBook: Book, items: Array<NavItem>) => {
+  const request = ++tocLocationRequest
+  const locations: TocLocation[] = []
+
+  const walk = async (tocItems: Array<NavItem>) => {
+    for (const item of tocItems) {
+      const hashIndex = item.href.indexOf('#')
+      const spineHref = hashIndex === -1 ? item.href : item.href.slice(0, hashIndex)
+      const fragment = hashIndex === -1 ? '' : item.href.slice(hashIndex + 1)
+      const section = currentBook.spine.get(spineHref)
+
+      if (section) {
+        const wasLoaded = Boolean(section.document)
+
+        try {
+          if (!wasLoaded) await section.load(currentBook.load.bind(currentBook))
+          const id = fragment ? decodeURIComponent(fragment) : ''
+          const element = id ? section.document.getElementById(id) : section.document.body
+
+          if (element) locations.push({ id: item.id, cfi: section.cfiFromElement(element) })
+        } catch {
+          // 部分 EPUB 的目录目标可能不存在，保留其余可解析的目录项。
+        } finally {
+          if (!wasLoaded) section.unload()
+        }
+      }
+
+      if (item.subitems?.length) await walk(item.subitems)
+    }
+  }
+
+  await walk(items)
+  if (request === tocLocationRequest) tocLocations.value = locations
+}
+
+watch(
+  [toc, book],
+  ([items, currentBook]) => {
+    if (isSubmenu.value) return
+
+    tocLocationRequest++
+    tocLocations.value = []
+    if (currentBook) loadTocLocations(currentBook, items)
+  },
+  { immediate: true }
+)
+
+const containsCurrentItem = (items: Array<NavItem>, id: string): boolean =>
+  items.some((item) => item.id === id || (item.subitems && containsCurrentItem(item.subitems, id)))
+
+watch(
+  current,
+  (id) => {
+    if (!id) return
+
+    bookToc.value.forEach((item) => {
+      if (item.subitems && containsCurrentItem(item.subitems, id)) item.expansion = true
+    })
   },
   { immediate: true }
 )
