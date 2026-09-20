@@ -45,8 +45,10 @@ export default defineConfig({
     rollupOptions: {
       external: ['vue', 'epubjs'],
       output: {
+        exports: 'named',
         globals: {
           vue: 'Vue',
+          epubjs: 'ePub',
         },
       },
     },

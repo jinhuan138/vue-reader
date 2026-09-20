@@ -45,7 +45,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, toRefs } from 'vue'
+import { ref, shallowRef, toRefs } from 'vue'
 import type { Book, Rendition, NavItem, Location } from 'epubjs'
 import EpubView from '../EpubView/EpubView.vue'
 import Toc from './Toc.vue'
@@ -68,7 +68,7 @@ const { url, title, showToc } = toRefs(props)
 
 const epubRef = ref<InstanceType<typeof EpubView>>()
 const currentLocation = ref<Location | null>(null)
-const book = ref<Book | null>(null)
+const book = shallowRef<Book | null>(null)
 
 const toc = ref<Array<NavItem>>([])
 const expandedToc = ref<boolean>(false)
