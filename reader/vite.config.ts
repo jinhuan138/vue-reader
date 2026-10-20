@@ -8,6 +8,12 @@ import { resolve } from 'path'
 // https://vite.dev/config/
 export default defineConfig({
   publicDir: resolve(__dirname, '../public'),
+  resolve: {
+    alias: [
+      // 示例直接使用组件源码，无需先构建 lib。
+      { find: /^vue-reader$/, replacement: resolve(__dirname, '../src/packages/index.ts') },
+    ],
+  },
   plugins: [
     vue(),
     AutoImport({

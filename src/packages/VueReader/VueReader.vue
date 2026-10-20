@@ -14,7 +14,8 @@
         </div>
       </slot>
       <!-- 阅读 -->
-      <epub-view ref="epubRef" v-bind="$attrs" :url="url" :tocChanged="onTocChange" :getRendition="onGetRendition">
+      <epub-view ref="epubRef" v-bind="$attrs" :url="url" :location="location" :tocChanged="onTocChange"
+        :getRendition="onGetRendition" @update:location="emit('update:location', $event)">
         <template #loadingView>
           <slot name="loadingView">
             <div class="loadingView">Loading…</div>
@@ -52,6 +53,7 @@ import Toc from './Toc.vue'
 
 export interface VueReaderProps {
   url: string | ArrayBuffer
+  location?: number | string | Location['start']
   title?: string
   showToc?: boolean
   tocChanged?: (toc: Array<NavItem>) => void
@@ -62,9 +64,13 @@ const props = withDefaults(defineProps<VueReaderProps>(), {
   showToc: true,
 })
 
+const emit = defineEmits<{
+  'update:location': [string]
+}>()
+
 const { tocChanged, getRendition } = props
 
-const { url, title, showToc } = toRefs(props)
+const { url, location, title, showToc } = toRefs(props)
 
 const epubRef = ref<InstanceType<typeof EpubView>>()
 const currentLocation = ref<Location | null>(null)
@@ -100,16 +106,23 @@ const onGetRendition = (rendition) => {
 }
 
 const setLocation = (href: string | number, close: boolean = true) => {
-  epubRef?.value?.setLocation(href)
+  const result = epubRef.value?.setLocation(href)
   expandedToc.value = !close
+  return result
 }
 
-const next = (): void => {
-  epubRef.value?.nextPage()
+const next = () => {
+  return epubRef.value?.nextPage()
 }
-const pre = (): void => {
-  epubRef.value?.prevPage()
+const pre = () => {
+  return epubRef.value?.prevPage()
 }
+
+defineExpose({
+  nextPage: next,
+  prevPage: pre,
+  setLocation,
+})
 </script>
 <style scoped>
 /* container */

@@ -12,7 +12,7 @@
 <script setup lang="ts">
 //http://epubjs.org/documentation/0.3/
 //https://github.com/johnfactotum/foliate-js
-import { ref, onMounted, onUnmounted, watch, unref, toRefs } from 'vue'
+import { ref, onMounted, onUnmounted, watch, unref, toRefs, nextTick } from 'vue'
 import Epub from 'epubjs'
 import type { Book, Rendition, Contents, Location, NavItem } from 'epubjs'
 import type { BookOptions } from 'epubjs/types/book'
@@ -55,7 +55,7 @@ const {
 const { url, location } = toRefs(props)
 
 const emit = defineEmits<{
-  'update:location': [Location['start']]
+  'update:location': [string]
 }>()
 
 const viewer = ref<HTMLDivElement | null>(null)
@@ -64,6 +64,8 @@ const isLoaded = ref(false)
 const isError = ref(false)
 let book: null | Book = null,
   rendition: null | Rendition = null
+// 切书或卸载时递增，使旧的加载任务失效。
+let loadRequest = 0
 
 // 存储 iframe 事件清理函数，防止内存泄漏
 const iframeCleanups: Array<() => void> = []
@@ -75,21 +77,44 @@ const cleanupIframeListeners = () => {
   iframeCleanups.length = 0
 }
 
+const onLoadError = (error: unknown) => {
+  console.error(error)
+  isLoaded.value = false
+  isError.value = true
+}
+
+const getLocation = (value: EpubViewProps['location']) =>
+  typeof value === 'object' ? value?.cfi : value
+
 const initBook = async () => {
+  const request = ++loadRequest
+  isLoaded.value = false
+  isError.value = false
+  toc.value = []
   cleanupIframeListeners() // 切换书籍前清理旧的 iframe 事件监听器
-  if (book) book.destroy()
-  if (url.value) {
-    book = Epub(unref(url), epubInitOptions)
+  book?.destroy()
+  book = null
+  rendition = null
+  if (!url.value) return
+
+  try {
+    const currentBook = Epub(unref(url), epubInitOptions)
+    book = currentBook
     book.on('openFailed', (error: Error) => {
-      console.error(error)
-      isError.value = true
+      if (request === loadRequest) onLoadError(error)
     })
-    book!.loaded.navigation.then(({ toc: _toc }) => {
-      isLoaded.value = true
-      toc.value = _toc
-      tocChanged && tocChanged(_toc)
-      initReader()
-    })
+    const { toc: _toc } = await currentBook.loaded.navigation
+    if (request !== loadRequest || isError.value) return
+
+    isLoaded.value = true
+    toc.value = _toc
+    tocChanged && tocChanged(_toc)
+    // 等待 v-show 恢复容器尺寸后再初始化阅读器。
+    await nextTick()
+    if (request !== loadRequest || isError.value) return
+    await initReader()
+  } catch (error) {
+    if (request === loadRequest) onLoadError(error)
   }
 }
 
@@ -99,14 +124,17 @@ const initReader = () => {
     height: '100%',
     ...epubOptions,
   })
+  const currentRendition = rendition
   registerEvents()
-  getRendition && getRendition(rendition)
-  if (typeof location.value === 'string' && location.value) {
-    rendition.display(location.value)
-  } else if (typeof location.value === 'number') {
-    rendition.display(location.value)
+  getRendition && getRendition(currentRendition)
+  if (currentRendition !== rendition) return
+  const target = getLocation(location.value)
+  if (typeof target === 'string' && target) {
+    return currentRendition.display(target)
+  } else if (typeof target === 'number') {
+    return currentRendition.display(target)
   } else {
-    rendition.display()
+    return currentRendition.display()
   }
 }
 
@@ -117,6 +145,7 @@ const flipPage = (direction: string) => {
 
 const registerEvents = () => {
   if (rendition) {
+    const request = loadRequest
     rendition.on('rendered', (e: Event, iframe: any) => {
       const doc = iframe?.document as Document | undefined
       if (!doc) return
@@ -138,7 +167,9 @@ const registerEvents = () => {
       }
     })
     rendition.on('locationChanged', onLocationChange)
-    rendition.on('displayError', () => console.error('error rendering book'))
+    rendition.on('displayError', (error: Error) => {
+      if (request === loadRequest) onLoadError(error)
+    })
     if (handleTextSelected) {
       rendition.on('selected', handleTextSelected)
     }
@@ -148,27 +179,43 @@ const registerEvents = () => {
   }
 }
 
-const onLocationChange = (loc: Location) => {
+const onLocationChange = (loc: { start: string }) => {
   //监听翻页
   const newLocation = loc.start
-  if (location.value !== newLocation) {
-    emit('update:location', loc.start)
+  if (getLocation(location.value) !== newLocation) {
+    emit('update:location', newLocation)
   }
 }
 
 watch(url, initBook)
 
+watch(
+  () => getLocation(location.value),
+  (href) => {
+    if (href === undefined || href === '' || !rendition || isError.value) return
+    // 翻页事件回传给 v-model 时，当前位置已经更新，无需再次跳转。
+    if (href === rendition.location?.start.cfi) return
+    const request = loadRequest
+    setLocation(href)?.catch((error) => {
+      if (request === loadRequest) onLoadError(error)
+    })
+  }
+)
+
 const nextPage = () => {
-  rendition?.next()
+  return rendition?.next()
 }
 
 const prevPage = () => {
-  rendition?.prev()
+  return rendition?.prev()
 }
 
 const setLocation = (href: number | string) => {
-  if (typeof href === 'string') rendition!.display(href)
-  if (typeof href === 'number') rendition!.display(href)
+  if (typeof href === 'string') {
+    return rendition?.display(href)
+  } else {
+    return rendition?.display(href)
+  }
 }
 
 onMounted(() => {
@@ -176,8 +223,11 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
+  loadRequest++
   cleanupIframeListeners()
   book?.destroy()
+  book = null
+  rendition = null
 })
 
 defineExpose({

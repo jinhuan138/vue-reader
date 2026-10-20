@@ -12,7 +12,7 @@
   "dependencies": {
     "mitt": "^3.0.1",
     "vue": "^3.5.13",
-    "vue-reader": "catalog:"
+    "vue-reader": "link:.."
   },
   "devDependencies": {
     "@element-plus/icons-vue": "catalog:",

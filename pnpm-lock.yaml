@@ -154,8 +154,8 @@ importers:
         specifier: ^3.5.13
         version: 3.5.31(typescript@5.9.3)
       vue-reader:
-        specifier: 'catalog:'
-        version: 1.3.7
+        specifier: link:..
+        version: link:..
     devDependencies:
       '@element-plus/icons-vue':
         specifier: 'catalog:'
